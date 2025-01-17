@@ -9,6 +9,16 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
-const eslintConfig = [...compat.extends("next/core-web-vitals")];
+const eslintConfig = [
+	...compat.extends("next/core-web-vitals"),
+	{
+		files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+		rules: {
+			"react/jsx-uses-react": "off",
+			"react/react-in-jsx-scope": "off",
+			"react/jsx-uses-vars": "error",
+		},
+	},
+];
 
 export default eslintConfig;
