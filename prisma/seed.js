@@ -22,7 +22,7 @@ async function main() {
 				},
 			},
 		});
-		console.log(`Created User ${i} with Profile and Posts`);
+		// console.log(`Created User ${i} with Profile and Posts`);
 	}
 }
 
