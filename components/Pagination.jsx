@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 
-export default function Pagination({ currentPage, totalPages }) {
+export default function Pagination({ totalPages, currentPage }) {
 	const current = +currentPage;
-	const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-	// console.log(current, totalPages, typeof totalPages);
+	const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
 	return (
 		<nav
