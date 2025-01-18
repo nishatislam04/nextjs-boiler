@@ -1,4 +1,4 @@
-## 🚀 Start Your Next.js Project from Scratch  
+## 🚀 Start Next.js Project from Scratch  
 
 Head over to the Notion page below to learn how to set up a **Next.js application** from scratch using:  
 - **Docker**  
@@ -7,9 +7,7 @@ Head over to the Notion page below to learn how to set up a **Next.js applicatio
 - **Prisma**  
 - **phpMyAdmin**  
 
-📌 **Note**: This guide is for starting a new project and not for initializing this cloned project.  
-
-[👉 Notion Guide: Docker, MySQL, Prisma, Bun](https://www.notion.so/Docker-MySQL-Prisma-BUN-17d13ca8b20480e48f6dea4469718097)  
+[👉 Notion Guide: Create a nextjs 15 project from scratch in Docker, MySQL, Prisma, Bun.](https://www.notion.so/Docker-MySQL-Prisma-BUN-17d13ca8b20480e48f6dea4469718097)  
 
 ---
 
@@ -17,23 +15,38 @@ Head over to the Notion page below to learn how to set up a **Next.js applicatio
 
 After cloning the project, run the following commands in your terminal:
 
-1. **Access the container shell**  
+1. **Access the container shell (VSCODE)**  
 ```bash
 docker exec -it next-app sh
 ```
-Replace next-app with the name of your app.
+*Replace 'next-app' with the name of your app.*
 
-2. **Install dependencies**
+2. **Install dependencies (VSCODE)**
 ```bash
 bun install
 ```
-3. **Build Docker Images**
+
+3. **Grant Right Permissions for Prisma/ (VSCODE)**
+```bash
+  make super
+  make grant-all
+```
+
+4. **Run Prisma Migration (VSCODE)**
+```bash
+  make migrate
+```
+
+5. **Build Docker Images (Konsole)**
 ```bash
 docker_build
 ```
-4. **Start the Docker container**
+
+6. **Start the Docker container (Konsole)**
 ```bash
 docker_up
 ```
+
+*To make Konsole terminal command working, make sure, All bash aliases are setup*
 
 Access the application at http://localhost:3000
