@@ -28,6 +28,10 @@ migrate:
 push:
 	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma db push --accept-data-loss --skip-generate
 
+# [[Prisma]] Local Generate Prisma client
+local_generate:
+	bunx prisma generate 
+
 # [[Prisma]] Generate Prisma client
 generate:
 	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma generate 

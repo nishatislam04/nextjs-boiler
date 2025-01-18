@@ -47,6 +47,22 @@ docker_build
 docker_up
 ```
 
-*To make Konsole terminal command working, make sure, All bash aliases are setup*
+*To make Konsole terminal command working, make sure, All bash aliases are setup already*
+
+### Run Prisma seed
+I am still not sure, how to seed it properly. but follow it now.
+10 users with 10 profiles & each user 5 posts.
+
+1. seed prisma with dummy data (vscode)
+```bash 
+  make seed
+```
+
+If error shown in terminal, run prisma migrate in local
+```bash
+  bunx prisma generate
+  or
+  make local_generate
+```
 
 Access the application at http://localhost:3000
