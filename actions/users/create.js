@@ -1,6 +1,8 @@
 "use server";
 
 import prisma from "@/prisma/db";
+import { flashMessage } from "@thewebartisan7/next-flash-message";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function createUser(formData) {
@@ -21,5 +23,7 @@ export async function createUser(formData) {
 	});
 
 	console.log(user);
+	await flashMessage("user create success");
+	revalidatePath("/user");
 	redirect("/user");
 }

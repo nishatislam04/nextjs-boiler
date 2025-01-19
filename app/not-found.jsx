@@ -2,11 +2,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export const metadata = {
-	cache: "force-cache", // Tells Next.js to cache this page aggressively
-	revalidate: 3600, // Revalidate once every hour
-};
-
 export default function NotFoundPage() {
 	const router = useRouter();
 

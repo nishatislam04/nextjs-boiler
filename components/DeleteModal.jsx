@@ -3,6 +3,7 @@ import CloseSvg from "@/svg/Close";
 import Button from "./Button";
 import DeleteSvg from "@/svg/Delete";
 import { useState } from "react";
+import { deleteUser } from "@/actions/users/delete";
 
 export default function DeleteModal({ user }) {
 	const [show, setShow] = useState(false);
@@ -33,7 +34,7 @@ export default function DeleteModal({ user }) {
 						{/* Close button */}
 						<button
 							onClick={handleShow}
-							className="absolute p-2 top-3 right-3 hover:bg-gray-200 hover:rounded-md text-gray-400 hover:text-gray-900 dark:hover:text-white"
+							className="w-8 h-8 absolute p-2 top-3 right-3 hover:bg-gray-200 hover:rounded-md text-gray-400 hover:text-gray-900 dark:hover:text-white"
 							aria-label="Close modal">
 							<CloseSvg />
 						</button>
@@ -56,19 +57,23 @@ export default function DeleteModal({ user }) {
 							<h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
 								Are you sure you want to delete this item?
 							</h3>
-							<button
-								onClick={() => {
-									console.log("Item deleted!");
-									handleShow();
-								}}
-								className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mr-2">
-								Yes, I&apos;m sure
-							</button>
-							<button
-								onClick={handleShow}
-								className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-								No, cancel
-							</button>
+							<div className="flex items-center justify-center">
+								<form
+									action={deleteUser.bind(null, user.id)}
+									className="flex items-center">
+									<button
+										type="submit"
+										className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mr-2">
+										Yes, I&apos;m sure
+									</button>
+								</form>
+
+								<button
+									onClick={handleShow}
+									className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+									No, cancel
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>

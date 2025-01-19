@@ -1,7 +1,6 @@
 // import { Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Toast from "@/components/Toast";
 import Script from "next/script";
 
 // const geistSans = Geist({
@@ -25,9 +24,7 @@ export default function RootLayout({ children }) {
 			{/* <body className={`${geistSans.variable} antialiased`}> */}
 			<body className="relative">
 				<Navbar />
-				{/* <Toast /> */}
 				{children}
-
 				<Script src="/js/flowbite/index.js"></Script>
 			</body>
 		</html>

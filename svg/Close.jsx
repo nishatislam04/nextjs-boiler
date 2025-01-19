@@ -6,7 +6,7 @@ export default function CloseSvg() {
 			fill="none"
 			viewBox="0 0 14 14">
 			<path
-				stroke="currentColor"
+				stroke="gray"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth="2"

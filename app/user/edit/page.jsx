@@ -1,3 +1,4 @@
+import { updateUser } from "@/actions/users/update";
 import GoBack from "@/components/GoBack";
 import prisma from "@/prisma/db";
 
@@ -23,7 +24,9 @@ export default async function UserEditPage({ searchParams }) {
 				<GoBack />
 
 				<h1 className="mb-5 text-2xl font-bold ">Edit User</h1>
-				<form className=" max-w-[40rem] bg-gray-100 py-6 px-3 rounded-lg">
+				<form
+					action={updateUser.bind(null, user.id)}
+					className="max-w-[40rem] bg-gray-100 py-6 px-3 rounded-lg">
 					<div className="flex gap-4 w-full">
 						<div className="mb-5 w-1/2">
 							<label
@@ -33,6 +36,7 @@ export default async function UserEditPage({ searchParams }) {
 							</label>
 							<input
 								type="text"
+								name="name"
 								defaultValue={user.name}
 								id="name"
 								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500  "
@@ -47,6 +51,7 @@ export default async function UserEditPage({ searchParams }) {
 							</label>
 							<input
 								type="email"
+								name="email"
 								defaultValue={user.email}
 								id="email"
 								className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500  "

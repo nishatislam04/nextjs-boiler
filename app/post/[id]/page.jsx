@@ -1,7 +1,7 @@
 import prisma from "@/prisma/db";
 
 export default async function PostPage({ params }) {
-	const id = await params.id;
+	const id = (await params).id;
 	const posts = await prisma.post.findMany({
 		where: {
 			authorId: parseInt(id, 10),

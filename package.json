@@ -13,11 +13,13 @@
   },
   "dependencies": {
     "@prisma/client": "^6.2.1",
+    "@thewebartisan7/next-flash-message": "^1.0.1",
     "flowbite": "^2.5.2",
     "next": "15.1.4",
     "prisma": "^6.2.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "sonner": "^1.7.2"
   },
   "devDependencies": {
     "postcss": "^8",

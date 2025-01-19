@@ -6,6 +6,7 @@ import Spinner from "@/components/Spinner";
 import Button from "@/components/Button";
 import AddSvg from "@/svg/Add";
 import prisma from "@/prisma/db";
+import Toast from "@/components/Toast";
 
 export default async function UserPage({ searchParams }) {
 	const itemPerPage = 5;
@@ -19,6 +20,7 @@ export default async function UserPage({ searchParams }) {
 
 	return (
 		<div className="max-w-screen-xl mx-auto p-4 mt-12 relative">
+			<Toast />
 			<Button
 				href="/user/create"
 				padding="px-3 py-2"

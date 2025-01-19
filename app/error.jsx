@@ -8,11 +8,6 @@
 // 	weight: "400",
 // });
 
-export const metadata = {
-	cache: "force-cache", // Tells Next.js to cache this page aggressively
-	revalidate: 3600, // Revalidate once every hour
-};
-
 export default function Error({ error, reset }) {
 	return (
 		<div className="w-full max-h-screen relative flex flex-col items-center justify-center bg-gray-50">

@@ -18,11 +18,6 @@ export default {
 		{
 			pattern:
 				/bg-(gray|blue|red|green|yellow|indigo|purple|pink)-(500|600|700|800)/,
-			variants: ["hover", "focus", "dark"],
-		},
-		{
-			pattern:
-				/focus:ring-(gray|blue|red|green|yellow|indigo|purple|pink)-(300|800)/,
 		},
 	],
 	plugins: [require("flowbite/plugin")],

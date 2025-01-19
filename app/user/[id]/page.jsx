@@ -16,15 +16,13 @@ async function fetchUser(id) {
 	return user;
 }
 
-export default async function ProfilePage({ searchParams }) {
-	const params = await searchParams;
-	const id = params.id;
+export default async function ProfilePage({ params }) {
+	const id = (await params).id;
 
-	if (!Number.isInteger(id)) notFound();
-
+	if (!id) return notFound();
 	const user = await fetchUser(id);
 
-	if (!user) notFound();
+	if (!user) return notFound();
 
 	// console.log(user);
 	return <div className="">ProfilePage</div>;

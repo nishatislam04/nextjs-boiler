@@ -108,7 +108,6 @@ export default async function UserTable({
 									Edit
 								</Button>
 								{/* delete modal */}
-
 								<DeleteModal user={user} />
 							</td>
 						</tr>
