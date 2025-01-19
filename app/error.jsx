@@ -1,12 +1,17 @@
 "use client";
 
-import { Roboto_Mono } from "next/font/google";
+// import { Roboto_Mono } from "next/font/google";
 
-export const roboto_mono = Roboto_Mono({
-	subsets: ["latin"],
-	display: "swap",
-	weight: "400",
-});
+// export const roboto_mono = Roboto_Mono({
+// 	subsets: ["latin"],
+// 	display: "swap",
+// 	weight: "400",
+// });
+
+export const metadata = {
+	cache: "force-cache", // Tells Next.js to cache this page aggressively
+	revalidate: 3600, // Revalidate once every hour
+};
 
 export default function Error({ error, reset }) {
 	return (
@@ -291,8 +296,12 @@ export default function Error({ error, reset }) {
 					fill="#fff"></path>
 			</svg>
 			<div className="flex flex-col items-center justify-center min-w-[60%] w-[60%] max-w-[80%]">
-				<p className="text-5xl md:text-6xl lg:text-4xl font-bold tracking-wider text-gray-600 mt-4">Something Went Wrong!</p>
-				<p className={` ${roboto_mono.className} w-full mt-8 px-4 py-8 bg-red-400 text-white leading-6 rounded-md border border-gray-300 shadow-md max-h-60 overflow-y-auto whitespace-pre-wrap`}>
+				<p className="text-5xl md:text-6xl lg:text-4xl font-bold tracking-wider text-gray-600 mt-4">
+					Something Went Wrong!
+				</p>
+				{/* <p className={` ${roboto_mono.className} w-full mt-8 px-4 py-8 bg-red-400 text-white leading-6 rounded-md border border-gray-300 shadow-md max-h-60 overflow-y-auto whitespace-pre-wrap`}> */}
+				<p
+					className={`w-full mt-8 px-4 py-8 bg-red-400 text-white leading-6 rounded-md border border-gray-300 shadow-md max-h-60 overflow-y-auto whitespace-pre-wrap`}>
 					{error.message || "A global error occurred."}
 				</p>
 			</div>

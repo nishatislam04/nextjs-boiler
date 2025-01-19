@@ -1,5 +1,9 @@
 import Link from "next/link";
 import NameSort from "./[id]/NameSort";
+import ViewSvg from "@/svg/View";
+import Button from "@/components/Button";
+import EditSvg from "@/svg/Edit";
+import DeleteModal from "@/components/DeleteModal";
 
 async function fetchUsers(currentPage, itemPerPage, query, nameSort) {
 	const users = await prisma.user.findMany({
@@ -15,14 +19,22 @@ async function fetchUsers(currentPage, itemPerPage, query, nameSort) {
 	return users;
 }
 
-export default async function UserTable({ nameSort, currentPage, searchQuery }) {
+export default async function UserTable({
+	nameSort,
+	currentPage,
+	searchQuery,
+}) {
 	let users = [];
-	let totalUsers = 0;
 	const itemPerPage = 5;
 
-	users = await fetchUsers(currentPage, itemPerPage, searchQuery, nameSort);
+	users = await fetchUsers(
+		currentPage,
+		itemPerPage,
+		searchQuery,
+		nameSort
+	);
 
-	if (!users) notFound();
+	if (!users) return notFound();
 
 	return (
 		<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -49,6 +61,11 @@ export default async function UserTable({ nameSort, currentPage, searchQuery }) 
 						className="px-6 py-3">
 						Posts
 					</th>
+					<th
+						scope="col"
+						className="px-6 py-3">
+						Actions
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -65,13 +82,34 @@ export default async function UserTable({ nameSort, currentPage, searchQuery }) 
 						<tr
 							className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 mr-2"
 							key={user.id}>
-							<th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{user.name}</th>
+							<th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+								{user.name}
+							</th>
 							<td className="px-6 py-4">{user.email}</td>
 							<td className="font-medium text-blue-600 dark:text-blue-500 hover:underline px-6 py-3">
 								<Link href={`/user/${user.id}`}>profile</Link>
 							</td>
 							<td className="font-medium text-blue-600 dark:text-blue-500 hover:underline px-6 py-3">
 								<Link href={`/post/${user.id}`}>posts</Link>
+							</td>
+							<td className="px-6 py-4 space-x-2">
+								<Button
+									href={`/user/show?id=${user.id}`}
+									padding="px-2 py-1">
+									<ViewSvg />
+									View
+								</Button>
+								<Button
+									href={`/user/edit?id=${user.id}`}
+									padding="px-2 py-1"
+									textColor="white"
+									bgColor="yellow">
+									<EditSvg />
+									Edit
+								</Button>
+								{/* delete modal */}
+
+								<DeleteModal user={user} />
 							</td>
 						</tr>
 					))

@@ -18,7 +18,7 @@ export default function NameSort() {
 	}
 	return (
 		<span
-			className="flex items-center gap-2"
+			className="flex items-center gap-2 cursor-pointer"
 			onClick={handleClick}>
 			Name
 			<svg
