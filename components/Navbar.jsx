@@ -6,6 +6,10 @@ import { SignOut } from "./SignOut";
 
 const links = [
 	{
+		label: "Dashboard",
+		href: "/dashboard",
+	},
+	{
 		label: "Home",
 		href: "/",
 	},

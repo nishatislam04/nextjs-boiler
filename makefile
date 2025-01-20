@@ -38,7 +38,7 @@ generate:
 
 # [[Prisma]] Reset database
 reset:
-	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma migrate reset --force --skip-seed
+	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma migrate reset --force --skip-seed --skip-generate
 
 # [[Prisma]] Run Prisma seed
 seed:

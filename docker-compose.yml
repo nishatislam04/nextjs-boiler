@@ -45,7 +45,7 @@ services:
   migrate:
     image: node:18-alpine
     working_dir: /app
-    command: npx prisma migrate dev
+    command: sh -c "bunx prisma migrate dev && bunx prisma generate"
     volumes:
       - .:/app
     environment:

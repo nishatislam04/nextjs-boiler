@@ -17,6 +17,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   username      String?   @unique
   emailVerified DateTime?
+  role          String    @default("member")
   accounts      Account?
   posts         Post[]
   profile       Profile?

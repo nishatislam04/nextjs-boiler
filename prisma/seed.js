@@ -11,7 +11,8 @@ async function main() {
 				name: `User ${i}`,
 				username: `user${i}`,
 				emailVerified: i % 2 === 0 ? new Date() : null,
-				image: `https://example.com/avatar${i}.png`,
+				image: `https://xsgames.co/randomusers/avatar.php?g=male`,
+
 				profile: {
 					create: {
 						bio: `This is the bio of User ${i}.`,
