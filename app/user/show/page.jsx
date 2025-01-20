@@ -10,7 +10,7 @@ export default async function UserShowPage({ searchParams }) {
 
 	const user = await prisma.user.findUnique({
 		where: {
-			id: +id,
+			id: id,
 		},
 		include: {
 			profile: true,

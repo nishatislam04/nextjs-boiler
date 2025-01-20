@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function NameSort() {
+export default function Sort({ children }) {
 	const [nameSort, setNameSort] = useState("desc");
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -20,7 +20,7 @@ export default function NameSort() {
 		<span
 			className="flex items-center gap-2 cursor-pointer"
 			onClick={handleClick}>
-			Name
+			{children}
 			<svg
 				className="w-4 h-4"
 				aria-hidden="true"

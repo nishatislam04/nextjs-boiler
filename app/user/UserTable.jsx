@@ -1,9 +1,7 @@
 import Link from "next/link";
-import NameSort from "./[id]/NameSort";
-import ViewSvg from "@/svg/View";
-import Button from "@/components/Button";
-import EditSvg from "@/svg/Edit";
-import DeleteModal from "@/components/DeleteModal";
+import TableAction from "@/components/TableAction";
+import TableHeader from "@/components/TableHeader";
+import TableCheckbox from "@/components/TableCheckbox";
 
 async function fetchUsers(currentPage, itemPerPage, query, nameSort) {
 	const users = await prisma.user.findMany({
@@ -36,37 +34,12 @@ export default async function UserTable({
 
 	if (!users) return notFound();
 
-	return (
-		<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-			<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-				<tr>
-					<th
-						scope="col"
-						className="px-6 py-3 ">
-						<NameSort />
-					</th>
-					<th
-						scope="col"
-						className="px-6 py-3 ">
-						email
-					</th>
+	const tableHeader = ["Name", "email", "Profile", "Posts", "Actions"];
 
-					<th
-						scope="col"
-						className="px-6 py-3">
-						Profile
-					</th>
-					<th
-						scope="col"
-						className="px-6 py-3">
-						Posts
-					</th>
-					<th
-						scope="col"
-						className="px-6 py-3">
-						Actions
-					</th>
-				</tr>
+	return (
+		<table className="relative w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+			<thead className="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+				<TableHeader header={tableHeader} />
 			</thead>
 			<tbody>
 				{users.length === 0 ? (
@@ -82,6 +55,9 @@ export default async function UserTable({
 						<tr
 							className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 mr-2"
 							key={user.id}>
+							<td className="w-4 p-4">
+								<TableCheckbox />
+							</td>
 							<th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
 								{user.name}
 							</th>
@@ -92,24 +68,10 @@ export default async function UserTable({
 							<td className="font-medium text-blue-600 dark:text-blue-500 hover:underline px-6 py-3">
 								<Link href={`/post/${user.id}`}>posts</Link>
 							</td>
-							<td className="px-6 py-4 space-x-2">
-								<Button
-									href={`/user/show?id=${user.id}`}
-									padding="px-2 py-1">
-									<ViewSvg />
-									View
-								</Button>
-								<Button
-									href={`/user/edit?id=${user.id}`}
-									padding="px-2 py-1"
-									textColor="white"
-									bgColor="yellow">
-									<EditSvg />
-									Edit
-								</Button>
-								{/* delete modal */}
-								<DeleteModal user={user} />
-							</td>
+							<TableAction
+								uri="user"
+								data={user}
+							/>
 						</tr>
 					))
 				)}

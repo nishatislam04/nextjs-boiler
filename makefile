@@ -49,7 +49,7 @@ production:
 	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma migrate deploy
 
 # [[Docker]] Start Application
-build:
+up:
 	$(DOCKER_COMPOSE) up
 
 # [[Docker]] Build and start services

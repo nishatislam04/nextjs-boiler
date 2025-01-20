@@ -6,27 +6,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function deleteUser(userId, formData) {
-	const id = +userId;
+	const id = userId;
 
-	const deletePosts = prisma.post.deleteMany({
-		where: {
-			authorId: id,
-		},
-	});
-
-	const deleteProfile = prisma.profile.delete({
-		where: {
-			userId: id,
-		},
-	});
-
-	const deleteUser = prisma.user.delete({
+	await prisma.user.delete({
 		where: {
 			id,
 		},
 	});
 
-	await prisma.$transaction([deletePosts, deleteProfile, deleteUser]);
 	await flashMessage("user delete success");
 	revalidatePath("/user");
 	redirect("/user");

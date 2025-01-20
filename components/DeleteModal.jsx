@@ -3,9 +3,13 @@ import CloseSvg from "@/svg/Close";
 import Button from "./Button";
 import DeleteSvg from "@/svg/Delete";
 import { useState } from "react";
-import { deleteUser } from "@/actions/users/delete";
 
-export default function DeleteModal({ user }) {
+export default function DeleteModal({
+	uri,
+	data,
+	action,
+	message = "Are you sure you want to delete this item?",
+}) {
 	const [show, setShow] = useState(false);
 
 	function handleShow() {
@@ -17,7 +21,7 @@ export default function DeleteModal({ user }) {
 			<Button
 				onClick={handleShow}
 				type="modal"
-				href={`/user/delete?id=${user.id}`}
+				href={`/${uri}/delete?id=${data.id}`}
 				padding="px-2 py-1"
 				textColor="white"
 				bgColor="red">
@@ -55,11 +59,11 @@ export default function DeleteModal({ user }) {
 								/>
 							</svg>
 							<h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-								Are you sure you want to delete this item?
+								{message}
 							</h3>
 							<div className="flex items-center justify-center">
 								<form
-									action={deleteUser.bind(null, user.id)}
+									action={action.bind(null, data.id)}
 									className="flex items-center">
 									<button
 										type="submit"

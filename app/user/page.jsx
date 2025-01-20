@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import AddSvg from "@/svg/Add";
 import prisma from "@/prisma/db";
 import Toast from "@/components/Toast";
+import TableHeaderAction from "@/components/TableHeaderAction";
 
 export default async function UserPage({ searchParams }) {
 	const itemPerPage = 5;
@@ -21,18 +22,13 @@ export default async function UserPage({ searchParams }) {
 	return (
 		<div className="max-w-screen-xl mx-auto p-4 mt-12 relative">
 			<Toast />
-			<Button
-				href="/user/create"
-				padding="px-3 py-2"
-				btnClasses="absolute top-0 right-0 text-sm font-medium">
-				<AddSvg />
-				Add User
-			</Button>
-			<div className="mb-6 w-1/2">
-				<Search query={searchQuery} />
-			</div>
 
-			<div className="flex flex-wrap items-center justify-center mx-auto relative overflow-x-auto w-full border max-h-60">
+			<TableHeaderAction
+				queryValue={searchQuery}
+				tableName="User"
+			/>
+
+			<div className="flex flex-wrap items-center justify-center mx-auto relative overflow-x-auto w-full border max-h-72">
 				<Suspense fallback={<Spinner />}>
 					<UserTable
 						nameSort={nameSort}

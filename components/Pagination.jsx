@@ -11,7 +11,7 @@ export default function Pagination({ totalPages, currentPage }) {
 		<nav
 			aria-label="Page navigation example"
 			className="mt-8 flex justify-center items-center">
-			<ul className="inline-flex -space-x-px text-sm">
+			<ul className="inline-flex -space-x-px text-sm shadow-lg ">
 				<li>
 					<Link
 						href={`user?page=${current - 1}`}
