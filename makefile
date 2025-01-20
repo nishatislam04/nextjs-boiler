@@ -107,8 +107,3 @@ size:
 deploy:
 	bun run build && bun run start
 
-# [[Prisma]] Generic command
-prisma:
-	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma $(CMD)
-#use it like this
-#make prisma CMD="migrate dev --name init"

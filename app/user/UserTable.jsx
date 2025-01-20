@@ -72,8 +72,8 @@ export default async function UserTable({
 				{users.length === 0 ? (
 					<tr className="">
 						<th
-							className="text-gray-400 italic text-center py-5 text-4xl"
-							colSpan={4}>
+							className="text-gray-400  text-center py-6 text-4xl"
+							colSpan={5}>
 							No user found
 						</th>
 					</tr>
