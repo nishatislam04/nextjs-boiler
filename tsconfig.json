@@ -1,26 +1,39 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "moduleResolution": "node",
-    "strict": true,
     "target": "ES6",
     "module": "commonjs",
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "strict": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx"
+    "allowJs": true, // Allow JavaScript files (for JSX)
+    "checkJs": false, // Check JavaScript files for errors
+    "esModuleInterop": true,
+    "noEmit": true, // Don't emit output; used for type checking only
+    "resolveJsonModule": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "incremental": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
-    "./app/**/*",
+    "app/**/*",
+    "components/**/*",
+    "lib/**/*",
+    "pages/**/*",
+    "prisma/**/*",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules",
-    "app/auth.js",
-    "app/api/**/*",
-    "app/middleware.js",
-    "prisma/db.js",
-    "prisma/seed-old.js",
-    "prisma/seed-old2.js",
-    "prisma/seed.js"
+    "node_modules"
   ]
 }

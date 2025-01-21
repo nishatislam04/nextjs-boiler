@@ -16,6 +16,7 @@
     "@faker-js/faker": "^9.4.0",
     "@prisma/client": "^6.2.1",
     "@thewebartisan7/next-flash-message": "^1.0.1",
+    "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",
     "date-fns": "^4.1.0",
     "flowbite": "^2.5.2",
