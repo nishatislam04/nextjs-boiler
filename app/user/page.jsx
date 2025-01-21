@@ -1,10 +1,7 @@
 import Pagination from "@/components/Pagination";
-import Search from "@/components/search";
 import { Suspense } from "react";
 import UserTable from "./UserTable";
 import Spinner from "@/components/Spinner";
-import Button from "@/components/Button";
-import AddSvg from "@/svg/Add";
 import prisma from "@/prisma/db";
 import Toast from "@/components/Toast";
 import TableHeaderAction from "@/components/TableHeaderAction";

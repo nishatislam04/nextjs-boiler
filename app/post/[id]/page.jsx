@@ -32,7 +32,7 @@ export default async function PostPage({ params }) {
 	const tableHeader = ["id", "title", "published", "created at", "action"];
 
 	return (
-		<div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+		<div className="max-w-screen-xl flex flex-wrap items-center justify-between mt-12 mx-auto p-4">
 			<TableHeaderAction
 				queryValue="post"
 				tableName="post"

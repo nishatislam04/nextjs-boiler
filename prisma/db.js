@@ -1,5 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
+/**
+ * @type {PrismaClient}
+ */
 let prisma;
 
 if (!global.prisma) {

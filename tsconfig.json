@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "./app/**/*",
+  ],
+  "exclude": [
+    "node_modules",
+    "app/auth.js",
+    "app/api/**/*",
+    "app/middleware.js",
+    "prisma/db.js",
+    "prisma/seed-old.js",
+    "prisma/seed-old2.js",
+    "prisma/seed.js"
+  ]
+}

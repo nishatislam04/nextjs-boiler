@@ -5,10 +5,21 @@ import prisma from "@/prisma/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	adapter: PrismaAdapter(prisma),
-	providers: [GitHub()],
+	providers: [
+		GitHub({
+			profile(profile) {
+				return {
+					name: profile.name,
+					username: profile.login,
+					email: profile.email,
+					image: profile.avatar_url,
+				};
+			},
+		}),
+	],
 	callbacks: {
-		authorized: async ({ auth }) => {
-			return !!auth;
+		async authorized({ auth }) {
+			return !!auth; // Check if the user is authenticated
 		},
 	},
 });

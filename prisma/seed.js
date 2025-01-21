@@ -1,73 +1,124 @@
+import { faker } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-	// Create 10 users with profiles, posts, accounts, and sessions
-	for (let i = 1; i <= 10; i++) {
+	// Seed Roles
+	const roles = [
+		"Super",
+		"Admin",
+		"Moderator",
+		"Writer",
+		"Viewer",
+		"Member",
+	];
+	for (const role of roles) {
+		await prisma.role.upsert({
+			where: { role },
+			update: {},
+			create: { role },
+		});
+	}
+
+	// Seed Categories
+	const categories = [
+		"Technology",
+		"Health",
+		"Finance",
+		"Education",
+		"Entertainment",
+	];
+	for (const name of categories) {
+		await prisma.category.upsert({
+			where: { name },
+			update: {},
+			create: { name, status: true },
+		});
+	}
+
+	// Seed Tags
+	const tags = ["AI", "Wellness", "Investing", "E-learning", "Movies"];
+	for (const name of tags) {
+		await prisma.tag.upsert({
+			where: { name },
+			update: {},
+			create: { name, status: true },
+		});
+	}
+	// Fetch all roles from the database
+	const allRoles = await prisma.role.findMany();
+
+	// Function to create random users and posts
+	const userPromises = Array.from({ length: 10 }).map(async () => {
 		const user = await prisma.user.create({
 			data: {
-				email: `user${i}@example.com`,
-				name: `User ${i}`,
-				username: `user${i}`,
-				emailVerified: i % 2 === 0 ? new Date() : null,
-				image: `https://xsgames.co/randomusers/avatar.php?g=male`,
-
+				email: faker.internet.email(),
+				name: faker.person.fullName(),
+				username: faker.internet.username(),
+				image: faker.image.avatar(),
+				password: faker.internet.password(),
+				roles: {
+					connect: [{ role: "Member" }], // Assign Member role
+				},
 				profile: {
 					create: {
-						bio: `This is the bio of User ${i}.`,
-					},
-				},
-				posts: {
-					create: Array.from({ length: 5 }, (_, j) => ({
-						title: `Post ${j + 1} by User ${i}`,
-						content: `This is the content of post ${j + 1} by User ${i}.`,
-						published: j % 2 === 0, // Alternate published status
-					})),
-				},
-				accounts: {
-					create: {
-						type: "oauth",
-						provider: "google",
-						providerAccountId: `google-${i}`,
-						access_token: `access-token-${i}`,
-						refresh_token: `refresh-token-${i}`,
-						expires_at: Math.floor(Date.now() / 1000) + 3600, // Expire in 1 hour
-						scope: "read write",
-						id_token: `id-token-${i}`,
-					},
-				},
-				sessions: {
-					create: {
-						sessionToken: `session-token-${i}`,
-						expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // Expire in 1 day
+						bio: faker.lorem.sentence(),
+						website: faker.internet.url(),
+						location: faker.location.city(),
 					},
 				},
 			},
 		});
-		console.log(`Created User ${i} with associated data`);
-	}
 
-	// Create additional Verification Tokens for testing
-	for (let i = 1; i <= 5; i++) {
-		await prisma.verificationToken.create({
+		// Assign random roles to the user
+		const userRoles = faker.helpers.arrayElements(
+			allRoles,
+			faker.number.int({ min: 1, max: 3 })
+		); // Assign 1 to 3 roles
+		await prisma.user.update({
+			where: { id: user.id },
 			data: {
-				identifier: `user${i}@example.com`,
-				token: `verification-token-${i}`,
-				expires: new Date(Date.now() + 30 * 60 * 1000), // Expire in 30 minutes
+				roles: {
+					connect: userRoles.map((role) => ({ id: role.id })),
+				},
 			},
 		});
-	}
 
-	console.log("Seed data created successfully!");
+		// Create posts for each user
+		const postPromises = Array.from({ length: 5 }).map(() =>
+			prisma.post.create({
+				data: {
+					title: faker.lorem.sentence(),
+					slug: faker.lorem.slug(),
+					description: faker.lorem.paragraph(),
+					shortDescription: faker.lorem.sentence(),
+					published: faker.datatype.boolean(),
+					publishedAt: faker.date.recent(),
+					authorId: user.id,
+					categories: {
+						connect: [{ name: faker.helpers.arrayElement(categories) }], // Connect a random category
+					},
+					tags: {
+						connect: [{ name: faker.helpers.arrayElement(tags) }], // Connect a random tag
+					},
+				},
+			})
+		);
+
+		await Promise.all(postPromises); // Wait for all posts to be created
+	});
+
+	await Promise.all(userPromises); // Wait for all users and their posts to be created
+
+	console.log("Database seeding completed!");
 }
 
 main()
-	.then(async () => {
-		await prisma.$disconnect();
-	})
-	.catch(async (e) => {
+	.catch((e) => {
 		console.error(e);
-		await prisma.$disconnect();
 		process.exit(1);
+	})
+	.finally(async () => {
+		await prisma.$disconnect();
 	});

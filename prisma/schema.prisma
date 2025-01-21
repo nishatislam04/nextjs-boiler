@@ -1,6 +1,7 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native"]
+  previewFeatures = ["strictUndefinedChecks"]
 }
 
 datasource db {
@@ -12,16 +13,91 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique
   name          String?
-  createdAt     DateTime  @default(now())
   image         String?
-  updatedAt     DateTime  @updatedAt
   username      String?   @unique
-  emailVerified DateTime?
-  role          String    @default("member")
-  accounts      Account?
-  posts         Post[]
-  profile       Profile?
-  sessions      Session[]
+  password      String?
+  emailVerified Boolean?  @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  roles    Role[]
+  accounts Account?
+  posts    Post[]
+  profile  Profile?
+  sessions Session[]
+}
+
+model Post {
+  id               Int       @id @default(autoincrement())
+  title            String
+  slug             String    @unique
+  description      String?   @db.LongText
+  shortDescription String?
+  metaTitle        String?
+  metaDescription  String?
+  published        Boolean   @default(false)
+  publishedAt      DateTime?
+  deletedAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categories Category[]
+  tags       Tag[]
+  authorId   String
+  author     User       @relation(fields: [authorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@index([authorId], map: "Post_authorId_fkey")
+  @@fulltext([title, description, shortDescription])
+}
+
+model Profile {
+  id       Int     @id @default(autoincrement())
+  bio      String? @db.LongText
+  userId   String  @unique
+  website  String?
+  location String?
+  user     User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  status    Boolean   @default(false)
+  posts     Post[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  status    Boolean   @default(false)
+  posts     Post[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Role {
+  id        Int      @id @default(autoincrement())
+  role      UserRole @unique
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User[]
+}
+
+enum UserRole {
+  Super
+  Admin
+  Moderator
+  Writer
+  Viewer
+  Member
 }
 
 model Account {
@@ -57,30 +133,4 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  String
-  author    User    @relation(fields: [authorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
-  @@index([authorId], map: "Post_authorId_fkey")
-}
-
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  userId String  @unique
-  user   User    @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }

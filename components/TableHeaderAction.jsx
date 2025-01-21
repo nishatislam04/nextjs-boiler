@@ -137,7 +137,7 @@ export default function TableHeaderAction({ queryValue, tableName }) {
 
 			<Button
 				href="#"
-				padding="px-3 py-2"
+				padding="px-3 py-1"
 				btnClasses="ml-auto text-sm font-medium">
 				<AddSvg />
 				Add {tableName}
