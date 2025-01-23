@@ -1,8 +1,9 @@
+import Sort from "./Sort";
 import TableCheckbox from "./TableCheckbox";
 
 export default function TableHeader({ header }) {
 	return (
-		<tr>
+		<tr className="bg-gray-50 dark:bg-gray-700">
 			<th
 				key="xx"
 				scope="col"
@@ -11,10 +12,16 @@ export default function TableHeader({ header }) {
 			</th>
 			{header.map((data) => (
 				<th
-					key={data}
+					key={data.label}
 					scope="col"
 					className="px-6 py-3">
-					{data}
+					<div className="flex items-center space-x-2">
+						{data.willSort ? (
+							<Sort>{data.label}</Sort>
+						) : (
+							<span>{data.label}</span>
+						)}
+					</div>
 				</th>
 			))}
 		</tr>

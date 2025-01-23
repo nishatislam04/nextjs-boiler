@@ -23,7 +23,13 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": ".", // This sets the base directory for resolving paths
+    "paths": {
+      "@/*": [
+        "./*"
+      ] // Maps "@/..." to the root directory
+    }
   },
   "include": [
     "app/**/*",

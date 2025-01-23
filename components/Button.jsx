@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 // eslint-disable-next-line react/display-name
 const Button = memo(
 	({
-		type = "link",
+		type = "button",
 		href = "#",
 		btnClasses = "",
 		padding = "px-4 py-2",
@@ -18,18 +18,20 @@ const Button = memo(
 		...rest
 	}) => {
 		const router = useRouter();
-		const baseClasses =
-			"text-sm font-medium inline-flex items-center rounded-lg focus:ring-4 focus:outline-none mr-1";
 
-		const backgroundColor = `bg-${bgColor}-700 hover:bg-${bgColor}-800`;
-		const focusRing = `focus:ring-${bgColor}-300 dark:focus:ring-${bgColor}-800`;
-		const darkBackground = `dark:bg-${bgColor}-600 dark:hover:bg-${bgColor}-700`;
+		// focus:ring-4 focus:outline-none
+		const baseClasses =
+			"text-sm font-medium inline-flex items-center rounded-lg mr-1";
+		// const backBtn = isBackButton ? "500" : "700";
+		const backgroundColor = `bg-${bgColor}-700 hover:bg-${bgColor}-700`;
+		const focusRing = `focus:ring-${bgColor}-700 dark:focus:ring-${bgColor}-700`;
+		const darkBackground = `dark:bg-${bgColor}-700 dark:hover:bg-${bgColor}-700`;
 
 		// LINK button
 		if (type === "link") {
 			return (
 				<Link
-					className={`${baseClasses} ${padding} text-${textColor} ${backgroundColor} ${darkBackground} ${focusRing} ${btnClasses}`}
+					className={`${baseClasses} text-${textColor} hover:underline decoration-blue-600 decoration-1 underline-offset-4 focus:ring-0 ${btnClasses}`}
 					href={href}>
 					{children}
 				</Link>
@@ -40,8 +42,32 @@ const Button = memo(
 		if (type === "button") {
 			return (
 				<button
+					type="button"
 					className={`${baseClasses} ${padding} text-${textColor} ${backgroundColor} ${darkBackground} ${focusRing} ${btnClasses}`}
-					onClick={router.back}>
+					onClick={() => router.push(href)}>
+					{children}
+				</button>
+			);
+		}
+
+		// go-back button
+		// if (type === "button" && isBackButton) {
+		// 	console.log("invoke back button");
+		// 	return (
+		// 		<button
+		// 			type="button"
+		// 			className={`${baseClasses} ${padding} text-${textColor} ${backgroundColor} ${darkBackground} ${focusRing} ${btnClasses}`}
+		// 			onClick={() => router.back()}>
+		// 			{children}
+		// 		</button>
+		// 	);
+		// }
+
+		if (type === "submit") {
+			return (
+				<button
+					type="submit"
+					className={`${baseClasses} ${padding} text-${textColor} ${backgroundColor} ${darkBackground} ${focusRing} ${btnClasses}`}>
 					{children}
 				</button>
 			);

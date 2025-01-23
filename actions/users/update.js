@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function updateUser(userId, formData) {
-	const id = +userId;
+	const id = userId;
 	const name = formData.get("name");
 	const email = formData.get("email");
 	const bio = formData.get("bio");

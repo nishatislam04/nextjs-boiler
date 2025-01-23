@@ -1,7 +1,7 @@
 export default function AddSvg() {
 	return (
 		<svg
-			className="w-6 h-6 mr-2 text-white dark:text-white"
+			className="w-6 h-6 mr-2 text-blue-500 dark:text-white"
 			aria-hidden="true"
 			width="24"
 			height="24"

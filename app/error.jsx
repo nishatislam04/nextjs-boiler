@@ -11,7 +11,7 @@
 export default function Error({ error, reset }) {
 	return (
 		<div className="w-full max-h-screen relative flex flex-col items-center justify-center bg-gray-50">
-			<svg
+			{/* <svg
 				className="w-1/2 md:w-1/3 lg:w-1/4 text-blue-600"
 				data-name="Layer 1"
 				viewBox="0 0 1119.60911 699">
@@ -290,7 +290,8 @@ export default function Error({ error, reset }) {
 					transform="translate(-31.39089 -100.5)"
 					fill="#fff"></path>
 			</svg>
-			<div className="flex flex-col items-center justify-center min-w-[60%] w-[60%] max-w-[80%]">
+			 */}
+			<div className="flex flex-col items-center justify-center min-w-[80%] w-[60%] max-w-[90%]">
 				<p className="text-5xl md:text-6xl lg:text-4xl font-bold tracking-wider text-gray-600 mt-4">
 					Something Went Wrong!
 				</p>

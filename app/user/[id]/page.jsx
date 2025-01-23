@@ -12,7 +12,7 @@ async function fetchUser(id) {
 		},
 		include: {
 			profile: true,
-			accounts: true, // Use `accounts` as defined in the schema
+			account: true, // Use `accounts` as defined in the schema
 			_count: {
 				select: { posts: true },
 			},
@@ -27,9 +27,6 @@ export default async function ProfilePage({ params }) {
 	const user = await fetchUser(id);
 
 	if (!user) return notFound();
-	const session = await auth();
-
-	console.log("xxx", user, session);
 
 	const computeUserName =
 		user.username || user.name.toLowerCase().replaceAll(" ", "-");
@@ -84,7 +81,7 @@ export default async function ProfilePage({ params }) {
 						</div>
 						<div>
 							<p className="text-gray-700 dark:text-gray-400">
-								<strong>Logged in via:</strong> {user.accounts.provider}
+								<strong>Logged in via:</strong> github
 							</p>
 						</div>
 					</div>

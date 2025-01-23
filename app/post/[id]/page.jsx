@@ -8,70 +8,133 @@ import TableAction from "@/components/TableAction";
 import TableCheckbox from "@/components/TableCheckbox";
 import TableHeader from "@/components/TableHeader";
 import TableHeaderAction from "@/components/TableHeaderAction";
+import GoBack from "@/components/GoBack";
+import { Suspense } from "react";
+import Spinner from "@/components/Spinner";
+import UserTable from "@/components/Table";
+import Table from "@/components/Table";
+import { format } from "date-fns";
+import Toast from "@/components/Toast";
+import { deletePost } from "@/actions/posts/delete";
+import { ScrollArea } from "@mantine/core";
 
-async function fetchPosts(id) {
-	return await prisma.user.findUnique({
+async function fetchPosts(currentPage, itemPerPage, id, orderBy, query) {
+	const posts = await prisma.user.findUnique({
 		where: {
 			id,
 		},
 		include: {
-			posts: true,
+			_count: {
+				select: {
+					posts: true,
+				},
+			},
+			posts: {
+				where: {
+					title: {
+						contains: query,
+					},
+				},
+				orderBy,
+				skip: (currentPage - 1) * itemPerPage,
+				take: itemPerPage,
+			},
 		},
 	});
+
+	return posts;
 }
 
-export default async function PostPage({ params }) {
+export default async function PostPage({ params, searchParams }) {
 	const id = (await params).id;
-	if (!id) return notFound();
+	const itemPerPage = 3;
+	const searchQuery = await searchParams;
+	const query = searchQuery?.query || "";
+	const currentPage = searchQuery?.page || 1;
+	const titleSorting = searchQuery?.titleSorting || null;
+	const publishedSorting = searchQuery?.publishedSorting || null;
+	const createdAtSorting = searchQuery?.createdatSorting || null;
 
-	const user = await fetchPosts(id);
-	const posts = user.posts;
+	// Set sorting logic
+	const orderBy = titleSorting
+		? { title: titleSorting } // Sort by title if it exists
+		: publishedSorting
+			? { published: publishedSorting } // Sort by published if it exists and titleSorting does not
+			: { createdAt: createdAtSorting || "desc" }; // Default to createdAt in descending order
 
-	if (!posts) return <p>no posts found for this user</p>;
+	const posts = await fetchPosts(
+		currentPage,
+		itemPerPage,
+		id,
+		orderBy,
+		query
+	);
 
-	const tableHeader = ["id", "title", "published", "created at", "action"];
+	const totalPages = Math.ceil(posts._count.posts / itemPerPage);
+
+	if (!posts.posts) return <p>no posts found for this user</p>;
+
+	const tableHeader = [
+		{ label: "title", willSort: true },
+		{ label: "shortDescription", willSort: false },
+		{ label: "published", willSort: true },
+		{ label: "created At", willSort: true },
+		{ label: "action", willSort: false },
+	];
+	const tableDataId = [
+		"title",
+		"shortDescription",
+		"published",
+		"createdAt",
+	];
 
 	return (
-		<div className="max-w-screen-xl flex flex-wrap items-center justify-between mt-12 mx-auto p-4">
-			<TableHeaderAction
-				queryValue="post"
-				tableName="post"
-			/>
+		<div className="max-w-screen-xl mx-auto p-4 mt-12 relative">
+			<div className="relative">
+				<GoBack />
+				<Toast />
 
-			<div className="w-full relative overflow-x-auto  sm:rounded-lg">
-				<table className="relative w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-					<thead className="sticky top-0 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 mb-5 border-b-2  dark:border-gray-700">
-						<TableHeader header={tableHeader} />
-					</thead>
-					<tbody>
-						{posts.map((post) => (
-							<tr
-								key={post.id}
-								className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-								<td className="w-4 p-4">
-									<TableCheckbox />
-								</td>
-								<th
-									scope="row"
-									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-									{post.id}
-								</th>
-								<td className="px-6 py-4">{post.title}</td>
-								<td className="px-6 py-4">
-									{post.published ? "published" : "not published"}
-								</td>
-								<td className="px-6 py-4">12-02-2025</td>
-								<TableAction
-									uri="post"
-									data={post}
-								/>
-							</tr>
-						))}
-					</tbody>
-				</table>
+				<TableHeaderAction
+					placeholder="Search for post title"
+					authorId={posts.id}
+					queryValue={query}
+					tableName="post"
+				/>
+
+				<Suspense fallback={<Spinner />}>
+					<Table
+						name="post"
+						datas={posts.posts}
+						tableHeader={tableHeader}
+						currentPage={currentPage}
+						searchQuery={query}
+						deleteAction={deletePost}
+						tableDataId={tableDataId}
+						renderCell={(data, field) => {
+							if (field === "published") {
+								return (
+									<span className="">
+										{data.published ? "published" : "not published"}
+									</span>
+								);
+							}
+							if (field === "createdAt") {
+								return (
+									<span className="">
+										{format(new Date(data.createdAt), "dd/MM/yyyy")}
+									</span>
+								);
+							}
+							// Default rendering for other fields
+							return data[field] || "N/A";
+						}}
+					/>
+				</Suspense>
+
 				<Pagination
-					totalPages={5}
-					currentPage={1}
+					uri={posts.id} // uri: /post/cm66j0ikt0000pf1cp89q5her?page=1
+					totalPages={totalPages}
+					currentPage={currentPage}
 				/>
 			</div>
 		</div>

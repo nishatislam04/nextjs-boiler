@@ -12,9 +12,9 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
-  name          String?
+  name          String
   image         String?
-  username      String?   @unique
+  username      String    @unique
   password      String?
   emailVerified Boolean?  @default(false)
   createdAt     DateTime  @default(now())
@@ -22,7 +22,7 @@ model User {
   deletedAt     DateTime?
 
   roles    Role[]
-  accounts Account?
+  account  Account?
   posts    Post[]
   profile  Profile?
   sessions Session[]

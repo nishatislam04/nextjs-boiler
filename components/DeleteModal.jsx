@@ -1,87 +1,87 @@
 "use client";
-import CloseSvg from "@/svg/Close";
-import Button from "./Button";
+import { Anchor, Button, Text } from "@mantine/core";
+import { modals } from "@mantine/modals";
+// import Button from "./Button";
 import DeleteSvg from "@/svg/Delete";
-import { useState } from "react";
+import { notifications } from "@mantine/notifications";
 
 export default function DeleteModal({
-	uri,
-	data,
-	action,
-	message = "Are you sure you want to delete this item?",
+  deleteAction,
+  uri,
+  data,
+  message,
+  title,
 }) {
-	const [show, setShow] = useState(false);
+  const openDeleteModal = () =>
+    modals.openConfirmModal({
+      title,
+      centered: true,
+      children: <Text size="sm">{message}</Text>,
+      labels: { confirm: "Yes, Proceed", cancel: "No, Cancel" },
+      confirmProps: { color: "red" },
+      overlayProps: {
+        backgroundOpacity: 0.55,
+        blur: 3,
+      },
+      onCancel: () =>
+        notifications.show({
+          withBorder: true,
+          position: "top-right",
+          autoClose: 5000,
+          title: "Action canceled",
+          message: "Resource was not deleted 🌟",
+        }),
+      onConfirm: async () => {
+        try {
+          const response = await deleteAction(data.id);
 
-	function handleShow() {
-		setShow((prevState) => !prevState);
-	}
+          if (response.status === "success") {
+            notifications.show({
+              withBorder: true,
+              position: "top-right",
+              autoClose: 5000,
+              title: "Success",
+              message: response.message || "Resource has been deleted 🌟",
+            });
+          } else {
+            notifications.show({
+              withBorder: true,
+              color: "red",
+              position: "top-right",
+              autoClose: 5000,
+              title: "Error",
+              message:
+                response.message ||
+                "Failed to delete the resource. Please try again.",
+            });
+          }
+        } catch (error) {
+          notifications.show({
+            withBorder: true,
+            color: "red",
+            position: "top-right",
+            autoClose: 5000,
+            title: "Error",
+            message: "Something went wrong. Please try again.",
+          });
+        }
+      },
+    });
 
-	return (
-		<>
-			<Button
-				onClick={handleShow}
-				type="modal"
-				href={`/${uri}/delete?id=${data.id}`}
-				padding="px-2 py-1"
-				textColor="white"
-				bgColor="red">
-				<DeleteSvg />
-				Delete
-			</Button>
-			{show && (
-				<div
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 "
-					aria-labelledby="modal-title"
-					role="dialog"
-					aria-modal="true">
-					<div className="relative p-4 w-full max-w-md bg-white rounded-lg shadow-lg dark:bg-gray-800">
-						{/* Close button */}
-						<button
-							onClick={handleShow}
-							className="w-8 h-8 absolute p-2 top-3 right-3 hover:bg-gray-200 hover:rounded-md text-gray-400 hover:text-gray-900 dark:hover:text-white"
-							aria-label="Close modal">
-							<CloseSvg />
-						</button>
+  return (
+    // <Button
+    // 	type="modal"
+    // 	padding="px-2 py-1"
+    // 	onClick={openDeleteModal}
+    // 	textColor="white"
+    // 	bgColor="red">
+    // 	<DeleteSvg />
+    // 	Delete
+    // </Button>
 
-						{/* Modal content */}
-						<div className="p-6 text-center">
-							<svg
-								className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
-								aria-hidden="true"
-								fill="none"
-								viewBox="0 0 20 20">
-								<path
-									stroke="currentColor"
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth="2"
-									d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-								/>
-							</svg>
-							<h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-								{message}
-							</h3>
-							<div className="flex items-center justify-center">
-								<form
-									action={action.bind(null, data.id)}
-									className="flex items-center">
-									<button
-										type="submit"
-										className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 mr-2">
-										Yes, I&apos;m sure
-									</button>
-								</form>
-
-								<button
-									onClick={handleShow}
-									className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-									No, cancel
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			)}
-		</>
-	);
+    <Button color="red" size="compact-xs" onClick={openDeleteModal}>
+      <DeleteSvg />
+      Delete
+    </Button>
+  );
 }

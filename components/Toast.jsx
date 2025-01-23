@@ -6,8 +6,21 @@ import { useEffect, useRef, useState } from "react";
 import CloseSvg from "@/svg/Close";
 import SuccessSvg from "@/svg/success";
 
+/**
+ * Toast Component
+ * A reusable toast notification component that shows messages and automatically disappears after a set duration.
+ *
+ * @returns {JSX.Element} The Toast UI Component
+ */
+
 export default function Toast() {
+	// State to manage the message displayed in the toast
 	const [message, setMessage] = useState(null);
+
+	// State to manage the visibility of the toast
+	const [isVisible, setIsVisible] = useState(false);
+
+	// Reference to the container for future enhancements (if needed)
 	const toastContainer = useRef(null);
 
 	useEffect(() => {
@@ -16,16 +29,19 @@ export default function Toast() {
 
 			if (flash) {
 				setMessage(flash.message);
-				toastContainer.current.hidden = false;
+				setIsVisible(true); // Show the toast
+
+				// Automatically hide the toast after 3 seconds
 				setTimeout(() => {
 					setMessage(null);
-					toastContainer.current.hidden = true;
+					setIsVisible(false); // Hide the toast
 				}, 3000);
 			}
 		};
 
 		showFlashMessage();
-		const interval = setInterval(showFlashMessage, 5000); // Poll for new messages every second
+
+		const interval = setInterval(showFlashMessage, 8000); // Poll for new messages every second
 
 		return () => clearInterval(interval);
 	}, []);
