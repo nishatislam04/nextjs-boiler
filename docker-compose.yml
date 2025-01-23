@@ -7,6 +7,8 @@ services:
       - .env
     environment:
       DATABASE_URL: ${DATABASE_URL_DOCKER}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     volumes:
       - .:/app
       - ./prisma:/app/prisma
@@ -43,6 +45,10 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-  
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
 volumes:
   mysql-data:

@@ -11,34 +11,55 @@ import Button from "@/components/Button";
 import GoBack from "@/components/GoBack";
 import { deleteUser } from "@/actions/users/delete";
 import { Anchor, ScrollArea } from "@mantine/core";
+import redis from "@/prisma/redis";
 
 async function fetchUsers(currentPage, itemPerPage, query, orderBy) {
-  const [users, totalUsers] = await prisma.$transaction([
-    prisma.user.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: query,
-            },
+  return await prisma.user.findMany({
+    where: {
+      OR: [
+        {
+          name: {
+            contains: query,
           },
-          {
-            email: {
-              contains: query,
-            },
+        },
+        {
+          email: {
+            contains: query,
           },
-        ],
-      },
-      orderBy,
-      skip: (currentPage - 1) * itemPerPage,
-      take: itemPerPage,
-    }),
-    prisma.user.count(),
-  ]);
-  return [users, totalUsers];
+        },
+      ],
+    },
+    orderBy,
+    skip: (currentPage - 1) * itemPerPage,
+    take: itemPerPage,
+  });
+  // const [users, totalUsers] = await prisma.$transaction([
+  //   prisma.user.findMany({
+  //     where: {
+  //       OR: [
+  //         {
+  //           name: {
+  //             contains: query,
+  //           },
+  //         },
+  //         {
+  //           email: {
+  //             contains: query,
+  //           },
+  //         },
+  //       ],
+  //     },
+  //     orderBy,
+  //     skip: (currentPage - 1) * itemPerPage,
+  //     take: itemPerPage,
+  //   }),
+  //   prisma.user.count(),
+  // ]);
+  // return [users, totalUsers];
 }
 
 export default async function UserPage({ searchParams }) {
+  const usersCache = "users_Listings";
   const itemPerPage = 5;
   const params = await searchParams;
   const searchQuery = params?.query || "";
@@ -51,12 +72,20 @@ export default async function UserPage({ searchParams }) {
     ? { email: emailSort } // Prioritize sorting by email if emailSort exists
     : { name: nameSort || "desc" }; // Default to sorting by name in "desc" order if no emailSort
 
-  const [users, totalUsers] = await fetchUsers(
-    currentPage,
-    itemPerPage,
-    searchQuery,
-    orderBy,
-  );
+  let userListings = await redis.get(usersCache);
+  let totalUsers = await prisma.user.count();
+  console.log(userListings);
+  if (!userListings) {
+    userListings = await fetchUsers(
+      currentPage,
+      itemPerPage,
+      searchQuery,
+      orderBy,
+    );
+    await redis.set(usersCache, JSON.stringify(userListings), "EX", 86400);
+  } else {
+    userListings = JSON.parse(userListings);
+  }
 
   const totalPages = Math.ceil(totalUsers / itemPerPage);
   const tableHeader = [
@@ -69,7 +98,7 @@ export default async function UserPage({ searchParams }) {
   const tableDataId = ["name", "email", "profile", "posts"];
 
   return (
-    <div className="relative mx-auto mt-12 max-w-screen-xl p-4">
+    <div className="max-w-(--breakpoint-xl) relative mx-auto mt-12 p-4">
       <Toast />
 
       <TableHeaderAction
@@ -81,7 +110,7 @@ export default async function UserPage({ searchParams }) {
       <Suspense fallback={<Spinner />}>
         <Table
           name="user"
-          datas={users}
+          datas={userListings}
           tableHeader={tableHeader}
           tableDataId={tableDataId}
           deleteAction={deleteUser}
