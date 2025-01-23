@@ -5,7 +5,7 @@ DB_CONTAINER = mysql
 DB_USER ?= root
 DB_PASS ?= 1234
 DEV_USER = nishat
-DEV_PRIVILEGES_CMD = "GRANT ALL PRIVILEGES ON *.* TO '$(DEV_USER)'@'%'; FLUSH PRIVILEGES;"
+DEV_PRIVILEGES_CMD = "CREATE USER IF NOT EXISTS '$(DEV_USER)'@'%' IDENTIFIED BY '$(DB_PASS)'; GRANT ALL PRIVILEGES ON *.* TO '$(DEV_USER)'@'%'; FLUSH PRIVILEGES;"
 TIMESTAMP = $(shell date +%Y.%m.%d.%H.%M.%S)
 
 # Targets
@@ -38,7 +38,7 @@ generate:
 
 # [[Prisma]] Reset database
 reset:
-	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma migrate reset --force --skip-seed
+	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma migrate reset --force --skip-seed --skip-generate
 
 # [[Prisma]] Run Prisma seed
 seed:
@@ -49,7 +49,7 @@ production:
 	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma migrate deploy
 
 # [[Docker]] Start Application
-build:
+up:
 	$(DOCKER_COMPOSE) up
 
 # [[Docker]] Build and start services
@@ -107,8 +107,3 @@ size:
 deploy:
 	bun run build && bun run start
 
-# [[Prisma]] Generic command
-prisma:
-	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma $(CMD)
-#use it like this
-#make prisma CMD="migrate dev --name init"

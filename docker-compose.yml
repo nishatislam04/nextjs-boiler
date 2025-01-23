@@ -9,6 +9,7 @@ services:
       DATABASE_URL: ${DATABASE_URL_DOCKER}
     volumes:
       - .:/app
+      - ./prisma:/app/prisma
     restart: always
     ports:
       - 3000:3000
@@ -42,6 +43,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-        
+  
 volumes:
   mysql-data:
