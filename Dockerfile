@@ -20,4 +20,5 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # and
 # CMD bun next start
 
-CMD bun run dev
+# CMD bun run dev
+CMD bun --bun run dev

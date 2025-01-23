@@ -10,13 +10,14 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-	...compat.extends("next/core-web-vitals"),
+	...compat.extends(["next/core-web-vitals",'next', 'prettier']),
 	{
 		files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
 		rules: {
 			"react/jsx-uses-react": "off",
 			"react/react-in-jsx-scope": "off",
 			"react/jsx-uses-vars": "error",
+			"no-unused-vars": "error",
 		},
 	},
 ];
