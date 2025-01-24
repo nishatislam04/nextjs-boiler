@@ -1,6 +1,6 @@
 import AddSvg from "@/prisma/svg/Add";
 import Search from "./search";
-import { Anchor, Select } from "@mantine/core";
+import { Anchor, Button, Select } from "@mantine/core";
 import Link from "next/link";
 
 export default function TableHeaderAction({
@@ -22,8 +22,10 @@ export default function TableHeaderAction({
           href={`/${tableName.toLowerCase()}/create?authorId=${authorId}`}
         >
           <span className="flex gap-0">
-            <AddSvg />
-            Add {tableName}
+            <Button size="xs" variant="filled" color="violet">
+              <AddSvg />
+              Add {tableName}
+            </Button>
           </span>
         </Anchor>
       </div>

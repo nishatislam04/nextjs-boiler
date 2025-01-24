@@ -24,6 +24,7 @@ import {
 } from "@/repository/user/dal";
 import { title } from "process";
 import { sortData } from "@/lib/helpers";
+import UserPostListingsTable from "./Table";
 
 export default async function PostPage({ params, searchParams }) {
   const id = (await params).id;
@@ -42,15 +43,6 @@ export default async function PostPage({ params, searchParams }) {
   let { totalPages } = await fetchTotalPostsUserCount(id);
   totalPages = Math.ceil(totalPages / itemPerPage);
 
-  const tableHeader = [
-    { label: "title", willSort: true },
-    { label: "shortDescription", willSort: false },
-    { label: "published", willSort: true },
-    { label: "created At", willSort: true },
-    { label: "action", willSort: false },
-  ];
-  const tableDataId = ["title", "shortDescription", "published", "createdAt"];
-
   return (
     <div className="relative mx-auto mt-12 max-w-screen-xl p-4">
       <div className="relative">
@@ -65,29 +57,7 @@ export default async function PostPage({ params, searchParams }) {
         />
 
         <Suspense fallback={<Spinner />}>
-          <Table
-            name="post"
-            datas={user.posts}
-            tableHeader={tableHeader}
-            currentPage={currentPage}
-            searchQuery={query}
-            deleteAction={deletePost}
-            tableDataId={tableDataId}
-            renderCell={(data, field) => {
-              if (field === "published") {
-                return (
-                  <span className="">
-                    {data.published ? "published" : "not published"}
-                  </span>
-                );
-              }
-              if (field === "createdAt") {
-                return <span className="">{data.createdAt}</span>;
-              }
-              // Default rendering for other fields
-              return data[field] || "N/A";
-            }}
-          />
+          <UserPostListingsTable posts={user.posts} />
         </Suspense>
 
         <Pagination

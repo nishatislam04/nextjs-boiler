@@ -5,13 +5,7 @@ import { modals } from "@mantine/modals";
 import DeleteSvg from "@/prisma/svg/Delete";
 import { notifications } from "@mantine/notifications";
 
-export default function DeleteModal({
-  deleteAction,
-  uri,
-  data,
-  message,
-  title,
-}) {
+export default function DeleteModal({ id, deleteAction, title, message }) {
   const openDeleteModal = () =>
     modals.openConfirmModal({
       title,
@@ -33,7 +27,7 @@ export default function DeleteModal({
         }),
       onConfirm: async () => {
         try {
-          const response = await deleteAction(data.id);
+          const response = await deleteAction(id);
 
           if (response.status === "success") {
             notifications.show({

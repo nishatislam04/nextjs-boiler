@@ -7,6 +7,8 @@ import { redirect } from "next/navigation";
 
 export async function deleteUser(userId, formData) {
   const id = userId;
+  console.log("xxx delete-user", id);
+
   try {
     await prisma.user.delete({
       where: {
