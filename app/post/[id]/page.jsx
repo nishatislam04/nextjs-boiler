@@ -1,9 +1,9 @@
 import Pagination from "@/components/Pagination";
 import Search from "@/components/search";
-import prisma from "@/prisma/db";
+import prisma from "@/lib/db";
 import { notFound } from "next/navigation";
 import Button from "@/components/Button";
-import AddSvg from "@/svg/Add";
+import AddSvg from "@/prisma/svg/Add";
 import TableAction from "@/components/TableAction";
 import TableCheckbox from "@/components/TableCheckbox";
 import TableHeader from "@/components/TableHeader";
@@ -15,128 +15,87 @@ import UserTable from "@/components/Table";
 import Table from "@/components/Table";
 import { format } from "date-fns";
 import Toast from "@/components/Toast";
-import { deletePost } from "@/actions/posts/delete";
+import { deletePost } from "@/repository/actions/posts/delete";
 import { ScrollArea } from "@mantine/core";
-
-async function fetchPosts(currentPage, itemPerPage, id, orderBy, query) {
-	const posts = await prisma.user.findUnique({
-		where: {
-			id,
-		},
-		include: {
-			_count: {
-				select: {
-					posts: true,
-				},
-			},
-			posts: {
-				where: {
-					title: {
-						contains: query,
-					},
-				},
-				orderBy,
-				skip: (currentPage - 1) * itemPerPage,
-				take: itemPerPage,
-			},
-		},
-	});
-
-	return posts;
-}
+import { CURRENT_PAGE, PER_PAGE } from "@/config/settings";
+import {
+  fetchTotalPostsUserCount,
+  fetchUserPosts,
+} from "@/repository/user/dal";
+import { title } from "process";
+import { sortData } from "@/lib/helpers";
 
 export default async function PostPage({ params, searchParams }) {
-	const id = (await params).id;
-	const itemPerPage = 3;
-	const searchQuery = await searchParams;
-	const query = searchQuery?.query || "";
-	const currentPage = searchQuery?.page || 1;
-	const titleSorting = searchQuery?.titleSorting || null;
-	const publishedSorting = searchQuery?.publishedSorting || null;
-	const createdAtSorting = searchQuery?.createdatSorting || null;
+  const id = (await params).id;
+  const itemPerPage = PER_PAGE;
+  const searchQuery = await searchParams;
+  const query = searchQuery?.query || "";
+  const currentPage = searchQuery?.page || CURRENT_PAGE;
+  const titleSorting = { title: searchQuery?.titleSorting || null };
+  const publishedSorting = { published: searchQuery?.publishedSorting || null };
+  const createdAtSorting = { createdAt: searchQuery?.createdatSorting || null };
+  const orderBy = sortData([titleSorting, publishedSorting, createdAtSorting], {
+    createdAt: "desc",
+  });
 
-	// Set sorting logic
-	const orderBy = titleSorting
-		? { title: titleSorting } // Sort by title if it exists
-		: publishedSorting
-			? { published: publishedSorting } // Sort by published if it exists and titleSorting does not
-			: { createdAt: createdAtSorting || "desc" }; // Default to createdAt in descending order
+  const user = await fetchUserPosts(currentPage, id, orderBy, query);
+  let { totalPages } = await fetchTotalPostsUserCount(id);
+  totalPages = Math.ceil(totalPages / itemPerPage);
 
-	const posts = await fetchPosts(
-		currentPage,
-		itemPerPage,
-		id,
-		orderBy,
-		query
-	);
+  const tableHeader = [
+    { label: "title", willSort: true },
+    { label: "shortDescription", willSort: false },
+    { label: "published", willSort: true },
+    { label: "created At", willSort: true },
+    { label: "action", willSort: false },
+  ];
+  const tableDataId = ["title", "shortDescription", "published", "createdAt"];
 
-	const totalPages = Math.ceil(posts._count.posts / itemPerPage);
+  return (
+    <div className="relative mx-auto mt-12 max-w-screen-xl p-4">
+      <div className="relative">
+        <GoBack />
+        <Toast />
 
-	if (!posts.posts) return <p>no posts found for this user</p>;
+        <TableHeaderAction
+          placeholder="Search for post title"
+          authorId={user.id}
+          queryValue={query}
+          tableName="post"
+        />
 
-	const tableHeader = [
-		{ label: "title", willSort: true },
-		{ label: "shortDescription", willSort: false },
-		{ label: "published", willSort: true },
-		{ label: "created At", willSort: true },
-		{ label: "action", willSort: false },
-	];
-	const tableDataId = [
-		"title",
-		"shortDescription",
-		"published",
-		"createdAt",
-	];
+        <Suspense fallback={<Spinner />}>
+          <Table
+            name="post"
+            datas={user.posts}
+            tableHeader={tableHeader}
+            currentPage={currentPage}
+            searchQuery={query}
+            deleteAction={deletePost}
+            tableDataId={tableDataId}
+            renderCell={(data, field) => {
+              if (field === "published") {
+                return (
+                  <span className="">
+                    {data.published ? "published" : "not published"}
+                  </span>
+                );
+              }
+              if (field === "createdAt") {
+                return <span className="">{data.createdAt}</span>;
+              }
+              // Default rendering for other fields
+              return data[field] || "N/A";
+            }}
+          />
+        </Suspense>
 
-	return (
-		<div className="max-w-screen-xl mx-auto p-4 mt-12 relative">
-			<div className="relative">
-				<GoBack />
-				<Toast />
-
-				<TableHeaderAction
-					placeholder="Search for post title"
-					authorId={posts.id}
-					queryValue={query}
-					tableName="post"
-				/>
-
-				<Suspense fallback={<Spinner />}>
-					<Table
-						name="post"
-						datas={posts.posts}
-						tableHeader={tableHeader}
-						currentPage={currentPage}
-						searchQuery={query}
-						deleteAction={deletePost}
-						tableDataId={tableDataId}
-						renderCell={(data, field) => {
-							if (field === "published") {
-								return (
-									<span className="">
-										{data.published ? "published" : "not published"}
-									</span>
-								);
-							}
-							if (field === "createdAt") {
-								return (
-									<span className="">
-										{format(new Date(data.createdAt), "dd/MM/yyyy")}
-									</span>
-								);
-							}
-							// Default rendering for other fields
-							return data[field] || "N/A";
-						}}
-					/>
-				</Suspense>
-
-				<Pagination
-					uri={posts.id} // uri: /post/cm66j0ikt0000pf1cp89q5her?page=1
-					totalPages={totalPages}
-					currentPage={currentPage}
-				/>
-			</div>
-		</div>
-	);
+        <Pagination
+          uri={user.id} // uri: /post/cm66j0ikt0000pf1cp89q5her?page=1
+          totalPages={totalPages}
+          currentPage={currentPage}
+        />
+      </div>
+    </div>
+  );
 }

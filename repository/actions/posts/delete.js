@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/prisma/db";
+import prisma from "@/lib/db";
 import { flashMessage } from "@thewebartisan7/next-flash-message";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";

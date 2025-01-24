@@ -1,7 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation";
 // import Button from "./Button";
-import BackSvg from "@/svg/Back";
+import BackSvg from "@/prisma/svg/Back";
 import { Button } from "@mantine/core";
 import { IconChevronLeft } from "@tabler/icons-react";
 

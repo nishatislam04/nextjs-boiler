@@ -1,9 +1,9 @@
 "use client";
 import { Button } from "@mantine/core";
-import prisma from "../prisma/db";
+import prisma from "../lib/db";
 
 export default function Home() {
   return (
-    <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"></div>
+    <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between p-4"></div>
   );
 }

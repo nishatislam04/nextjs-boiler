@@ -1,7 +1,7 @@
 "use client";
-import ViewSvg from "@/svg/View";
+import ViewSvg from "@/prisma/svg/View";
 // import Button from "./Button";
-import EditSvg from "@/svg/Edit";
+import EditSvg from "@/prisma/svg/Edit";
 import DeleteModal from "./DeleteModal";
 import { IconEye } from "@tabler/icons-react";
 import { IconEdit } from "@tabler/icons-react";

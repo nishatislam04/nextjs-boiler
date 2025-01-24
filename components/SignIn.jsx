@@ -1,5 +1,5 @@
 import { signIn } from "@/app/auth";
-import GithubSvg from "@/svg/github";
+import GithubSvg from "@/prisma/svg/github";
 import { Button } from "@mantine/core";
 
 export default function SignIn() {

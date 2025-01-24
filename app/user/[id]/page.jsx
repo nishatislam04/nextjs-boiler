@@ -2,91 +2,65 @@ import GoBack from "@/components/GoBack";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
-import prisma from "@/prisma/db";
+import prisma from "@/lib/db";
 import { auth } from "@/app/auth";
+import UserShowForm from "../show/Form";
+import { AspectRatio } from "@mantine/core";
 
 async function fetchUser(id) {
-	return prisma.user.findUnique({
-		where: {
-			id: id,
-		},
-		include: {
-			profile: true,
-			account: true, // Use `accounts` as defined in the schema
-			_count: {
-				select: { posts: true },
-			},
-		},
-	});
+  return prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      profile: true,
+      account: true, // Use `accounts` as defined in the schema
+      _count: {
+        select: { posts: true },
+      },
+    },
+  });
 }
 
 export default async function ProfilePage({ params }) {
-	const id = (await params).id;
+  const id = (await params).id;
 
-	if (!id) return notFound();
-	const user = await fetchUser(id);
+  if (!id) return notFound();
+  const user = await fetchUser(id);
 
-	if (!user) return notFound();
+  if (!user) return notFound();
 
-	const computeUserName =
-		user.username || user.name.toLowerCase().replaceAll(" ", "-");
+  const computeUserName =
+    user.username || user.name.toLowerCase().replaceAll(" ", "-");
 
-	const formattedDate = format(new Date(user.createdAt), "dd - MM - yyyy");
+  const formattedDate = format(new Date(user.createdAt), "dd - MM - yyyy");
 
-	return (
-		<div className="max-w-screen-xl h-96 mx-auto p-4 mt-12 relative">
-			<GoBack />
+  return (
+    <div className="relative mx-auto max-w-screen-xl p-4">
+      <div className="relative">
+        <GoBack />
 
-			<div className="grid grid-cols-10 items-stretch bg-white border border-gray-200 rounded-lg shadow w-full h-full mt-16 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-				<div className="col-span-4 h-full relative">
-					<Image
-						fill
-						priority={false}
-						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-						className="object-cover rounded-t-lg md:rounded-none md:rounded-s-lg"
-						src={
-							user.image ||
-							"https://via.placeholder.com/150/0000FF/808080?text=Default+Avatar"
-						}
-						alt="User Avatar"
-					/>
-				</div>
+        <div className="mt-16 grid h-full w-full grid-cols-10 items-stretch rounded-lg border border-gray-200 bg-white shadow hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+          <div className="relative col-span-4 flex h-full items-center justify-center">
+            <AspectRatio ratio={1080 / 720} maw={200} className="w-full">
+              <Image
+                src={
+                  user.image ||
+                  "https://via.placeholder.com/150/0000FF/808080?text=Default+Avatar"
+                }
+                alt="User Avatar"
+                className="rounded-lg object-cover"
+                fill
+              />
+            </AspectRatio>
+          </div>
 
-				{/* User Information Section */}
-				<div className="col-span-6 p-6">
-					<div className="grid grid-cols-2 gap-4">
-						<div className="col-span-full">
-							<h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-								{user.name}
-								<span className="text-gray-400 text-base pl-2">
-									{user.username || computeUserName}
-								</span>
-							</h5>
-						</div>
-
-						<div>
-							<p className="text-gray-700 dark:text-gray-400">
-								<strong>Email:</strong> {user.email}
-							</p>
-						</div>
-						<div>
-							<p className="text-gray-700 dark:text-gray-400">
-								<strong>Joined On:</strong> {formattedDate}
-							</p>
-						</div>
-						<div>
-							<p className="text-gray-700 dark:text-gray-400">
-								<strong>Total Posts:</strong> 10
-							</p>
-						</div>
-						<div>
-							<p className="text-gray-700 dark:text-gray-400">
-								<strong>Logged in via:</strong> github
-							</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+          {/* User Information Section */}
+          <div className="col-span-6 p-6">
+            <UserShowForm user={user} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

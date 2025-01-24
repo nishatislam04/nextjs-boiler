@@ -1,6 +1,7 @@
 # Variables
 DOCKER_COMPOSE = docker compose -f docker-compose.yml
 CONTAINER_NAME = next-app
+REDIS_CONTAINER = redis
 DB_CONTAINER = mysql
 DB_USER ?= root
 DB_PASS ?= 1234
@@ -47,6 +48,26 @@ seed:
 # [[Prisma]] Migrate for production
 production:
 	$(DOCKER_COMPOSE) run --rm $(CONTAINER_NAME) bunx prisma migrate deploy
+
+# [[Redis]] clear all
+redis-clear:
+	@echo "Clearing all Redis cache..."
+	$(DOCKER_COMPOSE) exec $(REDIS_CONTAINER) redis-cli FLUSHALL
+
+# [[Redis]] restart
+redis-restart:
+	@echo "Restarting Redis container..."
+	$(DOCKER_COMPOSE) restart $(REDIS_CONTAINER)
+
+# [[Redis]] connection check
+redis-ping:
+	@echo "Pinging Redis to check connection..."
+	$(DOCKER_COMPOSE) exec $(REDIS_CONTAINER) redis-cli PING
+
+#[[Redis]] list all keys
+redis-keys:
+	@echo "Fetching all Redis keys..."
+	$(DOCKER_COMPOSE) exec $(REDIS_CONTAINER) redis-cli KEYS '*'
 
 # [[Docker]] Start Application
 up:

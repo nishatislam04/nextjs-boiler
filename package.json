@@ -27,6 +27,7 @@
     "@mantine/spotlight": "^7.16.1",
     "@mantine/tiptap": "^7.16.1",
     "@prisma/client": "^6.2.1",
+    "@promised/zlib": "^0.1.0-0",
     "@tabler/icons-react": "^3.29.0",
     "@thewebartisan7/next-flash-message": "^1.0.1",
     "@tiptap/extension-link": "^2.11.3",
@@ -53,7 +54,8 @@
     "recharts": "2",
     "sonner": "^1.7.2",
     "typescript": "^5.7.3",
-    "uuid": "^11.0.5"
+    "uuid": "^11.0.5",
+    "zlib": "^1.0.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

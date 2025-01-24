@@ -2,7 +2,7 @@
 import { Anchor, Button, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 // import Button from "./Button";
-import DeleteSvg from "@/svg/Delete";
+import DeleteSvg from "@/prisma/svg/Delete";
 import { notifications } from "@mantine/notifications";
 
 export default function DeleteModal({

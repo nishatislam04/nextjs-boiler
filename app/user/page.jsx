@@ -2,92 +2,33 @@ import Pagination from "@/components/Pagination";
 import { Suspense } from "react";
 import UserTable from "../../components/Table";
 import Spinner from "@/components/Spinner";
-import prisma from "@/prisma/db";
+import prisma from "@/lib/db";
 import Toast from "@/components/Toast";
 import TableHeaderAction from "@/components/TableHeaderAction";
 import Table from "../../components/Table";
 import Link from "next/link";
 import Button from "@/components/Button";
 import GoBack from "@/components/GoBack";
-import { deleteUser } from "@/actions/users/delete";
+import { deleteUser } from "@/repository/actions/users/delete";
 import { Anchor, ScrollArea } from "@mantine/core";
-import redis from "@/prisma/redis";
-
-async function fetchUsers(currentPage, itemPerPage, query, orderBy) {
-  return await prisma.user.findMany({
-    where: {
-      OR: [
-        {
-          name: {
-            contains: query,
-          },
-        },
-        {
-          email: {
-            contains: query,
-          },
-        },
-      ],
-    },
-    orderBy,
-    skip: (currentPage - 1) * itemPerPage,
-    take: itemPerPage,
-  });
-  // const [users, totalUsers] = await prisma.$transaction([
-  //   prisma.user.findMany({
-  //     where: {
-  //       OR: [
-  //         {
-  //           name: {
-  //             contains: query,
-  //           },
-  //         },
-  //         {
-  //           email: {
-  //             contains: query,
-  //           },
-  //         },
-  //       ],
-  //     },
-  //     orderBy,
-  //     skip: (currentPage - 1) * itemPerPage,
-  //     take: itemPerPage,
-  //   }),
-  //   prisma.user.count(),
-  // ]);
-  // return [users, totalUsers];
-}
+import redis from "@/lib/redis";
+import { fetchAll, fetchTotalCount } from "@/repository/user/dal";
+import { CURRENT_PAGE, PER_PAGE } from "@/config/settings";
+import { sortData } from "@/lib/helpers";
 
 export default async function UserPage({ searchParams }) {
-  const usersCache = "users_Listings";
-  const itemPerPage = 5;
   const params = await searchParams;
   const searchQuery = params?.query || "";
-  const currentPage = params?.page || 1;
-  const nameSort = params?.nameSorting || null;
-  const emailSort = params?.emailSorting || null;
+  const currentPage = params?.page || CURRENT_PAGE;
+  const nameSort = { name: params?.nameSorting || null };
+  const emailSort = { email: params?.emailSorting || null };
+  const orderBy = sortData([nameSort, emailSort], { name: "asc" });
 
-  // Set sorting logic
-  const orderBy = emailSort
-    ? { email: emailSort } // Prioritize sorting by email if emailSort exists
-    : { name: nameSort || "desc" }; // Default to sorting by name in "desc" order if no emailSort
+  let users = null;
+  users = await fetchAll(currentPage, searchQuery, orderBy);
+  let totalUsers = await fetchTotalCount();
+  const totalPages = Math.ceil(totalUsers / PER_PAGE);
 
-  let userListings = await redis.get(usersCache);
-  let totalUsers = await prisma.user.count();
-  console.log(userListings);
-  if (!userListings) {
-    userListings = await fetchUsers(
-      currentPage,
-      itemPerPage,
-      searchQuery,
-      orderBy,
-    );
-    await redis.set(usersCache, JSON.stringify(userListings), "EX", 86400);
-  } else {
-    userListings = JSON.parse(userListings);
-  }
-
-  const totalPages = Math.ceil(totalUsers / itemPerPage);
   const tableHeader = [
     { label: "Name", willSort: true },
     { label: "email", willSort: true },
@@ -101,16 +42,12 @@ export default async function UserPage({ searchParams }) {
     <div className="max-w-(--breakpoint-xl) relative mx-auto mt-12 p-4">
       <Toast />
 
-      <TableHeaderAction
-        queryValue={searchQuery}
-        // queryValue="test"
-        tableName="User"
-      />
+      <TableHeaderAction queryValue={searchQuery} tableName="User" />
 
       <Suspense fallback={<Spinner />}>
         <Table
           name="user"
-          datas={userListings}
+          datas={users}
           tableHeader={tableHeader}
           tableDataId={tableDataId}
           deleteAction={deleteUser}
