@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
+import { invalidateUserCache } from "@/lib/helpers";
 
 export async function createUser(formData) {
   const username = formData.get("username");
@@ -22,34 +23,37 @@ export async function createUser(formData) {
   const access_token = uuidv4();
 
   if (password) password = bcrypt.hashSync(password, 10);
-
-  const user = await prisma.user.create({
-    data: {
-      username,
-      password,
-      name,
-      email,
-      image,
-      profile: {
-        create: {
-          bio,
-          website,
-          location,
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password,
+        name,
+        email,
+        image,
+        profile: {
+          create: {
+            bio,
+            website,
+            location,
+          },
+        },
+        account: {
+          create: {
+            type,
+            provider,
+            providerAccountId,
+            access_token,
+          },
         },
       },
-      account: {
-        create: {
-          type,
-          provider,
-          providerAccountId,
-          access_token,
-        },
-      },
-    },
-  });
+    });
 
-  console.log("create-user", user);
-  await flashMessage("user create success");
-  revalidatePath("/user");
+    await invalidateUserCache("users:listings:*");
+    await flashMessage("user create success", "success");
+    revalidatePath("/user");
+  } catch (error) {
+    await flashMessage("Failed to create the user. Please try again.", "error");
+  }
   redirect("/user");
 }

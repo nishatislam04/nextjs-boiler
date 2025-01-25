@@ -63,16 +63,6 @@ export default function DeleteModal({ id, deleteAction, title, message }) {
     });
 
   return (
-    // <Button
-    // 	type="modal"
-    // 	padding="px-2 py-1"
-    // 	onClick={openDeleteModal}
-    // 	textColor="white"
-    // 	bgColor="red">
-    // 	<DeleteSvg />
-    // 	Delete
-    // </Button>
-
     <Button color="red" size="compact-xs" onClick={openDeleteModal}>
       <DeleteSvg />
       Delete

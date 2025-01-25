@@ -4,7 +4,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },
-  
+
   images: {
     remotePatterns: [
       {
@@ -18,6 +18,11 @@ const nextConfig = {
         hostname: "xsgames.co",
         port: "",
         pathname: "/randomusers/avatar.php",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+        pathname: "/**",
       },
     ],
   },

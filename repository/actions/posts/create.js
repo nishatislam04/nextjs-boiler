@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { invalidateUserCache } from "@/lib/helpers";
 import { flashMessage } from "@thewebartisan7/next-flash-message";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -22,33 +23,35 @@ export async function createPost(authorId, formData) {
     return { id: parseInt(category) };
   });
 
-  const post = await prisma.post.create({
-    data: {
-      title,
-      shortDescription,
-      description,
-      published,
-      slug,
-      metaTitle,
-      metaDescription,
-      authorId,
-      categories: {
-        connect: categories,
+  try {
+    const post = await prisma.post.create({
+      data: {
+        title,
+        shortDescription,
+        description,
+        published,
+        slug,
+        metaTitle,
+        metaDescription,
+        authorId,
+        categories: {
+          connect: categories,
+        },
+        tags: {
+          connectOrCreate: tags.map((tag) => ({
+            where: { name: tag },
+            create: { name: tag },
+          })),
+        },
       },
-      tags: {
-        connectOrCreate: tags.map((tag) => ({
-          where: { name: tag },
-          create: { name: tag },
-        })),
-      },
-    },
-  });
+    });
 
-  console.log("pOts Created", post);
-  await flashMessage("post create success");
-  revalidatePath("/post");
-  // invalidate post data from redis
-  // await redis.del("posts:*");
+    // await invalidateUserCache("user:posts:*");
+    await flashMessage("post create success", "success");
+    revalidatePath(`/post${authorId}`);
+  } catch (error) {
+    await flashMessage("Failed to create the post", "error");
+  }
   redirect(`/post/${authorId}`);
 }
 

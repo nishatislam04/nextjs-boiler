@@ -22,7 +22,7 @@ model User {
   deletedAt     DateTime?
 
   roles    Role[]
-  account  Account?
+  account  Account[]
   posts    Post[]
   profile  Profile?
   sessions Session[]

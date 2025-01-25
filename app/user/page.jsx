@@ -30,7 +30,7 @@ export default async function UserPage({ searchParams }) {
   const totalPages = Math.ceil(totalUsers / PER_PAGE);
 
   return (
-    <div className="max-w-(--breakpoint-xl) relative mx-auto mt-12 p-4">
+    <div className="relative mx-auto mt-12 max-w-screen-xl p-4">
       <Toast />
 
       <TableHeaderAction queryValue={searchQuery} tableName="User" />

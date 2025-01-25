@@ -11,8 +11,6 @@ export async function fetchPost(id) {
     },
   });
 
-  // console.log("single post", post);
-
   post = toPostDto(post);
   return post;
 }

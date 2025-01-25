@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
       <body>
         <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
           <ModalsProvider>
-            <Notifications />
+            <Notifications autoClose={2000} />
 
             <Navbar />
             {children}

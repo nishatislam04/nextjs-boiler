@@ -22,15 +22,11 @@ export async function fetchAll(currentPage, query = "", orderBy) {
     query,
     orderBy,
   });
-  // const sortingKey = Object.keys(orderBy)[0];
-  // const sortingValue = Object.values(orderBy)[0];
-  // const cacheKey = `users:fetchAll:${currentPage}-${query}-${sortingKey}:${sortingValue}`;
   let users = await redis.get(cacheKey);
 
   if (users) {
     users = decompress(Buffer.from(users, "base64"));
     return users;
-    // return JSON.parse(users);
   }
 
   users = await prisma.user.findMany({
@@ -58,13 +54,12 @@ export async function fetchAll(currentPage, query = "", orderBy) {
     take: PER_PAGE,
   });
 
-  // compressData(users); // first compress
   await redis.set(
     cacheKey,
     Buffer.from(compressData(users)).toString("base64"),
     "EX",
     CACHE_TTL,
-  ); // set compressed data in redis
+  );
   users = toUsersDto(users);
   return users;
 }
@@ -86,36 +81,44 @@ export async function fetchTotalCount() {
  * @returns
  */
 export async function fetchUserPosts(currentPage, id, orderBy, query) {
-  const sortingKey = Object.keys(orderBy)[0];
-  const sortingValue = Object.values(orderBy)[0];
-  const cacheKey = `user:fetchAllPosts:${id}-${currentPage}-${sortingKey}:${sortingValue}-${query}`;
-  let user = await redis.get(cacheKey);
+  // const cacheKey = buildCacheKey("user:posts", {
+  //   currentPage,
+  //   query,
+  //   orderBy,
+  //   id,
+  // });
+  // let user = await redis.get(cacheKey);
 
-  if (!user) {
-    user = await prisma.user.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        // posts: true
-        posts: {
-          where: {
-            title: {
-              contains: query,
-            },
+  // if (user) {
+  //   user = decompress(Buffer.from(user, "base64"));
+  //   return user;
+  // }
+
+  let user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      // posts: true
+      posts: {
+        where: {
+          title: {
+            contains: query,
           },
-          orderBy,
-          skip: (currentPage - 1) * PER_PAGE,
-          take: PER_PAGE,
         },
+        orderBy,
+        skip: (currentPage - 1) * PER_PAGE,
+        take: PER_PAGE,
       },
-    });
-    await redis.set(cacheKey, JSON.stringify(user), "EX", CACHE_TTL);
-  } else {
-    user = JSON.parse(user);
-    return user;
-  }
+    },
+  });
 
+  // await redis.set(
+  //   cacheKey,
+  //   Buffer.from(compressData(user)).toString("base64"),
+  //   "EX",
+  //   CACHE_TTL,
+  // );
   user = userPostDto(user);
   return user;
 }

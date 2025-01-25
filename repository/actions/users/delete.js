@@ -1,13 +1,14 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { invalidateUserCache } from "@/lib/helpers";
 import { flashMessage } from "@thewebartisan7/next-flash-message";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+// this is handled by modal. so flash message is not integrated
 export async function deleteUser(userId, formData) {
   const id = userId;
-  console.log("xxx delete-user", id);
 
   try {
     await prisma.user.delete({
@@ -16,29 +17,16 @@ export async function deleteUser(userId, formData) {
       },
     });
 
-    console.log("User deleted successfully:", userId);
+    await invalidateUserCache("users:listings:*");
     revalidatePath("/user");
     return {
       status: "success",
       message: "User Delete Success",
     };
   } catch (error) {
-    console.error("Error deleting user:", error.message);
     return {
       status: "error",
       message: "Failed to delete the user.",
     };
   }
-  // const id = userId;
-
-  // await prisma.user.delete({
-  // 	where: {
-  // 		id,
-  // 	},
-  // });
-
-  // console.log("xxxx", id, "user delete success");
-  // // await flashMessage("user delete success");
-  // revalidatePath("/user");
-  // redirect("/user");
 }

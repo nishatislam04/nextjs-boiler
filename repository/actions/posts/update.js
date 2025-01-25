@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { invalidateUserCache } from "@/lib/helpers";
 import { flashMessage } from "@thewebartisan7/next-flash-message";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -13,54 +14,59 @@ export async function updatePost(postId, formData) {
   const published = Boolean(formData.get("published"));
   let categories = formData.get("categories").split(",");
   let tags = formData.get("tags").split(",");
+  let author = null;
 
-  console.log("post-update", categories, tags);
+  try {
+    author = await prisma.post.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        authorId: true,
+      },
+    });
 
-  const { authorId } = await prisma.post.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      authorId: true,
-    },
-  });
+    if (!author.authorId) {
+      throw new Error("Post not found or invalid ID");
+    }
 
-  if (!authorId) {
-    throw new Error("Post not found or invalid ID");
+    // Ensure tags are created if they don't exist
+    const tagRecords = await Promise.all(
+      tags.map(async (tagName) => {
+        const tag = await prisma.tag.upsert({
+          where: { name: tagName },
+          update: {},
+          create: { name: tagName },
+        });
+        return tag;
+      }),
+    );
+
+    const post = await prisma.post.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        shortDescription,
+        description,
+        published,
+        categories: {
+          set: categories.map((categoryId) => ({
+            id: parseInt(categoryId, 10),
+          })),
+        },
+        tags: {
+          set: tagRecords.map((tag) => ({ id: tag.id })),
+        },
+      },
+    });
+
+    // await invalidateUserCache("user:posts:*");
+    await flashMessage("post update success", "success");
+    revalidatePath(`/post/${author.authorId}`);
+  } catch (error) {
+    await flashMessage("Failed to update the post", "error");
   }
-
-  // Ensure tags are created if they don't exist
-  const tagRecords = await Promise.all(
-    tags.map(async (tagName) => {
-      const tag = await prisma.tag.upsert({
-        where: { name: tagName },
-        update: {},
-        create: { name: tagName },
-      });
-      return tag;
-    }),
-  );
-
-  const post = await prisma.post.update({
-    where: {
-      id,
-    },
-    data: {
-      title,
-      shortDescription,
-      description,
-      published,
-      categories: {
-        set: categories.map((categoryId) => ({ id: parseInt(categoryId, 10) })),
-      },
-      tags: {
-        set: tagRecords.map((tag) => ({ id: tag.id })),
-      },
-    },
-  });
-
-  console.log(post);
-  await flashMessage("post update success");
-  revalidatePath("/post");
-  redirect(`/post/${authorId}`);
+  redirect(`/post/${author.authorId}`);
 }
