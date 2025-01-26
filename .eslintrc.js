@@ -1,17 +1,19 @@
-/** @type {import("eslint").Linter.Config} */
 module.exports = {
   extends: [
-    "next/core-web-vitals", // Default Next.js ESLint rules
-    "plugin:tailwindcss/recommended", // TailwindCSS recommended rules
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "next/core-web-vitals", // Use Next.js-specific linting
   ],
-  settings: {
-    tailwindcss: {
-      callees: ["twMerge", "createTheme"], // Functions to check for Tailwind classes
-      classRegex: "^(class(Name)?|theme)?$", // Regex for identifying Tailwind class usage
-    },
-  },
-  plugins: ["tailwindcss"], // Add the TailwindCSS plugin
   rules: {
-    // Customize rules if needed
+    "react/react-in-jsx-scope": "off", // Turn off the rule requiring React in scope
+    "react/prop-types": "off", // Turn off prop-types validation if you're using TypeScript
+    "no-unused-vars": "warn", // Warn about unused variables
+  },
+  settings: {
+    react: {
+      version: "detect", // Automatically detect React version
+    },
   },
 };
