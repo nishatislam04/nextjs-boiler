@@ -5,7 +5,8 @@ WORKDIR /app
 COPY package.json ./
 COPY bun.lockb ./
 
-RUN bun install
+# RUN bun install
+RUN bun install --frozen-lockfile
 
 COPY . .
 
@@ -21,4 +22,5 @@ ENV NEXT_TELEMETRY_DISABLED 1
 # CMD bun next start
 
 # CMD bun run dev
-CMD bun --bun run dev
+# CMD bun --bun run dev
+CMD bun run dev

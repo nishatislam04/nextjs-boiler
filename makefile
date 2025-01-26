@@ -1,4 +1,5 @@
-# Variables
+# Variables 
+# test docker compose [run] with [exec] 
 DOCKER_COMPOSE = docker compose -f docker-compose.yml
 CONTAINER_NAME = next-app
 REDIS_CONTAINER = redis
