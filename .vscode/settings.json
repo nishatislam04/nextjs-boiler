@@ -22,12 +22,14 @@
     "node_modules/@mantine/core/styles.css"
   ],
   "eslint.format.enable": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
+  
   "eslint.validate": [
     "javascript",
-    "typescript"
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "html",
+    "json"
   ],
   "eslint.nodePath": "./node_modules/eslint"
 }

@@ -4,7 +4,6 @@ import { memo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// eslint-disable-next-line react/display-name
 const Button = memo(
 	({
 		type = "button",
