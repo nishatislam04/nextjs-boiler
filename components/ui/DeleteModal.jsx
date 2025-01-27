@@ -49,6 +49,7 @@ export default function DeleteModal({ id, deleteAction, title, message }) {
 						});
 					}
 				} catch (error) {
+					console.log(error);
 					notifications.show({
 						withBorder: true,
 						color: "red",

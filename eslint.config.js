@@ -24,7 +24,7 @@ export default [
 			"no-unused-vars": "warn",
 			"no-var": "warn",
 			"react/jsx-no-duplicate-props": "warn",
-			"react/self-closing-comp": "warn",
+			"react/self-closing-comp": "off",
 			"react/no-array-index-key": "warn",
 			"react/jsx-pascal-case": "warn",
 			"react/destructuring-assignment": ["warn", "always"],
@@ -48,6 +48,7 @@ export default [
 			globals: {
 				...globals.node,
 				...globals.browser,
+				Bun: "readonly",
 			},
 		},
 	},
