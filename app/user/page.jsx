@@ -31,7 +31,9 @@ export default async function UserPage({ searchParams }) {
 			/>
 
 			<Suspense fallback={<Spinner />}>
-				<UserListingsTable users={users} />
+				<div className="min-h-[22rem]">
+					<UserListingsTable users={users} />
+				</div>
 			</Suspense>
 
 			<Pagination

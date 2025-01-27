@@ -3,8 +3,8 @@ import { useState } from "react";
 import { Anchor, Button, Table, Checkbox } from "@mantine/core";
 import Link from "next/link";
 import DeleteModal from "@/components/ui/DeleteModal";
-import ViewSvg from "@/prisma/svg/View";
-import EditSvg from "@/prisma/svg/Edit";
+import ViewSvg from "@/components/svg/View";
+import EditSvg from "@/components/svg/Edit";
 import { deleteUser } from "@/lib/repository/actions/users/delete";
 import Sort from "@/components/ui/Sort";
 
@@ -121,7 +121,7 @@ export default function UserListingsTable({ users }) {
 						<Table.Th>Actions</Table.Th>
 					</Table.Tr>
 				</Table.Thead>
-				<Table.Tbody>{rows}</Table.Tbody>
+				<Table.Tbody className="min-h-[20rem]">{rows}</Table.Tbody>
 			</Table>
 		</Table.ScrollContainer>
 	);

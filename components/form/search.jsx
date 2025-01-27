@@ -2,7 +2,7 @@
 // import { useState } from "react";
 // import { useForm } from "@mantine/form";
 // import { usePathname } from "next/navigation";
-import SearchSvg from "@/prisma/svg/Search";
+import SearchSvg from "@/components/svg/Search";
 // import { CloseButton, Select } from "@mantine/core";
 // import { useRouter } from "next/navigation";
 import FormSelect from "./FormSelect";

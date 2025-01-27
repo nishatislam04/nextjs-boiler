@@ -1,4 +1,4 @@
-import AddSvg from "@/prisma/svg/Add";
+import AddSvg from "@/components/svg/Add";
 import Search from "./form/search";
 import { Anchor, Button } from "@mantine/core";
 import Link from "next/link";

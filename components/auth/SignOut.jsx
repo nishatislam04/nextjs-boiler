@@ -1,5 +1,5 @@
 import { signOut } from "@/app/auth";
-import SignoutSvg from "@/prisma/svg/Signout";
+import SignoutSvg from "@/components/svg/Signout";
 import { Button } from "@mantine/core";
 
 export function SignOut() {

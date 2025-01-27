@@ -1,7 +1,7 @@
 "use client";
 import { Button, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import DeleteSvg from "@/prisma/svg/Delete";
+import DeleteSvg from "@/components/svg/Delete";
 import { notifications } from "@mantine/notifications";
 
 export default function DeleteModal({ id, deleteAction, title, message }) {
