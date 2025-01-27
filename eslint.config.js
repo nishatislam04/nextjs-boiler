@@ -3,6 +3,7 @@ import pluginReact from "eslint-plugin-react";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import { fixupPluginRules } from "@eslint/compat";
 import nextPlugin from "@next/eslint-plugin-next";
+import globals from "globals";
 
 export default [
 	pluginJs.configs.recommended,
@@ -17,7 +18,7 @@ export default [
 			"react/react-in-jsx-scope": "off",
 			"react/jsx-uses-react": "error",
 			"react/jsx-uses-vars": "error",
-			"no-undef": "off",
+			"no-undef": "error",
 			"no-useless-escape": "off",
 			"react/prop-types": "off",
 			"no-unused-vars": "warn",
@@ -42,4 +43,12 @@ export default [
 	},
 	{ ignores: [".next/*", "node_modules/*"] },
 	{ files: ["**/*.jsx", "**/*.js"] },
+	{
+		languageOptions: {
+			globals: {
+				...globals.node,
+				...globals.browser,
+			},
+		},
+	},
 ];

@@ -9,7 +9,7 @@ import {
 	fetchTotalPostsUserCount,
 	fetchUserPosts,
 } from "@/lib/repository/user/dal";
-import { sortData } from "@/lib/helpers";
+import helpers from "@/lib/helpers";
 import UserPostListingsTable from "./Table";
 
 export default async function PostPage({ params, searchParams }) {
@@ -25,7 +25,7 @@ export default async function PostPage({ params, searchParams }) {
 	const createdAtSorting = {
 		createdAt: searchQuery?.createdatSorting || null,
 	};
-	const orderBy = sortData(
+	const orderBy = helpers.sortData(
 		[titleSorting, publishedSorting, createdAtSorting],
 		{
 			createdAt: "desc",
