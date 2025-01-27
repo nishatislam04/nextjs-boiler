@@ -1,7 +1,7 @@
 import {
-  toSingleUserDto,
-  toUsersDto,
-  userPostDto,
+	toSingleUserDto,
+	toUsersDto,
+	userPostDto,
 } from "@/repository/user/dto";
 import prisma from "@/lib/db";
 import redis from "@/lib/redis";
@@ -17,51 +17,51 @@ import { buildCacheKey, compressData, decompress } from "@/lib/helpers";
  * @returns
  */
 export async function fetchAll(currentPage, query = "", orderBy) {
-  const cacheKey = buildCacheKey("users:listings", {
-    currentPage,
-    query,
-    orderBy,
-  });
-  let users = await redis.get(cacheKey);
+	const cacheKey = buildCacheKey("users:listings", {
+		currentPage,
+		query,
+		orderBy,
+	});
+	let users = await redis.get(cacheKey);
 
-  if (users) {
-    users = decompress(Buffer.from(users, "base64"));
-    return users;
-  }
+	if (users) {
+		users = decompress(Buffer.from(users, "base64"));
+		return users;
+	}
 
-  users = await prisma.user.findMany({
-    where: {
-      OR: [
-        {
-          name: {
-            contains: query,
-          },
-        },
-        {
-          email: {
-            contains: query,
-          },
-        },
-      ],
-    },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-    },
-    orderBy,
-    skip: (currentPage - 1) * PER_PAGE,
-    take: PER_PAGE,
-  });
+	users = await prisma.user.findMany({
+		where: {
+			OR: [
+				{
+					name: {
+						contains: query,
+					},
+				},
+				{
+					email: {
+						contains: query,
+					},
+				},
+			],
+		},
+		select: {
+			id: true,
+			name: true,
+			email: true,
+		},
+		orderBy,
+		skip: (currentPage - 1) * PER_PAGE,
+		take: PER_PAGE,
+	});
 
-  await redis.set(
-    cacheKey,
-    Buffer.from(compressData(users)).toString("base64"),
-    "EX",
-    CACHE_TTL,
-  );
-  users = toUsersDto(users);
-  return users;
+	await redis.set(
+		cacheKey,
+		Buffer.from(compressData(users)).toString("base64"),
+		"EX",
+		CACHE_TTL
+	);
+	users = toUsersDto(users);
+	return users;
 }
 
 /**
@@ -69,7 +69,7 @@ export async function fetchAll(currentPage, query = "", orderBy) {
  * @returns
  */
 export async function fetchTotalCount() {
-  return await prisma.user.count();
+	return await prisma.user.count();
 }
 
 /**
@@ -81,46 +81,46 @@ export async function fetchTotalCount() {
  * @returns
  */
 export async function fetchUserPosts(currentPage, id, orderBy, query) {
-  // const cacheKey = buildCacheKey("user:posts", {
-  //   currentPage,
-  //   query,
-  //   orderBy,
-  //   id,
-  // });
-  // let user = await redis.get(cacheKey);
+	// const cacheKey = buildCacheKey("user:posts", {
+	//   currentPage,
+	//   query,
+	//   orderBy,
+	//   id,
+	// });
+	// let user = await redis.get(cacheKey);
 
-  // if (user) {
-  //   user = decompress(Buffer.from(user, "base64"));
-  //   return user;
-  // }
+	// if (user) {
+	//   user = decompress(Buffer.from(user, "base64"));
+	//   return user;
+	// }
 
-  let user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      // posts: true
-      posts: {
-        where: {
-          title: {
-            contains: query,
-          },
-        },
-        orderBy,
-        skip: (currentPage - 1) * PER_PAGE,
-        take: PER_PAGE,
-      },
-    },
-  });
+	let user = await prisma.user.findUnique({
+		where: {
+			id,
+		},
+		include: {
+			// posts: true
+			posts: {
+				where: {
+					title: {
+						contains: query,
+					},
+				},
+				orderBy,
+				skip: (currentPage - 1) * PER_PAGE,
+				take: PER_PAGE,
+			},
+		},
+	});
 
-  // await redis.set(
-  //   cacheKey,
-  //   Buffer.from(compressData(user)).toString("base64"),
-  //   "EX",
-  //   CACHE_TTL,
-  // );
-  user = userPostDto(user);
-  return user;
+	// await redis.set(
+	//   cacheKey,
+	//   Buffer.from(compressData(user)).toString("base64"),
+	//   "EX",
+	//   CACHE_TTL,
+	// );
+	user = userPostDto(user);
+	return user;
 }
 
 /**
@@ -129,34 +129,34 @@ export async function fetchUserPosts(currentPage, id, orderBy, query) {
  * @returns
  */
 export async function fetchTotalPostsUserCount(id) {
-  const result = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      _count: {
-        select: {
-          posts: true,
-        },
-      },
-    },
-  });
+	const result = await prisma.user.findUnique({
+		where: {
+			id,
+		},
+		select: {
+			_count: {
+				select: {
+					posts: true,
+				},
+			},
+		},
+	});
 
-  return {
-    totalPages: result?._count.posts || 0,
-  };
+	return {
+		totalPages: result?._count.posts || 0,
+	};
 }
 
 export async function fetchUser(id) {
-  let user = await prisma.user.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      profile: true,
-    },
-  });
+	let user = await prisma.user.findUnique({
+		where: {
+			id,
+		},
+		include: {
+			profile: true,
+		},
+	});
 
-  user = toSingleUserDto(user);
-  return user;
+	user = toSingleUserDto(user);
+	return user;
 }
