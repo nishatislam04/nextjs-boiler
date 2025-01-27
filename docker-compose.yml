@@ -8,13 +8,13 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL_DOCKER}
       REDIS_HOST: redis
-      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PORT: 6379
     volumes:
       - .:/app
       - ./prisma:/app/prisma
     restart: always
     ports:
-      - ${NEXT_APP_PORT}:${NEXT_APP_PORT}
+      - 3000:3000
 
   mysql:
     image: mysql:8.0
@@ -25,7 +25,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "${MYSQL_PORT}:${MYSQL_PORT}"
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
@@ -37,7 +37,7 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     ports:
-      - "${PMA_PORT}:${PMA_INSIDE_PORT}"
+      - "8080:80"
     environment:
       PMA_HOST: mysql
       PMA_USER: ${MYSQL_USER}
@@ -49,6 +49,6 @@ services:
     image: redis:latest
     container_name: redis
     ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
+      - "6379:6379"
 volumes:
   mysql-data:
