@@ -1,27 +1,8 @@
-"use client";
-import { Button } from "@mantine/core";
-import prisma from "../lib/db";
-import { useEffect, useState } from "react";
+import { auth } from "./auth";
 
-export default function Home() {
-	const [first, setfirst] = useState("");
-	useEffect(() => {
-		console.log(first);
-	}, []);
-
-	function hello() {
-		<image
-			src=""
-			alt=""
-		/>;
-		console.log("tet");
-	}
-
-	hello();
-
-	var ami = "test";
-	let unusedVar = "I'm not used";
-	console.log("Hello World"); // Should be flagged by ESLint
+export default async function Home() {
+	const session = await auth();
+	console.log("user", session);
 	return (
 		<div className="relative mx-auto mt-12 max-w-screen-xl p-4">home</div>
 	);
