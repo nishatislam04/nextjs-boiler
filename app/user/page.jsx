@@ -1,10 +1,10 @@
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/ui/Pagination";
 import { Suspense } from "react";
-import Spinner from "@/components/Spinner";
-import Toast from "@/components/Toast";
+import Spinner from "@/components/ui/Spinner";
+import Toast from "@/components/ui/Toast";
 import TableHeaderAction from "@/components/TableHeaderAction";
-import { fetchAll, fetchTotalCount } from "@/repository/user/dal";
-import { CURRENT_PAGE, PER_PAGE } from "@/config/settings";
+import { fetchAll, fetchTotalCount } from "@/lib/repository/user/dal";
+import { CURRENT_PAGE, PER_PAGE } from "@/lib/config/settings";
 import { sortData } from "@/lib/helpers";
 import UserListingsTable from "./Table";
 

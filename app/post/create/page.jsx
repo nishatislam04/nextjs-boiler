@@ -1,6 +1,6 @@
 import PostCreateForm from "@/app/post/create/Form";
-import GoBack from "@/components/GoBack";
-import { fetchActiveCategories } from "@/repository/category/dal";
+import GoBack from "@/components/ui/GoBack";
+import { fetchActiveCategories } from "@/lib/repository/category/dal";
 
 export default async function PostCreatePage({ searchParams }) {
 	const authorId = (await searchParams).authorId;

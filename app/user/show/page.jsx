@@ -1,6 +1,6 @@
-import GoBack from "@/components/GoBack";
+import GoBack from "@/components/ui/GoBack";
 import UserShowForm from "./Form";
-import { fetchUser } from "@/repository/user/dal";
+import { fetchUser } from "@/lib/repository/user/dal";
 
 export default async function UserShowPage({ searchParams }) {
 	const params = await searchParams;

@@ -30,6 +30,7 @@ export default [
 			"react/no-deprecated": "warn",
 			"react/require-render-return": "error",
 			"react-hooks/exhaustive-deps": "warn",
+			"react/display-name": "off",
 		},
 	},
 	{

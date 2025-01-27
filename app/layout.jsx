@@ -5,22 +5,11 @@ import {
 } from "@mantine/core";
 import "@mantine/notifications/styles.css";
 import { Notifications } from "@mantine/notifications";
-// import { Geist } from "next/font/google";
 import "./globals.css";
 import "@mantine/core/styles.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/nav/Navbar";
 import { theme } from "../theme";
 import { ModalsProvider } from "@mantine/modals";
-
-// const geistSans = Geist({
-// 	variable: "--font-geist-sans",
-// 	subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-// 	variable: "--font-geist-mono",
-// 	subsets: ["latin"],
-// });
 
 export const metadata = {
 	title: "Go Crazy",

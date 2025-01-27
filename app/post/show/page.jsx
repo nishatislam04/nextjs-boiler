@@ -1,5 +1,5 @@
-import GoBack from "@/components/GoBack";
-import { fetchPost } from "@/repository/post/dal";
+import GoBack from "@/components/ui/GoBack";
+import { fetchPost } from "@/lib/repository/post/dal";
 import ShowPostForm from "./Form";
 
 export default async function ShowPostPage({ searchParams }) {

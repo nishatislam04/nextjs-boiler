@@ -1,14 +1,14 @@
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/ui/Pagination";
 import TableHeaderAction from "@/components/TableHeaderAction";
-import GoBack from "@/components/GoBack";
+import GoBack from "@/components/ui/GoBack";
 import { Suspense } from "react";
-import Spinner from "@/components/Spinner";
-import Toast from "@/components/Toast";
-import { CURRENT_PAGE, PER_PAGE } from "@/config/settings";
+import Spinner from "@/components/ui/Spinner";
+import Toast from "@/components/ui/Toast";
+import { CURRENT_PAGE, PER_PAGE } from "@/lib/config/settings";
 import {
 	fetchTotalPostsUserCount,
 	fetchUserPosts,
-} from "@/repository/user/dal";
+} from "@/lib/repository/user/dal";
 import { sortData } from "@/lib/helpers";
 import UserPostListingsTable from "./Table";
 

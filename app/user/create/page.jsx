@@ -1,4 +1,4 @@
-import GoBack from "@/components/GoBack";
+import GoBack from "@/components/ui/GoBack";
 import CreateUserForm from "./Form";
 
 export default function UserCreatePage() {

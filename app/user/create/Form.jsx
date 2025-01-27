@@ -1,7 +1,6 @@
 "use client";
-import Button from "@/components/Button";
-import { createUser } from "@/repository/actions/users/create";
-import { PasswordInput, TextInput } from "@mantine/core";
+import { createUser } from "@/lib/repository/actions/users/create";
+import { Button, PasswordInput, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLock } from "@tabler/icons-react";
 
@@ -53,7 +52,9 @@ export default function CreateUserForm() {
 			</div>
 
 			<Button
-				btnClasses="mt-5"
+				variant="filled"
+				size="xs"
+				radius="md"
 				type="submit">
 				Create
 			</Button>

@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { Button, Table, Checkbox } from "@mantine/core";
 import Link from "next/link";
-import DeleteModal from "@/components/DeleteModal";
+import DeleteModal from "@/components/ui/DeleteModal";
 import ViewSvg from "@/prisma/svg/View";
 import EditSvg from "@/prisma/svg/Edit";
-import { deletePost } from "@/repository/actions/posts/delete";
-import Sort from "@/components/Sort";
+import { deletePost } from "@/lib/repository/actions/posts/delete";
+import Sort from "@/components/ui/Sort";
 
 export default function UserPostListingsTable({ posts }) {
 	const [selectedRows, setSelectedRows] = useState([]);

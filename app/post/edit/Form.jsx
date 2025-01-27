@@ -1,8 +1,8 @@
 "use client";
 
-import Button from "@/components/Button";
-import { updatePost } from "@/repository/actions/posts/update";
+import { updatePost } from "@/lib/repository/actions/posts/update";
 import {
+	Button,
 	MultiSelect,
 	Select,
 	TagsInput,
@@ -25,7 +25,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 		return post.published
 			? setPublishStatus({ value: "1", label: "Publish" })
 			: setPublishStatus({ value: "0", label: "Don't published yet" });
-	}, [publishStatus, post.published]);
+	}, [post.published]);
 
 	return (
 		<form
@@ -112,7 +112,10 @@ export default function PostEditPage({ post, categories, authorId }) {
 				/>
 			</div>
 			<Button
-				btnClasses="mt-5"
+				color="orange"
+				variant="filled"
+				radius="sm"
+				size="xs"
 				type="submit">
 				Update
 			</Button>

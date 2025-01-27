@@ -1,8 +1,7 @@
-import GoBack from "@/components/GoBack";
+import GoBack from "@/components/ui/GoBack";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { format } from "date-fns";
-import prisma from "@/lib/db";
+import prisma from "@/lib/prisma";
 import UserShowForm from "../show/Form";
 import { AspectRatio } from "@mantine/core";
 
