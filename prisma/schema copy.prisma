@@ -5,9 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL_DOCKER")
 }
 
 model User {
@@ -23,6 +22,8 @@ model User {
   deletedAt     DateTime?
 
   role     String?
+  // role     Role?     @relation(fields: [roleId], references: [id])
+  // roleId   Int?
   account  Account[]
   posts    Post[]
   profile  Profile?
@@ -33,8 +34,10 @@ model Post {
   id               Int       @id @default(autoincrement())
   title            String
   slug             String    @unique
-  description      String?
+  description      String?   @db.LongText
   shortDescription String?
+  // metaTitle        String?
+  // metaDescription  String?
   published        Boolean   @default(false)
   publishedAt      DateTime?
   deletedAt        DateTime?
@@ -46,14 +49,14 @@ model Post {
   tags       Tag[]
   authorId   String
   author     User       @relation(fields: [authorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  // @@fulltext([title, description, shortDescription])
 
-  @@index([authorId])
+  @@index([authorId], map: "Post_authorId_fkey")
+  @@fulltext([title, description, shortDescription])
 }
 
 model Profile {
   id        Int      @id @default(autoincrement())
-  bio       String?
+  bio       String?  @db.LongText
   userId    String   @unique
   website   String?
   location  String?
@@ -82,18 +85,37 @@ model Tag {
   deletedAt DateTime?
 }
 
+// model Role {
+//   id        Int      @id @default(autoincrement())
+//   role      UserRole @unique
+//   status    Boolean  @default(true)
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   User User[]
+// }
+
+// enum UserRole {
+//   Super
+//   Admin
+//   Moderator
+//   Writer
+//   Viewer
+//   Member
+// }
+
 model Account {
   id                       String  @id @default(cuid())
   userId                   String  @unique
   type                     String
   provider                 String
   providerAccountId        String
-  refresh_token            String?
-  access_token             String?
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
   expires_at               Int?
   token_type               String?
   scope                    String?
-  id_token                 String?
+  id_token                 String? @db.Text
   session_state            String?
   refresh_token_expires_in Int?
   user                     User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
