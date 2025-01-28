@@ -7,14 +7,18 @@ export default function TableHeaderAction({
 	authorId = "",
 	queryValue,
 	tableName,
-	placeholder,
+	queryPlaceholder,
+	selectPlaceHolder,
+	selectData,
 }) {
 	return (
 		<div className="mb-6 flex w-full items-center justify-start gap-3 p-2">
 			{/* search */}
 			<Search
-				query={queryValue}
-				placeholder={placeholder}
+				selectPlaceHolder={selectPlaceHolder}
+				selectData={selectData}
+				queryValue={queryValue}
+				queryPlaceholder={queryPlaceholder}
 			/>
 			<div className="ml-auto">
 				<Anchor

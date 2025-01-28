@@ -8,7 +8,7 @@ import EditSvg from "@/components/svg/Edit";
 import { deleteUser } from "@/lib/repository/actions/users/delete";
 import Sort from "@/components/ui/Sort";
 
-export default function UserListingsTable({ users }) {
+export default function UserListingsTable({ users, children }) {
 	const [selectedRows, setSelectedRows] = useState([]);
 
 	const handleSelectAll = (event) => {
@@ -87,42 +87,46 @@ export default function UserListingsTable({ users }) {
 	));
 
 	return (
-		<Table.ScrollContainer minWidth={800}>
-			<Table
-				stickyHeader
-				verticalSpacing="md"
-				striped
-				highlightOnHover
-				withTableBorder
-				withColumnBorders>
-				<Table.Thead>
-					<Table.Tr>
-						<Table.Th>
-							<Checkbox
-								aria-label="Select all rows"
-								checked={
-									selectedRows.length === users.length && users.length > 0
-								}
-								indeterminate={
-									selectedRows.length > 0 &&
-									selectedRows.length < users.length
-								}
-								onChange={handleSelectAll}
-							/>
-						</Table.Th>
-						<Table.Th>
-							<Sort>Name</Sort>
-						</Table.Th>
-						<Table.Th>
-							<Sort>Email</Sort>
-						</Table.Th>
-						<Table.Th>Profile</Table.Th>
-						<Table.Th>Posts</Table.Th>
-						<Table.Th>Actions</Table.Th>
-					</Table.Tr>
-				</Table.Thead>
-				<Table.Tbody className="min-h-[20rem]">{rows}</Table.Tbody>
-			</Table>
-		</Table.ScrollContainer>
+		<>
+			{children}
+			<Table.ScrollContainer minWidth={800}>
+				<Table
+					stickyHeader
+					verticalSpacing="md"
+					striped
+					highlightOnHover
+					withTableBorder
+					withColumnBorders>
+					<Table.Thead>
+						<Table.Tr>
+							<Table.Th>
+								<Checkbox
+									aria-label="Select all rows"
+									checked={
+										selectedRows.length === users.length &&
+										users.length > 0
+									}
+									indeterminate={
+										selectedRows.length > 0 &&
+										selectedRows.length < users.length
+									}
+									onChange={handleSelectAll}
+								/>
+							</Table.Th>
+							<Table.Th>
+								<Sort>Name</Sort>
+							</Table.Th>
+							<Table.Th>
+								<Sort>Email</Sort>
+							</Table.Th>
+							<Table.Th>Profile</Table.Th>
+							<Table.Th>Posts</Table.Th>
+							<Table.Th>Actions</Table.Th>
+						</Table.Tr>
+					</Table.Thead>
+					<Table.Tbody className="min-h-[20rem]">{rows}</Table.Tbody>
+				</Table>
+			</Table.ScrollContainer>
+		</>
 	);
 }

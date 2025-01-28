@@ -9,6 +9,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      DEBUG: prisma:query
     extra_hosts:
       - "db.nsftfkuzxthlzoihgjqa.supabase.co:192.168.1.1"  
     

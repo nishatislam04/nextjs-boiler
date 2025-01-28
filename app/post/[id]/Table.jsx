@@ -8,7 +8,7 @@ import EditSvg from "@/components/svg/Edit";
 import { deletePost } from "@/lib/repository/actions/posts/delete";
 import Sort from "@/components/ui/Sort";
 
-export default function UserPostListingsTable({ posts }) {
+export default function UserPostListingsTable({ posts, children }) {
 	const [selectedRows, setSelectedRows] = useState([]);
 
 	const handleSelectAll = (event) => {
@@ -75,44 +75,48 @@ export default function UserPostListingsTable({ posts }) {
 	));
 
 	return (
-		<Table.ScrollContainer minWidth={800}>
-			<Table
-				stickyHeader
-				verticalSpacing="md"
-				striped
-				highlightOnHover
-				withTableBorder
-				withColumnBorders>
-				<Table.Thead>
-					<Table.Tr>
-						<Table.Th>
-							<Checkbox
-								aria-label="Select all rows"
-								checked={
-									selectedRows.length === posts.length && posts.length > 0
-								}
-								indeterminate={
-									selectedRows.length > 0 &&
-									selectedRows.length < posts.length
-								}
-								onChange={handleSelectAll}
-							/>
-						</Table.Th>
-						<Table.Th>
-							<Sort>Title</Sort>
-						</Table.Th>
-						<Table.Th>Description</Table.Th>
-						<Table.Th>
-							<Sort>Published</Sort>
-						</Table.Th>
-						<Table.Th>
-							<Sort>created at</Sort>
-						</Table.Th>
-						<Table.Th>Actions</Table.Th>
-					</Table.Tr>
-				</Table.Thead>
-				<Table.Tbody>{rows}</Table.Tbody>
-			</Table>
-		</Table.ScrollContainer>
+		<>
+			{children}
+			<Table.ScrollContainer minWidth={800}>
+				<Table
+					stickyHeader
+					verticalSpacing="md"
+					striped
+					highlightOnHover
+					withTableBorder
+					withColumnBorders>
+					<Table.Thead>
+						<Table.Tr>
+							<Table.Th>
+								<Checkbox
+									aria-label="Select all rows"
+									checked={
+										selectedRows.length === posts.length &&
+										posts.length > 0
+									}
+									indeterminate={
+										selectedRows.length > 0 &&
+										selectedRows.length < posts.length
+									}
+									onChange={handleSelectAll}
+								/>
+							</Table.Th>
+							<Table.Th>
+								<Sort>Title</Sort>
+							</Table.Th>
+							<Table.Th>Description</Table.Th>
+							<Table.Th>
+								<Sort>Published</Sort>
+							</Table.Th>
+							<Table.Th>
+								<Sort>created at</Sort>
+							</Table.Th>
+							<Table.Th>Actions</Table.Th>
+						</Table.Tr>
+					</Table.Thead>
+					<Table.Tbody>{rows}</Table.Tbody>
+				</Table>
+			</Table.ScrollContainer>
+		</>
 	);
 }

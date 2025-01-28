@@ -16,6 +16,7 @@ export default async function PostPage({ params, searchParams }) {
 	const id = (await params).id;
 	const itemPerPage = PER_PAGE;
 	const searchQuery = await searchParams;
+	const queryBy = searchQuery?.queryBy || "";
 	const query = searchQuery?.query || "";
 	const currentPage = searchQuery?.page || CURRENT_PAGE;
 	const titleSorting = { title: searchQuery?.titleSorting || null };
@@ -32,7 +33,13 @@ export default async function PostPage({ params, searchParams }) {
 		}
 	);
 
-	const user = await fetchUserPosts(currentPage, id, orderBy, query);
+	const user = await fetchUserPosts(
+		currentPage,
+		id,
+		orderBy,
+		query,
+		queryBy
+	);
 	let { totalPages } = await fetchTotalPostsUserCount(id);
 	totalPages = Math.ceil(totalPages / itemPerPage);
 
@@ -42,15 +49,22 @@ export default async function PostPage({ params, searchParams }) {
 				<GoBack />
 				<Toast />
 
-				<TableHeaderAction
-					placeholder="Search for post title"
-					authorId={user.id}
-					queryValue={query}
-					tableName="post"
-				/>
-
 				<Suspense fallback={<Spinner />}>
-					<UserPostListingsTable posts={user.posts} />
+					<div className="min-h-[22rem]">
+						<UserPostListingsTable posts={user.posts}>
+							<TableHeaderAction
+								selectPlaceHolder="Search For"
+								selectData={[
+									{ value: "title", label: "Title" },
+									{ value: "shortDescription", label: "Description" },
+								]}
+								queryPlaceholder="Search for post title"
+								authorId={user.id}
+								queryValue={query}
+								tableName="post"
+							/>
+						</UserPostListingsTable>
+					</div>
 				</Suspense>
 
 				<Pagination

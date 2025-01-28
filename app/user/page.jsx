@@ -11,13 +11,14 @@ import UserListingsTable from "./Table";
 export default async function UserPage({ searchParams }) {
 	const params = await searchParams;
 	const searchQuery = params?.query || "";
+	const queryBy = params?.queryBy || "";
 	const currentPage = params?.page || CURRENT_PAGE;
 	const nameSort = { name: params?.nameSorting || null };
 	const emailSort = { email: params?.emailSorting || null };
 	const orderBy = helpers.sortData([nameSort, emailSort], { name: "asc" });
 
 	let users = null;
-	users = await fetchAll(currentPage, searchQuery, orderBy);
+	users = await fetchAll(currentPage, searchQuery, queryBy, orderBy);
 	let totalUsers = await fetchTotalCount();
 	const totalPages = Math.ceil(totalUsers / PER_PAGE);
 
@@ -25,14 +26,20 @@ export default async function UserPage({ searchParams }) {
 		<div className="relative mx-auto mt-12 max-w-screen-xl p-4">
 			<Toast />
 
-			<TableHeaderAction
-				queryValue={searchQuery}
-				tableName="User"
-			/>
-
 			<Suspense fallback={<Spinner />}>
 				<div className="min-h-[22rem]">
-					<UserListingsTable users={users} />
+					<UserListingsTable users={users}>
+						<TableHeaderAction
+							selectPlaceHolder="Search For"
+							selectData={[
+								{ value: "name", label: "Name" },
+								{ value: "email", label: "Email" },
+							]}
+							queryValue={searchQuery}
+							queryPlaceholder="Search for post title"
+							tableName="User"
+						/>
+					</UserListingsTable>
 				</div>
 			</Suspense>
 
