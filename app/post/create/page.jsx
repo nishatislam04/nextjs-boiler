@@ -11,6 +11,7 @@ export default async function PostCreatePage({ searchParams }) {
 			label: category.name,
 		};
 	});
+	// categories = categories.map((category) => category.name);
 
 	return (
 		<div className="relative mx-auto mt-12 max-w-screen-xl p-4">

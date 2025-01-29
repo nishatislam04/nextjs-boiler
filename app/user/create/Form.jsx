@@ -63,6 +63,7 @@ export default function CreateUserForm() {
 				position: "top-right",
 				color: "red",
 				radius: "md",
+				autoClose: 5000,
 			});
 			setServerErrors({});
 			toggle();

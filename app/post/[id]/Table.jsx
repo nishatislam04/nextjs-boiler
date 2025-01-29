@@ -43,7 +43,7 @@ export default function UserPostListingsTable({ posts, children }) {
 			</Table.Td>
 			<Table.Td>{post.title}</Table.Td>
 			<Table.Td>{post.shortDescription}</Table.Td>
-			<Table.Td>{post.published ? "published" : "not published"}</Table.Td>
+			<Table.Td>{post.published}</Table.Td>
 			<Table.Td>{post.createdAt}</Table.Td>
 			<Table.Td>
 				<div style={{ display: "flex", gap: "8px" }}>

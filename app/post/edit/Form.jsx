@@ -1,18 +1,29 @@
 "use client";
 
+import Toast from "@/components/ui/Toast";
 import { updatePost } from "@/lib/repository/actions/posts/update";
+import { updatePostSchema } from "@/lib/schema/post/update";
 import {
+	Box,
 	Button,
+	LoadingOverlay,
 	MultiSelect,
 	Select,
 	TagsInput,
 	Textarea,
 	TextInput,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { zodResolver } from "mantine-form-zod-resolver";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function PostEditPage({ post, categories, authorId }) {
-	const [publishStatus, setPublishStatus] = useState();
+	const [serverErrors, setServerErrors] = useState({});
+	const [visible, { toggle }] = useDisclosure(false);
+	const [publishStatus, setPublishStatus] = useState("");
 	const [selectedCategories, setSelectedCategories] = useState(
 		post.categories.map((category) => category.value)
 	);
@@ -20,105 +31,192 @@ export default function PostEditPage({ post, categories, authorId }) {
 		post.tags.map((tag) => tag.label)
 	);
 
+	const router = useRouter();
+
+	console.log("--loaded post", post, categories);
+
+	const form = useForm({
+		mode: "uncontrolled",
+		initialValues: {
+			title: post.title,
+			shortDescription: post.shortDescription,
+			description: post.description,
+			tags: selectedTags,
+			// published: publishStatus,
+			published: post.published ? "1" : "0",
+			categories: selectedCategories,
+		},
+		validate: zodResolver(updatePostSchema),
+	});
+
+	const handleSubmit = async (values) => {
+		toggle();
+		setServerErrors({});
+
+		const response = await updatePost(authorId, values);
+
+		if (!response.success) {
+			setServerErrors(response.errors);
+			toggle();
+			return;
+		} else {
+			toggle();
+			router.push(`/post/${authorId}`);
+		}
+	};
+
 	useEffect(() => {
-		// update publish & not-publish status
+		if (serverErrors.general) {
+			notifications.show({
+				title: "Error",
+				message: serverErrors.general,
+				position: "top-right",
+				color: "red",
+				radius: "md",
+				autoClose: 5000,
+			});
+			setServerErrors({});
+			toggle();
+		}
+	}, [serverErrors, toggle]);
+
+	useEffect(() => {
 		return post.published
 			? setPublishStatus({ value: "1", label: "Publish" })
 			: setPublishStatus({ value: "0", label: "Don't published yet" });
 	}, [post.published]);
 
 	return (
-		<form
-			action={updatePost.bind(null, authorId)}
-			className="rounded-lg bg-gray-100 px-3 py-6">
-			<div className="flex w-full gap-4">
-				<TextInput
-					className="mb-4 w-1/2"
-					name="title"
-					label="Title"
-					withAsterisk
-					size="xs"
-					required={true}
-					defaultValue={post.title}
-					placeholder="Post Title"
-				/>
-				<TextInput
-					size="xs"
-					className="mb-4 w-1/2"
-					label="Short Description"
-					name="shortDescription"
-					defaultValue={post.shortDescription}
-					placeholder="Post short description"
-				/>
-			</div>
-			<div className="flex w-full justify-stretch gap-4">
-				<Textarea
-					className="w-full"
-					label="Description"
-					placeholder="Describe your post"
-					autosize
-					minRows={2}
-					maxRows={4}
-					defaultValue={post.description}
-					name="description"
-				/>
-			</div>
+		<Box pos="relative">
+			<LoadingOverlay
+				visible={visible}
+				zIndex={10000}
+				overlayProps={{ radius: "sm", blur: 2 }}
+			/>
+			<form
+				onSubmit={form.onSubmit(handleSubmit)}
+				// action={updatePost.bind(null, authorId)}
+				className="rounded-lg bg-gray-100 px-3 py-6">
+				<Toast />
+				<div className="flex w-full gap-4">
+					<TextInput
+						className="mb-4 w-1/2"
+						name="title"
+						label="Title"
+						withAsterisk
+						size="xs"
+						required={true}
+						placeholder="Post Title"
+						key={form.key("title")}
+						{...form.getInputProps("title")}
+						error={form.errors.title || serverErrors.title}
+						defaultValue={post.title}
+					/>
+					<TextInput
+						size="xs"
+						className="mb-4 w-1/2"
+						label="Short Description"
+						name="shortDescription"
+						placeholder="Post short description"
+						key={form.key("shortDescription")}
+						{...form.getInputProps("shortDescription")}
+						error={
+							form.errors.shortDescription || serverErrors.shortDescription
+						}
+						defaultValue={post.shortDescription}
+					/>
+				</div>
+				<div className="flex w-full justify-stretch gap-4">
+					<Textarea
+						className="w-full"
+						label="Description"
+						placeholder="Describe your post"
+						autosize
+						minRows={2}
+						maxRows={4}
+						name="description"
+						key={form.key("description")}
+						{...form.getInputProps("description")}
+						error={form.errors.description || serverErrors.description}
+						defaultValue={post.description}
+					/>
+				</div>
 
-			<div className="mt-2 flex w-full gap-4">
-				<TagsInput
+				<div className="mt-2 flex w-full gap-4">
+					<TagsInput
+						size="xs"
+						clearable
+						acceptValueOnBlur
+						splitChars={[",", " ", "|"]}
+						label="Press Enter to submit a tag for this post"
+						placeholder="Enter tag"
+						className="w-full"
+						name="tags"
+						key={form.key("tags")}
+						{...form.getInputProps("tags")}
+						error={form.errors.tags || serverErrors.tags}
+						value={selectedTags}
+						onChange={(value) => {
+							setSelectedTags(value);
+							form.setValues({ tags: value });
+						}}
+					/>
+					<Select
+						label="Publish the Post?"
+						placeholder="Pick value"
+						data={[
+							{ value: "1", label: "Publish" },
+							{ value: "0", label: "Don't Publish yet" },
+						]}
+						name="published"
+						clearable
+						allowDeselect
+						checkIconPosition="right"
+						size="xs"
+						required={true}
+						key={form.key("published")}
+						{...form.getInputProps("published")}
+						error={form.errors.published || serverErrors.published}
+						value={publishStatus ? publishStatus.value : null}
+						onChange={(_value, option) => {
+							setPublishStatus(option);
+							form.setValues({ published: option.value });
+						}}
+					/>
+				</div>
+				<div className="ml-auto mt-2 flex w-1/2 gap-4">
+					<MultiSelect
+						size="xs"
+						className="w-full"
+						label="Post Categories"
+						placeholder="Pick categories"
+						data={categories}
+						name="categories"
+						clearable
+						searchable
+						hidePickedOptions
+						checkIconPosition="right"
+						nothingFoundMessage="Nothing found..."
+						key={form.key("categories")}
+						{...form.getInputProps("categories")}
+						error={form.errors.categories || serverErrors.categories}
+						value={selectedCategories}
+						onChange={(value) => {
+							setSelectedCategories(value);
+							form.setValues({ categories: value });
+						}}
+					/>
+				</div>
+				<Button
+					loading={visible}
+					color="orange"
+					variant="filled"
+					radius="sm"
 					size="xs"
-					clearable
-					acceptValueOnBlur
-					splitChars={[",", " ", "|"]}
-					label="Press Enter to submit a tag for this post"
-					placeholder="Enter tag"
-					className="w-full"
-					name="tags"
-					value={selectedTags}
-					onChange={setSelectedTags}
-				/>
-				<Select
-					label="Publish the Post?"
-					placeholder="Pick value"
-					data={[
-						{ value: "1", label: "Publish" },
-						{ value: "0", label: "Don't Publish yet" },
-					]}
-					value={publishStatus ? publishStatus.value : null}
-					onChange={(_value, option) => setPublishStatus(option)}
-					name="published"
-					clearable
-					allowDeselect
-					checkIconPosition="right"
-					size="xs"
-					required={true}
-				/>
-			</div>
-			<div className="ml-auto mt-2 flex w-1/2 gap-4">
-				<MultiSelect
-					size="xs"
-					className="w-full"
-					label="Post Categories"
-					placeholder="Pick categories"
-					data={categories}
-					value={selectedCategories}
-					onChange={setSelectedCategories}
-					name="categories"
-					clearable
-					searchable
-					hidePickedOptions
-					checkIconPosition="right"
-					nothingFoundMessage="Nothing found..."
-				/>
-			</div>
-			<Button
-				color="orange"
-				variant="filled"
-				radius="sm"
-				size="xs"
-				type="submit">
-				Update
-			</Button>
-		</form>
+					type="submit">
+					Update
+				</Button>
+			</form>
+		</Box>
 	);
 }
