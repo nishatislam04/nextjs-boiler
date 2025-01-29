@@ -1,10 +1,18 @@
 "use client";
+import { useForm } from "@mantine/form";
+import { zodResolver } from "mantine-form-zod-resolver";
 import { createUser } from "@/lib/repository/actions/users/create";
 import { Button, PasswordInput, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLock } from "@tabler/icons-react";
+import { createUserSchema } from "@/lib/schema/user/create";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Toast from "@/components/ui/Toast";
+import { notifications } from "@mantine/notifications";
 
 export default function CreateUserForm() {
+	const [serverErrors, setServerErrors] = useState({});
 	const [visible, { toggle }] = useDisclosure(false);
 	const passwordIcon = (
 		<IconLock
@@ -12,10 +20,50 @@ export default function CreateUserForm() {
 			stroke={1.5}
 		/>
 	);
+	const router = useRouter();
+
+	const form = useForm({
+		mode: "uncontrolled",
+		initialValues: {
+			name: "",
+			email: "",
+			username: "",
+			password: "",
+		},
+		validate: zodResolver(createUserSchema),
+	});
+
+	const handleSubmit = async (values) => {
+		setServerErrors({});
+
+		const response = await createUser(values);
+
+		if (!response.success) {
+			setServerErrors(response.errors);
+			return;
+		} else {
+			router.push("/user");
+		}
+	};
+
+	useEffect(() => {
+		if (serverErrors.general) {
+			notifications.show({
+				title: "Error",
+				message: serverErrors.general,
+				position: "top-right",
+				color: "red",
+				radius: "md",
+			});
+			setServerErrors({});
+		}
+	}, [serverErrors]);
+
 	return (
 		<form
-			action={createUser}
+			onSubmit={form.onSubmit(handleSubmit)}
 			className="rounded-lg bg-gray-100 px-3 py-6">
+			<Toast />
 			<div className="flex w-full gap-4">
 				<TextInput
 					className="mb-4 w-1/2"
@@ -23,6 +71,9 @@ export default function CreateUserForm() {
 					size="xs"
 					name="name"
 					placeholder="Name"
+					key={form.key("name")}
+					{...form.getInputProps("name")}
+					error={form.errors.name || serverErrors.name}
 				/>
 				<TextInput
 					className="mb-4 w-1/2"
@@ -30,6 +81,9 @@ export default function CreateUserForm() {
 					size="xs"
 					name="email"
 					placeholder="Email Address"
+					key={form.key("email")}
+					{...form.getInputProps("email")}
+					error={form.errors.email || serverErrors.email}
 				/>
 			</div>
 			<div className="flex w-full gap-4">
@@ -39,6 +93,9 @@ export default function CreateUserForm() {
 					size="xs"
 					name="username"
 					placeholder="Username"
+					key={form.key("username")}
+					{...form.getInputProps("username")}
+					error={form.errors.username || serverErrors.username}
 				/>
 				<PasswordInput
 					className="mb-4 w-1/2"
@@ -48,6 +105,9 @@ export default function CreateUserForm() {
 					visible={visible}
 					onVisibilityChange={toggle}
 					name="password"
+					key={form.key("password")}
+					{...form.getInputProps("password")}
+					error={form.errors.password || serverErrors.password}
 				/>
 			</div>
 

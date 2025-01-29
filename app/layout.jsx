@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
 					withNormalizeCSS
 					theme={theme}>
 					<ModalsProvider>
-						<Notifications autoClose={2000} />
+						<Notifications autoClose={4000} />
 
 						<Navbar />
 						{children}
