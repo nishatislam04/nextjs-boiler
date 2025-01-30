@@ -7,6 +7,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	adapter: PrismaAdapter(prisma),
 	providers: [
 		GitHub({
+			allowDangerousEmailAccountLinking: true,
 			profile(profile) {
 				return {
 					name: profile.name,

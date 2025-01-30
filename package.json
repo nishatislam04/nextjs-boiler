@@ -27,6 +27,7 @@
     "@thewebartisan7/next-flash-message": "^1.0.1",
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",
+    "chalk": "^5.4.1",
     "date-fns": "^4.1.0",
     "eslint-plugin-react": "^7.37.4",
     "ioredis": "^5.4.2",

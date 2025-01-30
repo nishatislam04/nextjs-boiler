@@ -22,7 +22,7 @@ export default function MantinePagination({
 	};
 
 	return (
-		<div className="flex justify-center mt-8">
+		<div className="flex justify-center mt-2">
 			<Pagination
 				total={totalPages}
 				value={+currentPage}

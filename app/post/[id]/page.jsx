@@ -4,7 +4,7 @@ import GoBack from "@/components/ui/GoBack";
 import { Suspense } from "react";
 import Spinner from "@/components/ui/Spinner";
 import Toast from "@/components/ui/Toast";
-import { CURRENT_PAGE, PER_PAGE } from "@/lib/config/settings";
+import { CURRENT_PAGE, PER_PAGE } from "@/lib/settings";
 import {
 	fetchTotalPostsUserCount,
 	fetchUserPosts,
@@ -50,7 +50,7 @@ export default async function PostPage({ params, searchParams }) {
 				<Toast />
 
 				<Suspense fallback={<Spinner />}>
-					<div className="min-h-[22rem]">
+					<div className="min-h-[27rem]">
 						<UserPostListingsTable posts={user.posts}>
 							<TableHeaderAction
 								selectPlaceHolder="Search For"
