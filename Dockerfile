@@ -2,6 +2,8 @@ FROM oven/bun:alpine
 
 WORKDIR /app
 
+ENV BUN_AUTO_UPDATE 0
+
 COPY package.json ./
 COPY bun.lockb ./
 
