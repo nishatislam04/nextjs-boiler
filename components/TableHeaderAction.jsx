@@ -26,7 +26,8 @@ export default function TableHeaderAction({
 					color="indigo"
 					component={Link}
 					className=""
-					href={`/${tableName.toLowerCase()}/create?authorId=${authorId}`}>
+					href={`/${tableName.toLowerCase()}/create?authorId=${authorId}`}
+					prefetch>
 					<span className="flex gap-0">
 						<Button
 							size="xs"

@@ -7,7 +7,6 @@ import { fetchAll, fetchTotalCount } from "@/lib/repository/user/dal";
 import { CURRENT_PAGE, PER_PAGE } from "@/lib/settings";
 import helpers from "@/lib/helpers";
 import UserListingsTable from "./Table";
-import Logger from "@/lib/logger";
 
 export default async function UserPage({ searchParams }) {
 	const params = await searchParams;
@@ -22,8 +21,6 @@ export default async function UserPage({ searchParams }) {
 	users = await fetchAll(currentPage, searchQuery, queryBy, orderBy);
 	let totalUsers = await fetchTotalCount();
 	const totalPages = Math.ceil(totalUsers / PER_PAGE);
-
-	Logger.critical(users, "--user");
 
 	return (
 		<div className="relative mx-auto mt-12 max-w-screen-xl p-4">
