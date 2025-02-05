@@ -1,20 +1,41 @@
-import { signIn } from "@/app/auth";
+"use client";
 import GithubSvg from "@/components/svg/github";
-import { Button } from "@mantine/core";
+import { Button, Menu } from "@mantine/core";
+import GoogleSvg from "../svg/google";
+import { googleLogin } from "@/lib/auth/googleLogin";
+import { githubLogin } from "@/lib/auth/githubLogin";
 
 export default function SignIn() {
 	return (
-		<form
-			action={async () => {
-				"use server";
-				await signIn("github");
-			}}>
-			<Button
-				leftSection={<GithubSvg />}
-				type="submit"
-				variant="light">
-				Sign in
-			</Button>
-		</form>
+		<Menu
+			width={200}
+			className="">
+			<Menu.Target>
+				<Button
+					variant="light"
+					color="gray"
+					radius="lg">
+					Login
+				</Button>
+			</Menu.Target>
+
+			<Menu.Dropdown className="">
+				<Menu.Item
+					className=""
+					leftSection={<GithubSvg />}
+					onClick={githubLogin}
+					variant="filled">
+					Sign in with GitHub
+				</Menu.Item>
+
+				<Menu.Item
+					className=""
+					leftSection={<GoogleSvg />}
+					onClick={googleLogin}
+					variant="light">
+					Sign in with Google
+				</Menu.Item>
+			</Menu.Dropdown>
+		</Menu>
 	);
 }

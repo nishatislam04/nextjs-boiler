@@ -1,7 +1,7 @@
 export default function GithubSvg() {
 	return (
 		<svg
-			className="w-4 h-4 me-2"
+			className="w-4 h-4 -me-0 fill-gray-500"
 			aria-hidden="true"
 			fill="currentColor"
 			viewBox="0 0 20 20">

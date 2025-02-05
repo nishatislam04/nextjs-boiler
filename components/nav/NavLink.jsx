@@ -1,8 +1,9 @@
 "use client";
+import { NavLink } from "@mantine/core";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function NavLink({ link }) {
+export default function Navlink({ link }) {
 	const pathname = usePathname();
 
 	const isActive =
@@ -13,7 +14,23 @@ export default function NavLink({ link }) {
 
 	return (
 		<li>
-			<Link
+			<NavLink
+				href={
+					shouldAddQueryParams.includes(link["label"].toLowerCase())
+						? `${link.href}?page=1`
+						: link.href
+				}
+				component={Link}
+				label={link.label}
+				className={`${
+					isActive
+						? "font-bold text-blue-700 underline decoration-green-500 underline-offset-4"
+						: "text-black dark:text-white"
+				} block rounded px-3 py-2 md:bg-transparent md:p-0`}
+				aria-current={isActive ? "page" : undefined}
+			/>
+
+			{/* <Link
 				href={
 					shouldAddQueryParams.includes(link["label"].toLowerCase())
 						? `${link.href}?page=1`
@@ -26,7 +43,7 @@ export default function NavLink({ link }) {
 				} block rounded px-3 py-2 md:bg-transparent md:p-0`}
 				aria-current={isActive ? "page" : undefined}>
 				{link.label}
-			</Link>
+			</Link> */}
 		</li>
 	);
 }
