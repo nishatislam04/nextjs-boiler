@@ -1,14 +1,10 @@
-import { signOut } from "@/app/auth";
 import SignoutSvg from "@/components/svg/Signout";
+import { signout } from "@/lib/auth/signout";
 import { Button } from "@mantine/core";
 
 export function SignOut() {
 	return (
-		<form
-			action={async () => {
-				"use server";
-				await signOut();
-			}}>
+		<form action={signout}>
 			<Button
 				rightSection={<SignoutSvg />}
 				type="submit"
