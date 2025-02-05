@@ -13,7 +13,8 @@ export function SignOut() {
 				rightSection={<SignoutSvg />}
 				type="submit"
 				variant="light"
-				color="red">
+				color="red"
+				radius="lg">
 				Sign out
 			</Button>
 		</form>
