@@ -1,11 +1,14 @@
 "use client";
 
+import ImageSvg from "@/components/svg/imageSvg";
 import Toast from "@/components/ui/Toast";
+import Logger from "@/lib/logger";
 import { createPost } from "@/lib/repository/actions/posts/create";
 import { createPostSchema } from "@/lib/schema/post/create";
 import {
 	Box,
 	Button,
+	FileInput,
 	LoadingOverlay,
 	MultiSelect,
 	Select,
@@ -35,12 +38,12 @@ export default function PostCreateForm({ authorId, categories }) {
 			tags: [],
 			published: "",
 			categories: [],
+			coverPhoto: null,
 		},
 		validate: zodResolver(createPostSchema),
 	});
 
 	const handleSubmit = async (values) => {
-		console.log("--res");
 		toggle();
 		setServerErrors({});
 
@@ -154,7 +157,20 @@ export default function PostCreateForm({ authorId, categories }) {
 						]}
 					/>
 				</div>
-				<div className="ml-auto mt-2 flex w-1/2 gap-4">
+				<div className="mb-4 mt-2 flex w-full gap-4">
+					<FileInput
+						name="coverPhoto"
+						className="w-1/2"
+						size="xs"
+						clearable
+						leftSection={<ImageSvg />}
+						label="Post Cover Picture"
+						accept="image/png,image/jpeg,image/jpg"
+						placeholder="Upload Post cover picture"
+						onChange={(file) => form.setFieldValue("coverPhoto", file)}
+						error={form.errors.coverPhoto}
+					/>
+
 					<MultiSelect
 						size="xs"
 						className="w-full"

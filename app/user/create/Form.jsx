@@ -5,6 +5,7 @@ import { createUser } from "@/lib/repository/actions/users/create";
 import {
 	Box,
 	Button,
+	FileInput,
 	LoadingOverlay,
 	PasswordInput,
 	TextInput,
@@ -16,6 +17,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Toast from "@/components/ui/Toast";
 import { notifications } from "@mantine/notifications";
+import ImageSvg from "@/components/svg/imageSvg";
+import Logger from "@/lib/logger";
 
 export default function CreateUserForm() {
 	const [serverErrors, setServerErrors] = useState({});
@@ -35,6 +38,7 @@ export default function CreateUserForm() {
 			email: "",
 			username: "",
 			password: "",
+			image: null,
 		},
 		validate: zodResolver(createUserSchema),
 	});
@@ -118,6 +122,7 @@ export default function CreateUserForm() {
 						className="mb-4 w-1/2"
 						leftSection={passwordIcon}
 						label="password"
+						size="xs"
 						placeholder="Password"
 						visible={visible}
 						onVisibilityChange={toggle}
@@ -125,6 +130,21 @@ export default function CreateUserForm() {
 						key={form.key("password")}
 						{...form.getInputProps("password")}
 						error={form.errors.password || serverErrors.password}
+					/>
+				</div>
+
+				<div className="flex w-full gap-4 mb-4">
+					<FileInput
+						name="image"
+						className="w-80"
+						size="xs"
+						clearable
+						leftSection={<ImageSvg />}
+						label="Profile Picture"
+						accept="image/png,image/jpeg,image/jpg"
+						placeholder="Upload profile picture"
+						onChange={(file) => form.setFieldValue("image", file)}
+						error={form.errors.image}
 					/>
 				</div>
 
