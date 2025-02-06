@@ -38,6 +38,11 @@ const nextConfig = {
 				hostname: "picsum.photos",
 				pathname: "/**",
 			},
+			{
+				protocol: "https", // Allow images from Google UserContent
+				hostname: "lh3.googleusercontent.com", // Add this line
+				pathname: "/**", // Allow all paths from this hostname
+			},
 		],
 	},
 };

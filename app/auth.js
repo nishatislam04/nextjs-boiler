@@ -58,6 +58,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 							{ username: credentials.username },
 						],
 					},
+					include: {
+						roles: true,
+					},
 				});
 
 				if (!user) return null;
@@ -84,12 +87,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			// Check if the user already exists in the database
 			const existingUser = await prisma.user.findUnique({
 				where: { email: user.email },
-				include: { account: true }, // Include related account
+				include: { account: true, roles: true },
 			});
 
 			if (!existingUser) {
 				// 🆕 New user → Create user and related account (GitHub or Google)
 				Logger.info(null, "New user found, creating account...");
+
+				// Get the "Member" role
+				const memberRole = await prisma.role.findUnique({
+					where: { name: "member" },
+				});
 				await prisma.user.create({
 					data: {
 						email: user.email,
@@ -97,7 +105,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						image: user.image || "",
 						username: user.username || "",
 						password: await Bun.password.hash("123456"),
-						role: "Member",
 						account: {
 							create: {
 								provider: account.provider,
@@ -108,10 +115,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 								expires_at: account.expires_at || null,
 							},
 						},
+						roles: {
+							connect: { id: memberRole.id },
+						},
 					},
 				});
 			} else {
 				// ✅ User exists → Check if the account already exists for this provider
+
 				const existingAccount = existingUser.account.find(
 					(acc) => acc.provider === account.provider
 				);
@@ -135,7 +146,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				} else {
 					// 🔗 Link new provider account to existing user
 					Logger.info(null, "Linking new provider account to user...");
-					Logger.info(account, "google account details");
+
+					// member role
+					const memberRole = await prisma.role.findUnique({
+						where: { name: "member" },
+					});
+					// assign member role to new auth user
+					await prisma.user.update({
+						where: { email: user.email },
+						data: { roles: { connect: { id: memberRole.id } } },
+					});
+
 					await prisma.account.create({
 						data: {
 							userId: existingUser.id, // Link new account to the existing user
