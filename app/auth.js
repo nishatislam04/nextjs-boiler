@@ -4,18 +4,14 @@ import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import Logger from "@/lib/logger";
+import Credentials from "next-auth/providers/credentials";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-	// Configure the Prisma adapter for NextAuth
 	adapter: {
-		...PrismaAdapter(prisma), // Use Prisma as the database adapter
-		linkAccount: async (_) => {
-			// Disable the default `linkAccount` behavior to avoid duplicate account creation
-			return null;
-		},
+		...PrismaAdapter(prisma),
+		linkAccount: async (_) => null,
 	},
 
-	// Define authentication providers (e.g., GitHub, Google)
 	providers: [
 		GitHub({
 			// Allow linking account with the same email address
@@ -31,6 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				};
 			},
 		}),
+
 		Google({
 			// Allow linking account with the same email address
 			allowDangerousEmailAccountLinking: true,
@@ -40,13 +37,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				return {
 					name: profile.name,
 					email: profile.email,
+					username: `${profile.name.replaceAll(" ", "")}`,
 					image: profile.picture,
 				};
 			},
 		}),
+
+		Credentials({
+			credentials: {
+				email: { label: "Email", type: "email" },
+				username: { label: "Username", type: "text" },
+				password: { label: "Password", type: "password" },
+			},
+
+			async authorize(credentials) {
+				const user = await prisma.user.findFirst({
+					where: {
+						OR: [
+							{ email: credentials.email },
+							{ username: credentials.username },
+						],
+					},
+				});
+
+				if (!user) return null;
+
+				// Verify the password
+				const isValidPassword = await Bun.password.verify(
+					credentials.password,
+					user.password
+				);
+
+				if (!isValidPassword) return null;
+
+				// Return the user object if credentials are valid
+				return user;
+			},
+		}),
 	],
 
-	// Define callbacks to customize authentication behavior
 	callbacks: {
 		async signIn({ user, account }) {
 			// Ensure the user has an email address
@@ -66,6 +95,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 						email: user.email,
 						name: user.name || "",
 						image: user.image || "",
+						username: user.username || "",
+						password: await Bun.password.hash("123456"),
+						role: "Member",
 						account: {
 							create: {
 								provider: account.provider,
@@ -121,5 +153,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			// ✅ Allow login
 			return true;
 		},
+
+		//! need to customize session for credentials
+		async session({ session, user }) {
+			if (user?.id) {
+				session.user.id = user.id;
+			}
+			return session;
+		},
+	},
+
+	session: {
+		strategy: "jwt",
 	},
 });

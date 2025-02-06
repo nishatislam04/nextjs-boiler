@@ -3,6 +3,7 @@ import Navlink from "./NavLink";
 import SignIn from "../auth/SignIn";
 import { auth } from "@/app/auth";
 import { SignOut } from "../auth/SignOut";
+import Logger from "@/lib/logger";
 
 const links = [
 	{
@@ -25,6 +26,7 @@ const links = [
 
 export default async function Navbar() {
 	const session = await auth();
+	// Logger.info(session, "--session");
 
 	return (
 		<nav className="bg-white border-gray-200 dark:bg-gray-900">

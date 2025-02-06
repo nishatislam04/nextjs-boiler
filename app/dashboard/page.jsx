@@ -2,9 +2,11 @@ import { Text, Title } from "@mantine/core";
 import { auth } from "../auth";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
+import Logger from "@/lib/logger";
 
 export default async function DashboardPage() {
 	const session = await auth();
+	Logger.info(session, "session in dashboard");
 
 	const loggedInStatus = session
 		? "Logged in user Information"
@@ -20,10 +22,7 @@ export default async function DashboardPage() {
 
 	const role = await prisma.user.findUnique({
 		where: {
-			id: session.userId,
-		},
-		include: {
-			roles: true,
+			id: session.user.email,
 		},
 	});
 
@@ -66,10 +65,10 @@ export default async function DashboardPage() {
 						fw={600}
 						variant="gradient"
 						gradient={{ from: "red", to: "orange", deg: 0 }}>
-						Role:{" "}
-						{role.roles.length > 0
+						Role: {session?.user?.role}
+						{/* {role.roles.length > 0
 							? role.roles.join(",")
-							: "does not have any role yet"}
+							: "does not have any role yet"} */}
 					</Text>
 				</div>
 			</div>

@@ -3,9 +3,9 @@ import {
 	mantineHtmlProps,
 	MantineProvider,
 } from "@mantine/core";
-import "@mantine/notifications/styles.css";
 import { Notifications } from "@mantine/notifications";
 import "./globals.css";
+import "@mantine/notifications/styles.css";
 import "@mantine/core/styles.css";
 import Navbar from "@/components/nav/Navbar";
 import { theme } from "../theme";
