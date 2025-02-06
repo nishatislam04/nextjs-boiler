@@ -114,7 +114,19 @@ export default function UserPostListingsTable({ posts, children }) {
 							<Table.Th>Actions</Table.Th>
 						</Table.Tr>
 					</Table.Thead>
-					<Table.Tbody>{rows}</Table.Tbody>
+					<Table.Tbody>
+						{posts.length > 0 ? (
+							rows
+						) : (
+							<Table.Tr key="no-post-found">
+								<Table.Td
+									colSpan={6}
+									className="text-center text-gray-500 py-4 text-xl">
+									No Post found
+								</Table.Td>
+							</Table.Tr>
+						)}
+					</Table.Tbody>
 				</Table>
 			</Table.ScrollContainer>
 		</>

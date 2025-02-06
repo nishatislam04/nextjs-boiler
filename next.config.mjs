@@ -28,6 +28,16 @@ const nextConfig = {
 				hostname: "placehold.co",
 				pathname: "/**",
 			},
+			{
+				protocol: "https",
+				hostname: "images.unsplash.com", // Added Unsplash hostname
+				pathname: "/**", // Allow all paths from this hostname
+			},
+			{
+				protocol: "https",
+				hostname: "picsum.photos",
+				pathname: "/**",
+			},
 		],
 	},
 };
