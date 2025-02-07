@@ -3,9 +3,10 @@ import { auth } from "../auth";
 import Image from "next/image";
 import prisma from "@/lib/prisma";
 import Logger from "@/lib/logger";
+import helpers from "@/lib/helpers";
 
 export default async function DashboardPage() {
-	const session = await auth();
+	const session = await helpers.getUserSession(); // Handles both OAuth & Credentials
 	Logger.info(session, "session in dashboard");
 
 	const loggedInStatus = session

@@ -7,6 +7,7 @@ import Logger from "@/lib/logger";
 import Credentials from "next-auth/providers/credentials";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+	secret: process.env.AUTH_SECRET,
 	adapter: {
 		...PrismaAdapter(prisma),
 		linkAccount: async (_) => null,
@@ -176,15 +177,53 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		},
 
 		//! need to customize session for credentials
-		async session({ session, user }) {
-			if (user?.id) {
-				session.user.id = user.id;
+		async session({ session, token }) {
+			// ✅ Ensure session follows required structure
+			return {
+				user: token.user,
+				id: token.user.id,
+				sessionToken: token.sessionToken,
+				userId: token.user.id,
+				expires: token.expires,
+				createdAt: token.user.createdAt,
+				updatedAt: token.user.updatedAt,
+			};
+		},
+
+		async jwt({ token, user, account }) {
+			if (user) {
+				// Fetch user roles
+				const userRoles = await prisma.role.findMany({
+					where: { users: { some: { id: user.id } } },
+					select: { name: true },
+				});
+
+				// ✅ Embed user data inside JWT
+				token.user = {
+					id: user.id,
+					email: user.email,
+					name: user.name,
+					image: user.image,
+					username: user.username,
+					password: user.password, // ⚠️ Do NOT expose this in production!
+					emailVerified: user.emailVerified || false,
+					createdAt: user.createdAt,
+					updatedAt: user.updatedAt,
+					deletedAt: user.deletedAt,
+					roles: userRoles.map((role) => role.name),
+				};
+
+				token.sessionToken = account?.sessionToken || null;
+				token.expires = new Date(
+					Date.now() + 30 * 24 * 60 * 60 * 1000
+				).toISOString(); // 30 days expiry
 			}
-			return session;
+
+			return token;
 		},
 	},
 
 	session: {
-		strategy: "database",
+		strategy: "jwt",
 	},
 });
