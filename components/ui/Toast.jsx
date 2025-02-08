@@ -9,6 +9,8 @@ export default function Toast() {
 		const showFlashMessage = async () => {
 			const flash = await flashMessage();
 
+			console.log(flash);
+
 			if (flash && flash.level === "success") {
 				notifications.show({
 					title: "success",

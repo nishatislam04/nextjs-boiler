@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 
 export default function PostCreateForm({ authorId, categories }) {
 	const [serverErrors, setServerErrors] = useState({});
-	const [visible, { toggle }] = useDisclosure(false);
+	const [visible, toggle] = useDisclosure(false);
 
 	const router = useRouter();
 
@@ -44,35 +44,49 @@ export default function PostCreateForm({ authorId, categories }) {
 	});
 
 	const handleSubmit = async (values) => {
-		toggle();
+		toggle.open();
 		setServerErrors({});
 
 		const response = await createPost(authorId, values);
 
-		if (!response.success) {
-			setServerErrors(response.errors);
-			toggle();
+		if (!response.success && !response.showNotification) {
+			await setServerErrors(response.errors);
+			toggle.close();
 			return;
-		} else {
-			toggle();
-			router.push(`/post/${authorId}`);
-		}
-	};
-
-	useEffect(() => {
-		if (serverErrors.general) {
+		} else if (!response.success && response.showNotification) {
 			notifications.show({
 				title: "Error",
-				message: serverErrors.general,
+				message: response.errors.general,
 				position: "top-right",
 				color: "red",
 				radius: "md",
 				autoClose: 5000,
 			});
 			setServerErrors({});
-			toggle();
+			toggle.close();
+			// setServerErrors(response.errors);
+			// toggle.close();
+			// return;
+		} else {
+			router.push("/user");
+			toggle.close();
 		}
-	}, [serverErrors, toggle]);
+	};
+
+	// useEffect(() => {
+	// 	if (serverErrors.general) {
+	// 		notifications.show({
+	// 			title: "Error",
+	// 			message: serverErrors.general,
+	// 			position: "top-right",
+	// 			color: "red",
+	// 			radius: "md",
+	// 			autoClose: 5000,
+	// 		});
+	// 		setServerErrors({});
+	// 		toggle.close();
+	// 	}
+	// }, [serverErrors, toggle]);
 
 	return (
 		<Box pos="relative">
@@ -84,21 +98,21 @@ export default function PostCreateForm({ authorId, categories }) {
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
 				className="rounded-lg bg-gray-100 px-3 py-6">
-				<Toast />
+				{/* <Toast /> */}
 				<div className="flex w-full gap-4">
 					<TextInput
 						className="mb-4 w-1/2"
 						name="title"
 						label="Title"
-						withAsterisk
+						required
 						size="xs"
-						required={true}
 						placeholder="Post Title"
 						key={form.key("title")}
 						{...form.getInputProps("title")}
 						error={form.errors.title || serverErrors.title}
 					/>
 					<TextInput
+						required
 						size="xs"
 						className="mb-4 w-1/2"
 						label="Short Description"

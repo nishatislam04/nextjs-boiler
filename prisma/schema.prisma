@@ -36,7 +36,7 @@ model Post {
   title            String
   slug             String    @unique
   description      String?
-  shortDescription String?
+  shortDescription String
   published        Boolean   @default(false)
   publishedAt      DateTime?
   deletedAt        DateTime?

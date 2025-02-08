@@ -105,14 +105,16 @@ export default function SignIn() {
 				opened={opened}
 				onClose={close}
 				title={`Welcome to Go-Crazy, ${type} with`}>
-				<LoadingOverlay
-					visible={loading}
-					zIndex={1000}
-					overlayProps={{ radius: "sm", blur: 2 }}
-				/>
 				<Paper
 					radius="md"
-					className="px-8 py-4">
+					className="px-8 py-4 relative">
+					{/* 🔹 Loading Overlay inside Paper to cover form properly */}
+					<LoadingOverlay
+						visible={loading}
+						zIndex={1000}
+						overlayProps={{ radius: "sm", blur: 2 }}
+					/>
+
 					<Group grow>
 						<Button
 							variant="light"
@@ -136,13 +138,11 @@ export default function SignIn() {
 						my="lg"
 					/>
 
-					{/* form */}
+					{/* Form */}
 					<form onSubmit={form.onSubmit(handleSubmit)}>
 						<Stack>
 							{type === "register" && (
 								<TextInput
-									// required
-									className=""
 									label="Username"
 									placeholder="Your username"
 									value={form.values.username}
@@ -160,7 +160,6 @@ export default function SignIn() {
 
 							{type === "register" && (
 								<TextInput
-									// required
 									label="Email"
 									placeholder="hello@mantine.dev"
 									value={form.values.email}
@@ -175,7 +174,6 @@ export default function SignIn() {
 
 							{type === "login" && (
 								<TextInput
-									// required
 									label="Email or Username"
 									placeholder="email or username"
 									size="xs"
@@ -191,7 +189,6 @@ export default function SignIn() {
 							)}
 
 							<PasswordInput
-								// required
 								label="Password"
 								placeholder="Your password"
 								size="xs"

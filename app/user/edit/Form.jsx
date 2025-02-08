@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 
 export default function EditUserForm({ user, authorId }) {
 	const [serverErrors, setServerErrors] = useState({});
-	const [visible, { toggle }] = useDisclosure(false);
+	const [visible, toggle] = useDisclosure(false);
 
 	const router = useRouter();
 
@@ -36,35 +36,49 @@ export default function EditUserForm({ user, authorId }) {
 	});
 
 	const handleSubmit = async (values) => {
-		toggle();
+		toggle.open();
 		setServerErrors({});
 
 		const response = await updateUser(authorId, values);
 
-		if (!response.success) {
-			setServerErrors(response.errors);
-			toggle();
-			return;
-		} else {
-			toggle();
-			router.push("/user");
-		}
-	};
-
-	useEffect(() => {
-		if (serverErrors.general) {
+		if (!response.success && !response.showNotification) {
+			await setServerErrors(response.errors);
+			toggle.close();
+		} else if (!response.success && response.showNotification) {
 			notifications.show({
 				title: "Error",
-				message: serverErrors.general,
+				message: response.errors.general,
 				position: "top-right",
 				color: "red",
 				radius: "md",
 				autoClose: 5000,
 			});
 			setServerErrors({});
-			toggle();
+			toggle.close();
+
+			// setServerErrors(response.errors);
+			// toggle.close();
+			// return;
+		} else {
+			router.push("/user");
+			toggle.close();
 		}
-	}, [serverErrors, toggle]);
+	};
+
+	// useEffect(() => {
+	// 	if (serverErrors.general) {
+	// 		notifications.show({
+	// 			title: "Error",
+	// 			message: serverErrors.general,
+	// 			position: "top-right",
+	// 			color: "red",
+	// 			radius: "md",
+	// 			autoClose: 5000,
+	// 		});
+	// 		setServerErrors({});
+	// 		toggle.close();
+	// 	}
+	// }, [serverErrors, toggle]);
 
 	return (
 		<Box pos="relative">
@@ -76,7 +90,7 @@ export default function EditUserForm({ user, authorId }) {
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
 				className="rounded-lg bg-gray-100 px-3 py-6">
-				<Toast />
+				{/* <Toast /> */}
 				<div className="flex w-full gap-4">
 					<TextInput
 						className="mb-4 w-1/2"

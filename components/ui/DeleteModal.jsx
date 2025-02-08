@@ -34,7 +34,7 @@ export default function DeleteModal({ id, deleteAction, title, message }) {
 							position: "top-right",
 							autoClose: 5000,
 							title: "Success",
-							message: response.message || "Resource has been deleted 🌟",
+							message: response.message || "Resource delete success 🌟",
 						});
 					} else {
 						notifications.show({

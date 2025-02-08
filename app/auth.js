@@ -180,13 +180,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		async session({ session, token }) {
 			// ✅ Ensure session follows required structure
 			return {
-				user: token.user,
-				id: token.user.id,
+				// user: token.user,
+				// id: token.user.id,
 				sessionToken: token.sessionToken,
 				userId: token.user.id,
 				expires: token.expires,
-				createdAt: token.user.createdAt,
-				updatedAt: token.user.updatedAt,
+				// createdAt: token.user.createdAt,
+				// updatedAt: token.user.updatedAt,
 			};
 		},
 
@@ -201,16 +201,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				// ✅ Embed user data inside JWT
 				token.user = {
 					id: user.id,
-					email: user.email,
-					name: user.name,
-					image: user.image,
-					username: user.username,
-					password: user.password, // ⚠️ Do NOT expose this in production!
-					emailVerified: user.emailVerified || false,
-					createdAt: user.createdAt,
-					updatedAt: user.updatedAt,
-					deletedAt: user.deletedAt,
-					roles: userRoles.map((role) => role.name),
+					// email: user.email,
+					// name: user.name,
+					// image: user.image,
+					// username: user.username,
+					// password: user.password, // ⚠️ Do NOT expose this in production!
+					// emailVerified: user.emailVerified || false,
+					// createdAt: user.createdAt,
+					// updatedAt: user.updatedAt,
+					// deletedAt: user.deletedAt,
+					// roles: userRoles.map((role) => role.name),
 				};
 
 				token.sessionToken = account?.sessionToken || null;

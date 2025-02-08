@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 
 export default function PostEditPage({ post, categories, authorId }) {
 	const [serverErrors, setServerErrors] = useState({});
-	const [visible, { toggle }] = useDisclosure(false);
+	const [visible, toggle] = useDisclosure(false);
 	const [publishStatus, setPublishStatus] = useState("");
 	const [selectedCategories, setSelectedCategories] = useState(
 		post.categories.map((category) => category.value)
@@ -33,8 +33,6 @@ export default function PostEditPage({ post, categories, authorId }) {
 
 	const router = useRouter();
 
-	console.log("--loaded post", post, categories);
-
 	const form = useForm({
 		mode: "uncontrolled",
 		initialValues: {
@@ -42,7 +40,6 @@ export default function PostEditPage({ post, categories, authorId }) {
 			shortDescription: post.shortDescription,
 			description: post.description,
 			tags: selectedTags,
-			// published: publishStatus,
 			published: post.published ? "1" : "0",
 			categories: selectedCategories,
 		},
@@ -50,35 +47,48 @@ export default function PostEditPage({ post, categories, authorId }) {
 	});
 
 	const handleSubmit = async (values) => {
-		toggle();
+		toggle.open();
 		setServerErrors({});
 
 		const response = await updatePost(authorId, values);
 
-		if (!response.success) {
-			setServerErrors(response.errors);
-			toggle();
-			return;
-		} else {
-			toggle();
-			router.push(`/post/${authorId}`);
-		}
-	};
-
-	useEffect(() => {
-		if (serverErrors.general) {
+		if (!response.success && !response.showNotification) {
+			await setServerErrors(response.errors);
+			toggle.close();
+		} else if (!response.success && response.showNotification) {
 			notifications.show({
 				title: "Error",
-				message: serverErrors.general,
+				message: response.errors.general,
 				position: "top-right",
 				color: "red",
 				radius: "md",
 				autoClose: 5000,
 			});
 			setServerErrors({});
-			toggle();
+			toggle.close();
+			// setServerErrors(response.errors);
+			// toggle.close();
+			// return;
+		} else {
+			router.push("/user");
+			toggle.close();
 		}
-	}, [serverErrors, toggle]);
+	};
+
+	// useEffect(() => {
+	// 	if (serverErrors.general) {
+	// 		notifications.show({
+	// 			title: "Error",
+	// 			message: serverErrors.general,
+	// 			position: "top-right",
+	// 			color: "red",
+	// 			radius: "md",
+	// 			autoClose: 5000,
+	// 		});
+	// 		setServerErrors({});
+	// 		toggle.close();
+	// 	}
+	// }, [serverErrors, toggle]);
 
 	useEffect(() => {
 		return post.published
@@ -95,9 +105,8 @@ export default function PostEditPage({ post, categories, authorId }) {
 			/>
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
-				// action={updatePost.bind(null, authorId)}
 				className="rounded-lg bg-gray-100 px-3 py-6">
-				<Toast />
+				{/* <Toast /> */}
 				<div className="flex w-full gap-4">
 					<TextInput
 						className="mb-4 w-1/2"

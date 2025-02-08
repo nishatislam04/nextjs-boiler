@@ -7,7 +7,12 @@ import helpers from "@/lib/helpers";
 
 export default async function DashboardPage() {
 	const session = await helpers.getUserSession(); // Handles both OAuth & Credentials
-	Logger.info(session, "session in dashboard");
+	// Logger.info(session, "session in dashboard");
+
+	// Logger.info(
+	// 	await helpers.getAuthenticatedUser(session?.userId),
+	// 	"auth user data"
+	// );
 
 	const loggedInStatus = session
 		? "Logged in user Information"
@@ -21,12 +26,7 @@ export default async function DashboardPage() {
 		);
 	}
 
-	const role = await prisma.user.findUnique({
-		where: {
-			id: session.user.email,
-		},
-	});
-
+	const authUser = await helpers.getAuthenticatedUser(session?.userId);
 	return (
 		<div className="relative mx-auto mt-12 flex max-w-screen-xl justify-center gap-2 p-4">
 			<div className="mr-auto w-1/2">
@@ -42,7 +42,7 @@ export default async function DashboardPage() {
 						fw={600}
 						variant="gradient"
 						gradient={{ from: "red", to: "orange", deg: 0 }}>
-						Name: {session?.user?.name}
+						Name: {authUser.name}
 					</Text>
 					<Text
 						className="mt-44"
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
 						fw={600}
 						variant="gradient"
 						gradient={{ from: "red", to: "orange", deg: 0 }}>
-						Email: {session?.user?.email}
+						Email: {authUser.email}
 					</Text>
 					<Text
 						className="mt-44"
@@ -58,7 +58,7 @@ export default async function DashboardPage() {
 						fw={600}
 						variant="gradient"
 						gradient={{ from: "red", to: "orange", deg: 0 }}>
-						Username: {session?.user?.username}
+						Username: {authUser.username}
 					</Text>
 					<Text
 						className="mt-44"
@@ -66,20 +66,17 @@ export default async function DashboardPage() {
 						fw={600}
 						variant="gradient"
 						gradient={{ from: "red", to: "orange", deg: 0 }}>
-						Role: {session?.user?.role}
-						{/* {role.roles.length > 0
-							? role.roles.join(",")
-							: "does not have any role yet"} */}
+						Role: {authUser.roles.join(", ")}
 					</Text>
 				</div>
 			</div>
 			<div className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full bg-gray-100">
 				<Image
 					src={
-						session?.user?.image ||
+						authUser.image ||
 						"https://placehold.co/600x400?text=Placeholder"
 					}
-					alt={session?.user?.name || "User"}
+					alt={authUser.name || "User"}
 					width={160}
 					height={160}
 					className="object-cover"

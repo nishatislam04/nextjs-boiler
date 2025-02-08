@@ -7,6 +7,7 @@ import {
 	Button,
 	FileInput,
 	LoadingOverlay,
+	MultiSelect,
 	PasswordInput,
 	TextInput,
 } from "@mantine/core";
@@ -20,9 +21,9 @@ import { notifications } from "@mantine/notifications";
 import ImageSvg from "@/components/svg/imageSvg";
 import Logger from "@/lib/logger";
 
-export default function CreateUserForm() {
+export default function CreateUserForm({ roles }) {
 	const [serverErrors, setServerErrors] = useState({});
-	const [visible, { toggle }] = useDisclosure(false);
+	const [visible, toggle] = useDisclosure(false);
 	const passwordIcon = (
 		<IconLock
 			size={18}
@@ -39,40 +40,57 @@ export default function CreateUserForm() {
 			username: "",
 			password: "",
 			image: null,
+			roles: roles.some((role) => role.label === "member")
+				? [roles.find((role) => role.label === "member")?.value]
+				: [],
 		},
 		validate: zodResolver(createUserSchema),
 	});
 
 	const handleSubmit = async (values) => {
-		toggle();
+		toggle.open();
 		setServerErrors({});
 
 		const response = await createUser(values);
 
-		if (!response.success) {
-			setServerErrors(response.errors);
-			toggle();
-			return;
-		} else {
-			toggle();
-			router.push("/user");
-		}
-	};
-
-	useEffect(() => {
-		if (serverErrors.general) {
+		if (!response.success && !response.showNotification) {
+			await setServerErrors(response.errors);
+			toggle.close();
+		} else if (!response.success && response.showNotification) {
 			notifications.show({
 				title: "Error",
-				message: serverErrors.general,
+				message: response.errors.general,
 				position: "top-right",
 				color: "red",
 				radius: "md",
 				autoClose: 5000,
 			});
 			setServerErrors({});
-			toggle();
+			toggle.close();
+
+			// setServerErrors(response.errors);
+			// toggle.close();
+			// return;
+		} else {
+			router.push("/user");
+			toggle.close();
 		}
-	}, [serverErrors, toggle]);
+	};
+
+	// useEffect(() => {
+	// 	if (serverErrors.general) {
+	// 		notifications.show({
+	// 			title: "Error",
+	// 			message: serverErrors.general,
+	// 			position: "top-right",
+	// 			color: "red",
+	// 			radius: "md",
+	// 			autoClose: 5000,
+	// 		});
+	// 		setServerErrors({});
+	// 		toggle.close();
+	// 	}
+	// }, [serverErrors, toggle]);
 
 	return (
 		<Box pos="relative">
@@ -84,9 +102,10 @@ export default function CreateUserForm() {
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
 				className="rounded-lg bg-gray-100 px-3 py-6">
-				<Toast />
+				{/* <Toast /> */}
 				<div className="flex w-full gap-4">
 					<TextInput
+						required
 						className="mb-4 w-1/2"
 						label="Name"
 						size="xs"
@@ -97,6 +116,7 @@ export default function CreateUserForm() {
 						error={form.errors.name || serverErrors.name}
 					/>
 					<TextInput
+						required
 						className="mb-4 w-1/2"
 						label="Email Address"
 						size="xs"
@@ -109,6 +129,7 @@ export default function CreateUserForm() {
 				</div>
 				<div className="flex w-full gap-4">
 					<TextInput
+						required
 						className="mb-4 w-1/2"
 						label="Userame"
 						size="xs"
@@ -119,6 +140,7 @@ export default function CreateUserForm() {
 						error={form.errors.username || serverErrors.username}
 					/>
 					<PasswordInput
+						required
 						className="mb-4 w-1/2"
 						leftSection={passwordIcon}
 						label="password"
@@ -145,6 +167,21 @@ export default function CreateUserForm() {
 						placeholder="Upload profile picture"
 						onChange={(file) => form.setFieldValue("image", file)}
 						error={form.errors.image}
+					/>
+
+					<MultiSelect
+						size="xs"
+						className="ml-auto w-60"
+						label="Roles"
+						placeholder="Pick Roles"
+						name="roles"
+						clearable
+						hidePickedOptions
+						checkIconPosition="right"
+						key={form.key("roles")}
+						{...form.getInputProps("roles")}
+						data={roles}
+						error={form.errors.roles || serverErrors.roles}
 					/>
 				</div>
 
