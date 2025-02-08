@@ -1,11 +1,14 @@
 "use client";
 
+import ImageSvg from "@/components/svg/imageSvg";
 import Toast from "@/components/ui/Toast";
+import Logger from "@/lib/logger";
 import { updatePost } from "@/lib/repository/actions/posts/update";
 import { updatePostSchema } from "@/lib/schema/post/update";
 import {
 	Box,
 	Button,
+	FileInput,
 	LoadingOverlay,
 	MultiSelect,
 	Select,
@@ -42,6 +45,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 			tags: selectedTags,
 			published: post.published ? "1" : "0",
 			categories: selectedCategories,
+			coverPhoto: null,
 		},
 		validate: zodResolver(updatePostSchema),
 	});
@@ -193,10 +197,28 @@ export default function PostEditPage({ post, categories, authorId }) {
 						}}
 					/>
 				</div>
-				<div className="ml-auto mt-2 flex w-1/2 gap-4">
+				<div className="ml-auto mt-2 flex w-full gap-4">
+					<FileInput
+						name="coverPhoto"
+						className="w-[30rem]"
+						size="xs"
+						clearable
+						description={
+							post.coverPhoto
+								? "you have already used cover picture for this post. choose a new one to update"
+								: "you still did not use a cover photo. choose a picture to setup cover photo"
+						}
+						leftSection={<ImageSvg />}
+						label="Cover Photo"
+						accept="image/png,image/jpeg,image/jpg"
+						placeholder="Upload post cover photo"
+						onChange={(file) => form.setFieldValue("coverPhoto", file)}
+						error={form.errors.image}
+					/>
+
 					<MultiSelect
 						size="xs"
-						className="w-full"
+						className="w-1/2 ml-auto mt-2"
 						label="Post Categories"
 						placeholder="Pick categories"
 						data={categories}
@@ -217,6 +239,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 					/>
 				</div>
 				<Button
+					className="mt-4"
 					loading={visible}
 					color="orange"
 					variant="filled"

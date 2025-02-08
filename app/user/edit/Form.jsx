@@ -1,11 +1,14 @@
 "use client";
+import ImageSvg from "@/components/svg/imageSvg";
 import Toast from "@/components/ui/Toast";
 import { updateUser } from "@/lib/repository/actions/users/update";
 import { updateUserSchema } from "@/lib/schema/user/update";
 import {
 	Box,
 	Button,
+	FileInput,
 	LoadingOverlay,
+	MultiSelect,
 	Textarea,
 	TextInput,
 } from "@mantine/core";
@@ -16,7 +19,7 @@ import { zodResolver } from "mantine-form-zod-resolver";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function EditUserForm({ user, authorId }) {
+export default function EditUserForm({ user, authorId, roles }) {
 	const [serverErrors, setServerErrors] = useState({});
 	const [visible, toggle] = useDisclosure(false);
 
@@ -31,6 +34,7 @@ export default function EditUserForm({ user, authorId }) {
 			bio: user.profile?.bio,
 			website: user.profile?.website,
 			location: user.profile?.location,
+			image: null,
 		},
 		validate: zodResolver(updateUserSchema),
 	});
@@ -138,6 +142,17 @@ export default function EditUserForm({ user, authorId }) {
 						{...form.getInputProps("website")}
 						error={form.errors.website || serverErrors.website}
 					/>
+					<TextInput
+						className="w-1/2"
+						label="User Location"
+						size="xs"
+						name="location"
+						placeholder="user location"
+						defaultValue={user.profile?.location}
+						key={form.key("location")}
+						{...form.getInputProps("location")}
+						error={form.errors.location || serverErrors.location}
+					/>
 				</div>
 				<Textarea
 					className="w-full"
@@ -153,19 +168,26 @@ export default function EditUserForm({ user, authorId }) {
 					error={form.errors.bio || serverErrors.bio}
 				/>
 				<div className="flex w-full gap-4">
-					<TextInput
-						className="mb-4 w-1/2"
-						label="User Location"
+					<FileInput
+						name="image"
+						className="w-[30rem] mt-2"
 						size="xs"
-						name="location"
-						placeholder="user location"
-						defaultValue={user.profile?.location}
-						key={form.key("location")}
-						{...form.getInputProps("location")}
-						error={form.errors.location || serverErrors.location}
+						clearable
+						description={
+							user.image
+								? "you have already setup your profile picture. choose a new one to update the existing picture"
+								: "you still did not setup your profile picture. choose a picture to setup your profile picture"
+						}
+						leftSection={<ImageSvg />}
+						label="Profile Picture"
+						accept="image/png,image/jpeg,image/jpg"
+						placeholder="Upload profile picture"
+						onChange={(file) => form.setFieldValue("image", file)}
+						error={form.errors.image}
 					/>
 				</div>
 				<Button
+					className="mt-4"
 					loading={visible}
 					color="orange"
 					variant="filled"
