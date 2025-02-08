@@ -10,8 +10,9 @@ import {
 	Container,
 	SimpleGrid,
 	Text,
+	Image,
 } from "@mantine/core";
-import Image from "next/image";
+// import Image from "next/image";
 import Pagination from "@/components/ui/Pagination";
 
 export default async function PostPage({ searchParams }) {
@@ -23,29 +24,31 @@ export default async function PostPage({ searchParams }) {
 	let totalPostCount = await fetchTotalCount();
 	const totalPages = Math.ceil(totalPostCount / POSTLISTINGS_PER_PAGE);
 
-	Logger.info(posts, "all posts");
-
 	const cards = posts.map((post) => (
 		<Card
 			key={post.id}
 			p="md"
 			radius="md"
 			component="a"
-			href="#"
+			href={`/post/singlePost?postId=${post.id}`}
 			className="transition-transform duration-150 ease-in-out transform hover:scale-[1.01] hover:shadow-md mb-5 bg-white border border-gray-200 rounded-lg">
 			{/* Cover Photo */}
 			<AspectRatio
 				ratio={1920 / 1080}
 				className="rounded-lg overflow-hidden">
 				<Image
-					alt="Cover Image"
+					alt="Cover Photo"
 					height={300}
 					width={400}
 					className="w-full h-full object-cover"
 					src={
 						post.coverPhoto ||
-						`https://picsum.photos/400/300?random=${post.id}`
+						"https://placehold.co/600x400?text=No+Cover+Photo+Found"
 					}
+					// src={
+					// 	post.coverPhoto ||
+					// 	`https://picsum.photos/400/300?random=${post.id}`
+					// }
 				/>
 			</AspectRatio>
 
