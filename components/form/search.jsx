@@ -2,8 +2,9 @@
 import SearchSvg from "@/components/svg/Search";
 import FormSelect from "./FormSelect";
 import { Button } from "@mantine/core";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IconRestore, IconSearch } from "@tabler/icons-react";
+import { useState } from "react";
 
 export default function Search({
 	selectPlaceHolder,
@@ -12,18 +13,49 @@ export default function Search({
 	queryPlaceholder = "search for resource",
 	defaultSelectedData,
 }) {
+	const [searchQuery, setSearchQuery] = useState(queryValue || "");
+	const [selectedOption, setSelectedOption] = useState(
+		defaultSelectedData
+	);
+
 	const router = useRouter();
+	const pathname = usePathname();
+
+	const handleSubmit = (event) => {
+		event.preventDefault(); // Prevent the form from reloading the page
+
+		// Build the query params based on the form inputs
+		const queryParams = new URLSearchParams();
+		queryParams.set("query", searchQuery);
+		queryParams.set("queryBy", selectedOption.value);
+
+		// Update the URL with the query params
+		router.push(`${pathname}?${queryParams.toString()}`, undefined, {
+			shallow: true,
+		});
+	};
+
+	function handleSelectedDataChange(_value, option) {
+		setSelectedOption(option);
+	}
+
 	function handleReset() {
+		setSearchQuery("");
+		setSelectedOption(defaultSelectedData);
 		router.replace("?");
 	}
+
 	return (
-		<form className="flex w-[35rem] justify-start">
+		<form
+			className="flex w-[35rem] justify-start"
+			onSubmit={handleSubmit}>
 			<div className="flex gap-2">
 				<FormSelect
 					name="queryBy"
 					selectPlaceHolder={selectPlaceHolder}
 					selectData={selectData}
-					defaultSelectedData={defaultSelectedData}
+					value={selectedOption.value} // Make sure this is a controlled component
+					onChange={handleSelectedDataChange} // Update selected option
 				/>
 
 				<div className="relative flex w-full items-center gap-1">
@@ -34,7 +66,8 @@ export default function Search({
 						name="query"
 						className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-1 ps-10 text-sm text-gray-900 focus:border-gray-500 focus:ring-1 focus:ring-gray-500 focus-visible:outline-0 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-gray-500 dark:focus:ring-gray-500"
 						placeholder={queryPlaceholder}
-						defaultValue={queryValue}
+						value={searchQuery} // Controlled input
+						onChange={(e) => setSearchQuery(e.target.value)} // Update search query
 					/>
 				</div>
 				<Button

@@ -7,22 +7,16 @@ export default function FormSelect({
 	selectPlaceHolder,
 	selectData,
 	name,
-	defaultSelectedData,
+	value,
+	onChange,
 }) {
-	const searchParams = useSearchParams();
-	const queryBy = searchParams.get("queryBy");
-	const defaultSelectValue = queryBy
-		? { value: queryBy, label: queryBy }
-		: defaultSelectedData;
-	const [value, setValue] = useState(defaultSelectValue);
-
 	return (
 		<Select
 			placeholder={selectPlaceHolder}
 			data={selectData}
 			name={name}
-			value={value ? value.value : null}
-			onChange={(_value, option) => setValue(option)}
+			value={value}
+			onChange={onChange}
 			clearable
 			allowDeselect
 			checkIconPosition="right"
