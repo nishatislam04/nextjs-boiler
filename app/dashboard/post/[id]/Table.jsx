@@ -7,6 +7,7 @@ import ViewSvg from "@/components/svg/View";
 import EditSvg from "@/components/svg/Edit";
 import { deletePost } from "@/lib/repository/actions/posts/delete";
 import Sort from "@/components/ui/Sort";
+import AuthorizedView from "@/components/ui/auth/AuthorizedView";
 
 export default function UserPostListingsTable({ posts, children }) {
 	const [selectedRows, setSelectedRows] = useState([]);
@@ -55,20 +56,25 @@ export default function UserPostListingsTable({ posts, children }) {
 							View
 						</Button>
 					</Link>
-					<Link href={`/dashboard/post/edit?id=${post.id}`}>
-						<Button
-							size="compact-xs"
-							color="orange">
-							<EditSvg />
-							Edit
-						</Button>
-					</Link>
-					<DeleteModal
-						id={post.id}
-						deleteAction={deletePost}
-						title="Delete Post"
-						message={`Are you sure you want to delete this post?`}
-					/>
+					<AuthorizedView pathname="/dashboard/post/edit">
+						<Link href={`/dashboard/post/edit?id=${post.id}`}>
+							<Button
+								size="compact-xs"
+								color="orange">
+								<EditSvg />
+								Edit
+							</Button>
+						</Link>
+					</AuthorizedView>
+
+					<AuthorizedView pathname="/dashboard/post/delete">
+						<DeleteModal
+							id={post.id}
+							deleteAction={deletePost}
+							title="Delete Post"
+							message={`Are you sure you want to delete this post?`}
+						/>
+					</AuthorizedView>
 				</div>
 			</Table.Td>
 		</Table.Tr>

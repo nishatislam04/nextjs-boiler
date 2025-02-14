@@ -11,6 +11,8 @@ import sessionHelper from "@/lib/sessionHelper";
 import NotAuthenticated from "@/components/ui/auth/NotAuthenticated";
 import NotAuthorized from "@/components/ui/auth/NotAuthorized";
 import { checkAuthAndRoles } from "@/lib/authHelper";
+import { SessionProvider } from "next-auth/react";
+import UserProvider from "@/context/AuthUserContext";
 
 export default async function UserPage({ searchParams }) {
 	const authUser = await checkAuthAndRoles("/dashboard/user");
@@ -35,19 +37,23 @@ export default async function UserPage({ searchParams }) {
 
 			<Suspense fallback={<Spinner />}>
 				<div className="min-h-[27rem]">
-					<UserListingsTable users={users}>
-						<TableHeaderAction
-							selectPlaceHolder="Search For"
-							selectData={[
-								{ value: "name", label: "Name" },
-								{ value: "email", label: "Email" },
-							]}
-							defaultSelectedData={{ value: "name", label: "Name" }}
-							queryValue={searchQuery}
-							queryPlaceholder="Search for user"
-							tableName="User"
-						/>
-					</UserListingsTable>
+					<SessionProvider>
+						<UserProvider>
+							<UserListingsTable users={users}>
+								<TableHeaderAction
+									selectPlaceHolder="Search For"
+									selectData={[
+										{ value: "name", label: "Name" },
+										{ value: "email", label: "Email" },
+									]}
+									defaultSelectedData={{ value: "name", label: "Name" }}
+									queryValue={searchQuery}
+									queryPlaceholder="Search for user"
+									tableName="User"
+								/>
+							</UserListingsTable>
+						</UserProvider>
+					</SessionProvider>
 				</div>
 			</Suspense>
 

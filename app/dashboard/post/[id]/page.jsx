@@ -15,12 +15,14 @@ import sessionHelper from "@/lib/sessionHelper";
 import NotAuthenticated from "@/components/ui/auth/NotAuthenticated";
 import NotAuthorized from "@/components/ui/auth/NotAuthorized";
 import { authenticateUser, checkAuthAndRoles } from "@/lib/authHelper";
+import { SessionProvider } from "next-auth/react";
+import UserProvider from "@/context/AuthUserContext";
 
 export default async function PostPage({ params, searchParams }) {
-	const authUser = await checkAuthAndRoles("dashboard");
+	const id = (await params).id;
+	const authUser = await checkAuthAndRoles(`/dashboard/post/${id}`);
 	if (React.isValidElement(authUser)) return authUser;
 
-	const id = (await params).id;
 	const itemPerPage = PER_PAGE;
 	const searchQuery = await searchParams;
 	const queryBy = searchQuery?.queryBy || "";
@@ -59,20 +61,27 @@ export default async function PostPage({ params, searchParams }) {
 				<Toast />
 				<Suspense fallback={<Spinner />}>
 					<div className="min-h-[27rem]">
-						<UserPostListingsTable posts={user.posts}>
-							<TableHeaderAction
-								selectPlaceHolder="Search For"
-								selectData={[
-									{ value: "title", label: "Title" },
-									{ value: "shortDescription", label: "Description" },
-								]}
-								defaultSelectedData={{ value: "title", label: "Title" }}
-								queryPlaceholder="Search for post title"
-								authorId={user.id}
-								queryValue={query}
-								tableName="post"
-							/>
-						</UserPostListingsTable>
+						<SessionProvider>
+							<UserProvider>
+								<UserPostListingsTable posts={user.posts}>
+									<TableHeaderAction
+										selectPlaceHolder="Search For"
+										selectData={[
+											{ value: "title", label: "Title" },
+											{ value: "shortDescription", label: "Description" },
+										]}
+										defaultSelectedData={{
+											value: "title",
+											label: "Title",
+										}}
+										queryPlaceholder="Search for post title"
+										authorId={user.id}
+										queryValue={query}
+										tableName="post"
+									/>
+								</UserPostListingsTable>
+							</UserProvider>
+						</SessionProvider>
 					</div>
 				</Suspense>
 				<Pagination

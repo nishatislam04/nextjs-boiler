@@ -1,15 +1,14 @@
-import Logger from "@/lib/logger";
+"use client";
+
 import { rolesConfig } from "@/lib/roleConfig";
-import sessionHelper from "@/lib/sessionHelper";
+import { useContext } from "react";
+import { UserContext } from "@/context/AuthUserContext";
 
-export default async function AuthorizedView({ pathname, children }) {
-	// Retrieve the authenticated user
-	const authUser = await sessionHelper.getAuthenticatedUser();
-
+export default function AuthorizedView({ pathname, children }) {
+	const { userData } = useContext(UserContext);
 	// Check if rolesConfig has the current pathname and get the required roles
 	const targetViewRoles = rolesConfig[pathname];
 
-	// If there are no roles for the given pathname, deny access
 	if (!targetViewRoles) {
 		return (
 			<p className="text-xs font-light text-gray-300 uppercase">
@@ -19,17 +18,11 @@ export default async function AuthorizedView({ pathname, children }) {
 	}
 
 	// Check if at least one role of the authenticated user is in the target roles
-	const isEligible = authUser.roles.some((role) =>
+	const isEligible = userData?.roles.some((role) =>
 		targetViewRoles.includes(role)
 	);
 
-	// If the user is authorized, render children or the protected content
 	if (!isEligible) return null;
-	// return (
-	// 	<p className="text-gray-300 uppercase font-light text-xs">
-	// 		You are not authorized to view this resource.
-	// 	</p>
-	// );
 
-	return { children };
+	return <>{children}</>;
 }
