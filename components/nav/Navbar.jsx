@@ -1,28 +1,24 @@
+"use client";
+import { NavLink } from "@mantine/core";
 import Link from "next/link";
-import Navlink from "./NavLink";
+import { usePathname } from "next/navigation";
+
 import SignIn from "../auth/SignIn";
-import { auth } from "@/app/auth";
 import { SignOut } from "../auth/SignOut";
-import Logger from "@/lib/logger";
 import AuthorizedView from "../ui/auth/AuthorizedView";
+import { useContext } from "react";
+import { UserContext } from "@/context/AuthUserContext";
 
-const links = [
-	{
-		label: "Dashboard",
-		href: "/dashboard",
-	},
-	{
-		label: "Home",
-		href: "/",
-	},
-	{
-		label: "Posts",
-		href: "/post",
-	},
-];
+const activeLinkStyle =
+	"!font-bold !text-blue-700 !underline !decoration-green-500 !underline-offset-4";
+const inactiveLinkStyle = "!text-black !dark:text-white";
+const generalLinkStyle =
+	"!block !rounded !px-1 !py-2 !md:bg-transparent !md:p-0";
 
-export default async function Navbar() {
-	const session = await auth();
+export default function Navbar() {
+	const { userData } = useContext(UserContext);
+
+	const pathname = usePathname();
 
 	return (
 		<nav className="bg-white border-gray-200 dark:bg-gray-900">
@@ -51,15 +47,46 @@ export default async function Navbar() {
 					className="hidden w-full md:block md:w-auto"
 					id="navbar-default">
 					<ul className="font-medium flex items-center flex-col p-2 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-						{links.map((link) => (
-							<Navlink
-								link={link}
-								key={link.label}
+						<AuthorizedView pathname="/dashboard/navLink">
+							<li>
+								<NavLink
+									href="/dashboard"
+									component={Link}
+									label="Dashboard"
+									className={`${
+										pathname === "/dashboard"
+											? activeLinkStyle
+											: inactiveLinkStyle
+									} ${generalLinkStyle}`}
+								/>
+							</li>
+						</AuthorizedView>
+
+						<li>
+							<NavLink
+								href="/"
+								component={Link}
+								label="Home"
+								className={`${
+									pathname === "/" ? activeLinkStyle : inactiveLinkStyle
+								} ${generalLinkStyle}`}
 							/>
-						))}
+						</li>
+						<li>
+							<NavLink
+								href="/post"
+								component={Link}
+								label="Posts"
+								className={`${
+									pathname === "/post"
+										? activeLinkStyle
+										: inactiveLinkStyle
+								} ${generalLinkStyle}`}
+							/>
+						</li>
 
 						{/* signin or signout */}
-						{session ? <SignOut /> : <SignIn />}
+						{userData ? <SignOut /> : <SignIn />}
 					</ul>
 				</div>
 			</div>

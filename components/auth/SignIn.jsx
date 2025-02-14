@@ -63,7 +63,8 @@ export default function SignIn() {
 				} else {
 					setLoading(false);
 					close();
-					router.refresh();
+					// router.refresh();
+					window.location.reload();
 				}
 			} else {
 				// register (signup)
@@ -80,7 +81,8 @@ export default function SignIn() {
 				} else {
 					setLoading(false);
 					close();
-					router.refresh();
+					// router.refresh();
+					window.location.reload();
 				}
 			}
 		} catch (error) {

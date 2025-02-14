@@ -10,6 +10,8 @@ import "@mantine/core/styles.css";
 import Navbar from "@/components/nav/Navbar";
 import { theme } from "../theme";
 import { ModalsProvider } from "@mantine/modals";
+import { SessionProvider } from "next-auth/react";
+import UserProvider from "@/context/AuthUserContext";
 
 export const metadata = {
 	title: "Go Crazy",
@@ -39,7 +41,11 @@ export default function RootLayout({ children }) {
 					<ModalsProvider>
 						<Notifications autoClose={3000} />
 
-						<Navbar />
+						<SessionProvider>
+							<UserProvider>
+								<Navbar />
+							</UserProvider>
+						</SessionProvider>
 						{children}
 					</ModalsProvider>
 				</MantineProvider>

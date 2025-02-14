@@ -6,6 +6,7 @@ const nextConfig = {
 	},
 
 	images: {
+		dangerouslyAllowSVG: true,
 		remotePatterns: [
 			{
 				protocol: "http",
@@ -19,12 +20,6 @@ const nextConfig = {
 			},
 			{
 				protocol: "https",
-				hostname: "xsgames.co",
-				port: "",
-				pathname: "/randomusers/avatar.php",
-			},
-			{
-				protocol: "https",
 				hostname: "placehold.co",
 				pathname: "/**",
 			},
@@ -32,11 +27,6 @@ const nextConfig = {
 				protocol: "https",
 				hostname: "images.unsplash.com", // Added Unsplash hostname
 				pathname: "/**", // Allow all paths from this hostname
-			},
-			{
-				protocol: "https",
-				hostname: "picsum.photos",
-				pathname: "/**",
 			},
 			{
 				protocol: "https", // Allow images from Google UserContent

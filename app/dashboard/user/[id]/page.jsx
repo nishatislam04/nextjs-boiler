@@ -23,10 +23,9 @@ async function fetchUser(id) {
 }
 
 export default async function ProfilePage({ params }) {
-	const authUser = await checkAuthAndRoles("dashboard");
-	if (React.isValidElement(authUser)) return authUser;
-
 	const id = (await params).id;
+	const authUser = await checkAuthAndRoles(`/dashboard/user/${id}`);
+	if (React.isValidElement(authUser)) return authUser;
 
 	if (!id) return notFound();
 	const user = await fetchUser(id);
@@ -48,7 +47,7 @@ export default async function ProfilePage({ params }) {
 							<Image
 								src={
 									user.image ||
-									"https://via.placeholder.com/150/0000FF/808080?text=Default+Avatar"
+									"https://placehold.co/600x400?text=Default+Profile+Picture"
 								}
 								alt="User Avatar"
 								className="rounded-lg object-cover"
