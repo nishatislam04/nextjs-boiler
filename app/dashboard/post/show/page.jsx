@@ -1,8 +1,13 @@
 import GoBack from "@/components/ui/GoBack";
 import { fetchPost } from "@/lib/repository/post/dal";
 import ShowPostForm from "./Form";
+import { checkAuthAndRoles } from "@/lib/authHelper";
+import React from "react";
 
 export default async function ShowPostPage({ searchParams }) {
+	const authUser = await checkAuthAndRoles("dashboard");
+	if (React.isValidElement(authUser)) return authUser;
+
 	const params = await searchParams;
 	const id = +params.id || "";
 
@@ -11,8 +16,9 @@ export default async function ShowPostPage({ searchParams }) {
 	return (
 		<div className="mx-auto mt-12 max-w-screen-xl p-4">
 			<div className="relative">
-				<GoBack />
-
+				<div className="mt-12 mb-8 absolute -top-24 right-2">
+					<GoBack />
+				</div>
 				<h1 className="mb-5 text-2xl font-bold">Show Post</h1>
 
 				<ShowPostForm post={post} />

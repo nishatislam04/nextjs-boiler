@@ -26,7 +26,7 @@ export default function Navlink({ link }) {
 					isActive
 						? "font-bold text-blue-700 underline decoration-green-500 underline-offset-4"
 						: "text-black dark:text-white"
-				} block rounded px-3 py-2 md:bg-transparent md:p-0`}
+				} block rounded px-1 py-2 md:bg-transparent md:p-0`}
 				aria-current={isActive ? "page" : undefined}
 			/>
 

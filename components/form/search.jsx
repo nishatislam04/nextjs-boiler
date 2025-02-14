@@ -3,12 +3,14 @@ import SearchSvg from "@/components/svg/Search";
 import FormSelect from "./FormSelect";
 import { Button } from "@mantine/core";
 import { useRouter } from "next/navigation";
+import { IconRestore, IconSearch } from "@tabler/icons-react";
 
 export default function Search({
 	selectPlaceHolder,
 	selectData,
 	queryValue,
 	queryPlaceholder = "search for resource",
+	defaultSelectedData,
 }) {
 	const router = useRouter();
 	function handleReset() {
@@ -21,6 +23,7 @@ export default function Search({
 					name="queryBy"
 					selectPlaceHolder={selectPlaceHolder}
 					selectData={selectData}
+					defaultSelectedData={defaultSelectedData}
 				/>
 
 				<div className="relative flex w-full items-center gap-1">
@@ -35,20 +38,20 @@ export default function Search({
 					/>
 				</div>
 				<Button
-					className="min-w-[5rem] opacity-50"
+					className="min-w-[3rem] opacity-50"
 					type="submit"
 					variant="filled"
 					color="gray"
 					size="xs">
-					search
+					<IconSearch />
 				</Button>
 				<Button
-					className="min-w-[5rem] opacity-50"
+					className="min-w-[3rem] opacity-50"
 					variant="filled"
 					color="pink"
 					onClick={handleReset}
 					size="xs">
-					reset
+					<IconRestore />
 				</Button>
 			</div>
 		</form>

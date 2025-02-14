@@ -64,7 +64,7 @@ export default function EditUserForm({ user, authorId, roles }) {
 			// toggle.close();
 			// return;
 		} else {
-			router.push("/user");
+			router.push("/dashboard/user");
 			toggle.close();
 		}
 	};

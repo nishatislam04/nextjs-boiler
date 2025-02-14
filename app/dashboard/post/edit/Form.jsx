@@ -74,7 +74,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 			// toggle.close();
 			// return;
 		} else {
-			router.push("/user");
+			router.push(`/dashboard/post/${authorId}`);
 			toggle.close();
 		}
 	};

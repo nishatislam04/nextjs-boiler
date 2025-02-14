@@ -1,23 +1,20 @@
 "use client";
 import { Select } from "@mantine/core";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function FormSelect({
 	selectPlaceHolder,
 	selectData,
 	name,
+	defaultSelectedData,
 }) {
 	const searchParams = useSearchParams();
 	const queryBy = searchParams.get("queryBy");
 	const defaultSelectValue = queryBy
 		? { value: queryBy, label: queryBy }
-		: null;
+		: defaultSelectedData;
 	const [value, setValue] = useState(defaultSelectValue);
-
-	useEffect(() => {
-		if (!queryBy) setValue(null);
-	}, [queryBy]);
 
 	return (
 		<Select

@@ -68,7 +68,7 @@ export default function PostCreateForm({ authorId, categories }) {
 			// toggle.close();
 			// return;
 		} else {
-			router.push("/user");
+			router.push(`/dashboard/post/${authorId}`);
 			toggle.close();
 		}
 	};

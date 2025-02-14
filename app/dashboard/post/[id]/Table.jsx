@@ -47,7 +47,7 @@ export default function UserPostListingsTable({ posts, children }) {
 			<Table.Td>{post.createdAt}</Table.Td>
 			<Table.Td>
 				<div style={{ display: "flex", gap: "8px" }}>
-					<Link href={`/post/show?id=${post.id}`}>
+					<Link href={`/dashboard/post/show?id=${post.id}`}>
 						<Button
 							size="compact-xs"
 							color="indigo">
@@ -55,7 +55,7 @@ export default function UserPostListingsTable({ posts, children }) {
 							View
 						</Button>
 					</Link>
-					<Link href={`/post/edit?id=${post.id}`}>
+					<Link href={`/dashboard/post/edit?id=${post.id}`}>
 						<Button
 							size="compact-xs"
 							color="orange">

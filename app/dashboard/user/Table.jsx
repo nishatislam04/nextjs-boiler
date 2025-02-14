@@ -7,6 +7,7 @@ import ViewSvg from "@/components/svg/View";
 import EditSvg from "@/components/svg/Edit";
 import { deleteUser } from "@/lib/repository/actions/users/delete";
 import Sort from "@/components/ui/Sort";
+import AuthorizedView from "@/components/ui/auth/AuthorizedView";
 
 export default function UserListingsTable({ users, children }) {
 	const [selectedRows, setSelectedRows] = useState([]);
@@ -46,20 +47,20 @@ export default function UserListingsTable({ users, children }) {
 			<Table.Td>
 				<Anchor
 					component={Link}
-					href={`/user/${user.id}`}>
+					href={`/dashboard/user/${user.id}`}>
 					Profile
 				</Anchor>
 			</Table.Td>
 			<Table.Td>
 				<Anchor
 					component={Link}
-					href={`/post/${user.id}`}>
+					href={`/dashboard/post/${user.id}`}>
 					Posts
 				</Anchor>
 			</Table.Td>
 			<Table.Td>
 				<div style={{ display: "flex", gap: "8px" }}>
-					<Link href={`/user/show?id=${user.id}`}>
+					<Link href={`/dashboard/user/show?id=${user.id}`}>
 						<Button
 							size="compact-xs"
 							color="indigo">
@@ -67,20 +68,24 @@ export default function UserListingsTable({ users, children }) {
 							View
 						</Button>
 					</Link>
-					<Link href={`/user/edit?id=${user.id}`}>
-						<Button
-							size="compact-xs"
-							color="orange">
-							<EditSvg />
-							Edit
-						</Button>
-					</Link>
-					<DeleteModal
-						id={user.id}
-						deleteAction={deleteUser}
-						title="Delete User"
-						message={`Are you sure you want to delete this User?`}
-					/>
+					<AuthorizedView pathname="/dashboard/user/edit">
+						<Link href={`/dashboard/user/edit?id=${user.id}`}>
+							<Button
+								size="compact-xs"
+								color="orange">
+								<EditSvg />
+								Edit
+							</Button>
+						</Link>
+					</AuthorizedView>
+					<AuthorizedView pathname="/dashboard/user/delete">
+						<DeleteModal
+							id={user.id}
+							deleteAction={deleteUser}
+							title="Delete User"
+							message={`Are you sure you want to delete this User?`}
+						/>
+					</AuthorizedView>
 				</div>
 			</Table.Td>
 		</Table.Tr>

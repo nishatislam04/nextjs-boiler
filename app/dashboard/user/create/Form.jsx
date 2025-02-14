@@ -72,7 +72,7 @@ export default function CreateUserForm({ roles }) {
 			// toggle.close();
 			// return;
 		} else {
-			router.push("/user");
+			router.push("/dashboard/user");
 			toggle.close();
 		}
 	};
@@ -140,14 +140,15 @@ export default function CreateUserForm({ roles }) {
 						error={form.errors.username || serverErrors.username}
 					/>
 					<PasswordInput
+						// todo: make the password visibility working
 						required
 						className="mb-4 w-1/2"
 						leftSection={passwordIcon}
 						label="password"
 						size="xs"
 						placeholder="Password"
-						visible={visible}
-						onVisibilityChange={toggle}
+						// visible={visible}
+						// onVisibilityChange={toggle}
 						name="password"
 						key={form.key("password")}
 						{...form.getInputProps("password")}
