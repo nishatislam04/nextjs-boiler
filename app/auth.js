@@ -226,6 +226,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 			return token;
 		},
+
+		async redirect({ url, baseUrl }) {
+			// ✅ Always redirect to the home page after successful sign-in
+			return baseUrl + "/";
+		},
 	},
 
 	session: {

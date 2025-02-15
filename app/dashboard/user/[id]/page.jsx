@@ -6,21 +6,23 @@ import UserShowForm from "../show/Form";
 import { AspectRatio } from "@mantine/core";
 import { checkAuthAndRoles } from "@/lib/authHelper";
 import React from "react";
+import { fetchUserProfile } from "@/lib/repository/user/dal";
+import Logger from "@/lib/logger";
 
-async function fetchUser(id) {
-	return prisma.user.findUnique({
-		where: {
-			id: id,
-		},
-		include: {
-			profile: true,
-			account: true, // Use `accounts` as defined in the schema
-			_count: {
-				select: { posts: true },
-			},
-		},
-	});
-}
+// async function fetchUser(id) {
+// 	return prisma.user.findUnique({
+// 		where: {
+// 			id: id,
+// 		},
+// 		include: {
+// 			profile: true,
+// 			account: true, // Use `accounts` as defined in the schema
+// 			_count: {
+// 				select: { posts: true },
+// 			},
+// 		},
+// 	});
+// }
 
 export default async function ProfilePage({ params }) {
 	const id = (await params).id;
@@ -28,7 +30,7 @@ export default async function ProfilePage({ params }) {
 	if (React.isValidElement(authUser)) return authUser;
 
 	if (!id) return notFound();
-	const user = await fetchUser(id);
+	const user = await fetchUserProfile(id);
 
 	if (!user) return notFound();
 

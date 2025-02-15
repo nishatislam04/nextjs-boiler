@@ -15,7 +15,7 @@ export default async function DashboardPage() {
 	const authUser = await checkAuthAndRoles("/dashboard");
 	if (React.isValidElement(authUser)) return authUser;
 
-	Logger.info(authUser, "auth from dash");
+	// Logger.info(authUser, "auth from dash");
 
 	return (
 		<div className="relative mx-auto mt-12 flex min-h-[100vh-75px] flex-col max-w-screen-xl justify-center gap-2 p-4">

@@ -5,7 +5,7 @@ import { fetchActiveCategories } from "@/lib/repository/category/dal";
 import React from "react";
 
 export default async function PostCreatePage({ searchParams }) {
-	const authUser = await checkAuthAndRoles("dashboard");
+	const authUser = await checkAuthAndRoles("/dashboard/post/create");
 	if (React.isValidElement(authUser)) return authUser;
 
 	const authorId = (await searchParams).authorId;

@@ -15,7 +15,6 @@ import NextImage from "next/image";
 export default async function SinglePostPage({ searchParams }) {
 	const params = await searchParams;
 	const post = await fetchPost(+params.postId);
-	Logger.info(post, "post");
 	return (
 		<Container
 			size="lg"

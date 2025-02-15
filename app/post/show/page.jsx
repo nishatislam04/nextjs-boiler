@@ -5,7 +5,7 @@ import { checkAuthAndRoles } from "@/lib/authHelper";
 import React from "react";
 
 export default async function ShowPostPage({ searchParams }) {
-	const authUser = await checkAuthAndRoles("/dashboard/post/show");
+	const authUser = await checkAuthAndRoles("/private/post/show");
 	if (React.isValidElement(authUser)) return authUser;
 
 	const params = await searchParams;

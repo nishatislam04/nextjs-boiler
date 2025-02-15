@@ -63,13 +63,15 @@ export default async function Home() {
 									color="dimmed">
 									View all your posts here
 								</Text>
-								<Button
-									variant="light"
-									color="green"
-									fullWidth
-									mt="md">
-									View Posts
-								</Button>
+								<Link href={`/post?id=${authUser.id}`}>
+									<Button
+										variant="light"
+										color="green"
+										fullWidth
+										mt="md">
+										View Posts
+									</Button>
+								</Link>
 							</Card>
 						</div>
 

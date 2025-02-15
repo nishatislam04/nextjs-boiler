@@ -5,7 +5,11 @@ import { useContext } from "react";
 import { UserContext } from "@/context/AuthUserContext";
 
 export default function AuthorizedView({ pathname, children }) {
-	const { userData } = useContext(UserContext);
+	const { userData, loading } = useContext(UserContext);
+
+	// Show a temporary loading state until data is available
+	if (loading) return null;
+
 	// Check if rolesConfig has the current pathname and get the required roles
 	const targetViewRoles = rolesConfig[pathname];
 
@@ -18,7 +22,7 @@ export default function AuthorizedView({ pathname, children }) {
 	}
 
 	// Check if at least one role of the authenticated user is in the target roles
-	const isEligible = userData?.roles.some((role) =>
+	const isEligible = userData?.roles?.some((role) =>
 		targetViewRoles.includes(role)
 	);
 

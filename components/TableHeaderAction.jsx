@@ -24,14 +24,24 @@ export default function TableHeaderAction({
 				defaultSelectedData={defaultSelectedData}
 			/>
 			<AuthorizedView
-				pathname={`/dashboard/${tableName.toLowerCase()}/create`}>
+				// pathname={`/dashboard/${tableName.toLowerCase()}/create`}>
+				pathname={
+					tableName.toLowerCase() === "user"
+						? `/dashboard/user/create`
+						: `/${tableName.toLowerCase()}/create`
+				}>
 				<div className="ml-auto">
 					<Anchor
 						variant="filled"
 						color="indigo"
 						component={Link}
 						className=""
-						href={`/dashboard/${tableName.toLowerCase()}/create?authorId=${authorId}`}
+						// href={`/dashboard/${tableName.toLowerCase()}/create?authorId=${authorId}`}
+						href={
+							tableName.toLowerCase() === "user"
+								? `/dashboard/user/create`
+								: `/post/create`
+						}
 						prefetch>
 						<span className="flex gap-0">
 							<Button

@@ -74,7 +74,7 @@ export default function Navbar() {
 						</li>
 						<li>
 							<NavLink
-								href="/post"
+								href="/post/publicPost"
 								component={Link}
 								label="Posts"
 								className={`${
