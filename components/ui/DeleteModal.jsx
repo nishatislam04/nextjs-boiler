@@ -12,10 +12,10 @@ export default function DeleteModal({ id, deleteAction, title, message }) {
 			children: <Text size="sm">{message}</Text>,
 			labels: { confirm: "Yes, Proceed", cancel: "No, Cancel" },
 			confirmProps: { color: "red" },
-			overlayProps: {
-				backgroundOpacity: 0.55,
-				blur: 3,
-			},
+			// overlayProps: {
+			// 	backgroundOpacity: 0.55,
+			// 	blur: 3,
+			// },
 			onCancel: () =>
 				notifications.show({
 					withBorder: true,

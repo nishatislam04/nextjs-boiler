@@ -8,8 +8,7 @@ export default function Toast() {
 	useEffect(() => {
 		const showFlashMessage = async () => {
 			const flash = await flashMessage();
-
-			console.log(flash);
+			if (!flash) return;
 
 			if (flash && flash.level === "success") {
 				notifications.show({

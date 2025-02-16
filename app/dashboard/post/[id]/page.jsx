@@ -12,8 +12,6 @@ import {
 import helpers from "@/lib/helpers";
 import UserPostListingsTable from "./Table";
 import sessionHelper from "@/lib/sessionHelper";
-import NotAuthenticated from "@/components/ui/auth/NotAuthenticated";
-import NotAuthorized from "@/components/ui/auth/NotAuthorized";
 import { authenticateUser, checkAuthAndRoles } from "@/lib/authHelper";
 import { SessionProvider } from "next-auth/react";
 import UserProvider from "@/context/AuthUserContext";

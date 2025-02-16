@@ -9,24 +9,9 @@ import React from "react";
 import { fetchUserProfile } from "@/lib/repository/user/dal";
 import Logger from "@/lib/logger";
 
-// async function fetchUser(id) {
-// 	return prisma.user.findUnique({
-// 		where: {
-// 			id: id,
-// 		},
-// 		include: {
-// 			profile: true,
-// 			account: true, // Use `accounts` as defined in the schema
-// 			_count: {
-// 				select: { posts: true },
-// 			},
-// 		},
-// 	});
-// }
-
 export default async function ProfilePage({ params }) {
 	const id = (await params).id;
-	const authUser = await checkAuthAndRoles(`/dashboard/user/${id}`);
+	const authUser = await checkAuthAndRoles(`/user/show/${id}`);
 	if (React.isValidElement(authUser)) return authUser;
 
 	if (!id) return notFound();

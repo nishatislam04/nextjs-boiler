@@ -21,8 +21,8 @@ export default function Navbar() {
 	const pathname = usePathname();
 
 	return (
-		<nav className="bg-white border-gray-200 dark:bg-gray-900">
-			<div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+		<nav className="w-full bg-white border-gray-200 dark:bg-gray-900 h-[var(--nav-height)]">
+			<div className="flex flex-wrap items-center justify-between  p-4">
 				<Link
 					href="/"
 					className="flex items-center space-x-3 rtl:space-x-reverse">

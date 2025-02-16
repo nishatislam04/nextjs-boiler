@@ -88,7 +88,7 @@ export default async function PublicPostPage({ searchParams }) {
 
 			<div className="py-8">
 				<Pagination
-					uri="post"
+					uri="publicPost"
 					totalPages={totalPages}
 					currentPage={currentPage}
 				/>

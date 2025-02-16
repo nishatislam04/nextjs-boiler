@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
 					content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
 				/>
 			</head>
-			<body>
+			<body className="[--nav-height:70px] mx-auto max-w-screen-xl">
 				<MantineProvider
 					withGlobalStyles
 					withNormalizeCSS

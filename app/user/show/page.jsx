@@ -1,9 +1,8 @@
 import GoBack from "@/components/ui/GoBack";
 import UserShowForm from "./Form";
-import { fetchUser, fetchUserProfile } from "@/lib/repository/user/dal";
+import { fetchUser } from "@/lib/repository/user/dal";
 import { checkAuthAndRoles } from "@/lib/authHelper";
 import React from "react";
-import Logger from "@/lib/logger";
 
 export default async function UserShowPage({ searchParams }) {
 	const authUser = await checkAuthAndRoles("/dashboard/user/show");
@@ -11,9 +10,9 @@ export default async function UserShowPage({ searchParams }) {
 
 	const params = await searchParams;
 	const id = params.id || "";
-	const user = await fetchUserProfile(id);
+	const user = await fetchUser(id);
 
-	Logger.info(user, "show user");
+	console.log("show-user", user);
 
 	return (
 		<div className="mx-auto mt-12 max-w-screen-xl p-4">

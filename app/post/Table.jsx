@@ -56,25 +56,25 @@ export default function UserPostListingsTable({ posts, children }) {
 							View
 						</Button>
 					</Link>
-					<AuthorizedView pathname="/private/post/edit">
-						<Link href={`/post/edit?id=${post.id}`}>
-							<Button
-								size="compact-xs"
-								color="orange">
-								<EditSvg />
-								Edit
-							</Button>
-						</Link>
-					</AuthorizedView>
+					{/* <AuthorizedView pathname="/private/post/edit"> */}
+					<Link href={`/post/edit?id=${post.id}`}>
+						<Button
+							size="compact-xs"
+							color="orange">
+							<EditSvg />
+							Edit
+						</Button>
+					</Link>
+					{/* </AuthorizedView> */}
 
-					<AuthorizedView pathname="/private/post/delete">
-						<DeleteModal
-							id={post.id}
-							deleteAction={deletePost}
-							title="Delete Post"
-							message={`Are you sure you want to delete this post?`}
-						/>
-					</AuthorizedView>
+					{/* <AuthorizedView pathname="/private/post/delete"> */}
+					<DeleteModal
+						id={post.id}
+						deleteAction={deletePost}
+						title="Delete Post"
+						message={`Are you sure you want to delete this post?`}
+					/>
+					{/* </AuthorizedView> */}
 				</div>
 			</Table.Td>
 		</Table.Tr>

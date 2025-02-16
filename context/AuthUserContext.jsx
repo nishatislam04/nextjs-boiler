@@ -1,4 +1,6 @@
 "use client";
+
+import Logger from "@/lib/logger";
 import { useSession } from "next-auth/react";
 import React, { createContext, useState, useEffect } from "react";
 
@@ -6,57 +8,39 @@ import React, { createContext, useState, useEffect } from "react";
 export const UserContext = createContext(null);
 
 export default function UserProvider({ children }) {
-	// Always call useSession() unconditionally
-	const { data: session, status } = useSession(); // Get session status (loading, authenticated, etc.)
+	const { data: session } = useSession(null);
 
-	// Retrieve cached user data from localStorage if available
-	const cachedUser =
-		typeof window !== "undefined"
-			? localStorage.getItem("authUserData")
-			: null;
+	// Initialize userData state as null (don't try to access localStorage immediately)
+	const [userData, setUserData] = useState(null);
 
-	// Initialize userData state with cached user data or null if not available
-	const [userData, setUserData] = useState(
-		cachedUser ? JSON.parse(cachedUser) : null
-	);
-	const [loading, setLoading] = useState(cachedUser ? false : true); // Set loading to false if data is cached
-
+	// Read from localStorage inside useEffect (only runs on the client)
 	useEffect(() => {
-		// If cached data exists, no need to fetch again
+		if (typeof window === "undefined") return; // Ensure it's running on the client
+
+		const cachedUser = localStorage.getItem("authUserData");
+
 		if (cachedUser) {
-			setLoading(false);
-			return;
-		}
+			setUserData(JSON.parse(cachedUser));
+		} else if (session?.userId) {
+			const fetchUserData = async () => {
+				try {
+					const response = await fetch(`/api/user/${session.userId}`);
+					const data = await response.json();
+					setUserData(data);
 
-		// Only fetch user data if session is available and cached data doesn't exist
-		const fetchUserData = async () => {
-			if (!session?.userId) {
-				setLoading(false);
-				return;
-			}
+					localStorage.setItem("authUserData", JSON.stringify(data));
+				} catch (error) {
+					console.error("Error fetching user data", error);
+				}
+			};
 
-			try {
-				const response = await fetch(`/api/user/${session.userId}`);
-				const data = await response.json();
-				setUserData(data);
-
-				// Store user data in localStorage for future requests
-				localStorage.setItem("authUserData", JSON.stringify(data));
-			} catch (error) {
-				console.error("Error fetching user data", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		// Fetch user data only if session is available and cached data is not available
-		if (!cachedUser && session?.userId) {
+			Logger.info(null, "calling fetch user");
 			fetchUserData();
 		}
-	}, [session, cachedUser, status]); // Only refetch if session changes
+	}, [session]); // Only re-run when `session` changes
 
 	return (
-		<UserContext.Provider value={{ userData, setUserData, loading }}>
+		<UserContext.Provider value={{ userData, setUserData }}>
 			{children}
 		</UserContext.Provider>
 	);

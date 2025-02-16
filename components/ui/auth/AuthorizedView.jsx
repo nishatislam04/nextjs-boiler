@@ -5,10 +5,7 @@ import { useContext } from "react";
 import { UserContext } from "@/context/AuthUserContext";
 
 export default function AuthorizedView({ pathname, children }) {
-	const { userData, loading } = useContext(UserContext);
-
-	// Show a temporary loading state until data is available
-	if (loading) return null;
+	const { userData } = useContext(UserContext);
 
 	// Check if rolesConfig has the current pathname and get the required roles
 	const targetViewRoles = rolesConfig[pathname];

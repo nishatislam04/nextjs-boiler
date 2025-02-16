@@ -9,6 +9,7 @@ import {
 	IconArrowRight,
 	IconGripHorizontal,
 } from "@tabler/icons-react";
+import Logger from "@/lib/logger";
 
 export default function MantinePagination({
 	uri,

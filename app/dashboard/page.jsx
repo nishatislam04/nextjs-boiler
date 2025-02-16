@@ -1,14 +1,10 @@
-import { NavLink, Text, Title } from "@mantine/core";
+import { Button, Card, NavLink, Text, Title } from "@mantine/core";
 import Image from "next/image";
-import sessionHelper from "@/lib/sessionHelper";
-import NotAuthenticated from "@/components/ui/auth/NotAuthenticated";
-import NotAuthorized from "@/components/ui/auth/NotAuthorized";
 import { checkAuthAndRoles } from "@/lib/authHelper";
 import Logger from "@/lib/logger";
 import React from "react";
 import { IconUser } from "@tabler/icons-react";
 import Link from "next/link";
-import { headers } from "next/headers";
 
 export default async function DashboardPage() {
 	// Logger.info(req, "req from dash");
@@ -74,16 +70,19 @@ export default async function DashboardPage() {
 					/>
 				</div>
 			</div>
-			<div className="w-28 bg-gray-300 mt-28 text-black hover:bg-gray-400 rounded-md transition-all">
-				<NavLink
-					href="/dashboard/user"
-					component={Link}
-					label="Users"
-					leftSection={<IconUser />}
+			<Card
+				component={Link}
+				href="/dashboard/user"
+				className="w-44 bg-gray-300 mt-28 text-black rounded-md transition-all cursor-pointer"
+				shadow="sm"
+				withBorder>
+				<Button
+					leftSection={<IconUser size={18} />}
 					variant="subtle"
-					className="flex items-center p-2 w-full "
-				/>
-			</div>
+					className="w-full py-1 px-2 text-black">
+					Users
+				</Button>
+			</Card>
 		</div>
 	);
 }

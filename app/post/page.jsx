@@ -11,9 +11,6 @@ import {
 } from "@/lib/repository/user/dal";
 import helpers from "@/lib/helpers";
 import UserPostListingsTable from "./Table";
-import sessionHelper from "@/lib/sessionHelper";
-import NotAuthenticated from "@/components/ui/auth/NotAuthenticated";
-import NotAuthorized from "@/components/ui/auth/NotAuthorized";
 import { authenticateUser, checkAuthAndRoles } from "@/lib/authHelper";
 import { SessionProvider } from "next-auth/react";
 import UserProvider from "@/context/AuthUserContext";
@@ -57,7 +54,7 @@ export default async function UserPostPage({ searchParams }) {
 			<div className="relative">
 				<div className="mt-12 mb-8 absolute -top-24 right-2">
 					<GoBack />
-				</div>{" "}
+				</div>
 				<Toast />
 				<Suspense fallback={<Spinner />}>
 					<div className="min-h-[27rem]">

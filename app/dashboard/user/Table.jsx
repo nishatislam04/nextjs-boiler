@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Anchor, Button, Table, Checkbox } from "@mantine/core/";
 import Link from "next/link";
 import DeleteModal from "@/components/ui/DeleteModal";
@@ -8,6 +8,7 @@ import EditSvg from "@/components/svg/Edit";
 import { deleteUser } from "@/lib/repository/actions/users/delete";
 import Sort from "@/components/ui/Sort";
 import AuthorizedView from "@/components/ui/auth/AuthorizedView";
+import Spinner from "@/components/ui/Spinner";
 
 export default function UserListingsTable({ users, children }) {
 	const [selectedRows, setSelectedRows] = useState([]);
