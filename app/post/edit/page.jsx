@@ -22,19 +22,21 @@ export default async function EditPostPage({ searchParams }) {
 	const post = await fetchPost(id);
 
 	return (
-		<div className="relative mx-auto mt-12 max-w-screen-xl p-4">
-			<div className="relative">
-				<div className="mt-12 mb-8 absolute -top-24 right-2">
-					<GoBack />
-				</div>
-				<h1 className="mb-5 text-2xl font-bold">Edit Post</h1>
+		<main className="relative flex flex-col items-stretch justify-center min-h-[calc(100vh-var(--nav-height))] mx-auto max-w-screen-xl">
+			{/* go back */}
+			<section className="absolute top-0 right-0">
+				<GoBack />
+			</section>
+			<section className="h-full">
+				<h1 className="mb-2 text-2xl font-bold">Edit Post</h1>
 
 				<PostEditPage
 					post={post}
 					categories={categories}
-					authorId={id}
+					authorId={authUser.id}
+					postId={id}
 				/>
-			</div>
-		</div>
+			</section>
+		</main>
 	);
 }

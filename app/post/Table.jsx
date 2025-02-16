@@ -28,7 +28,6 @@ export default function UserPostListingsTable({ posts, children }) {
 					? "var(--mantine-color-blue-light)"
 					: undefined
 			}>
-			{/* Row Checkbox */}
 			<Table.Td>
 				<Checkbox
 					aria-label={`Select row for post ${post.name}`}
@@ -56,25 +55,25 @@ export default function UserPostListingsTable({ posts, children }) {
 							View
 						</Button>
 					</Link>
-					{/* <AuthorizedView pathname="/private/post/edit"> */}
-					<Link href={`/post/edit?id=${post.id}`}>
-						<Button
-							size="compact-xs"
-							color="orange">
-							<EditSvg />
-							Edit
-						</Button>
-					</Link>
-					{/* </AuthorizedView> */}
+					<AuthorizedView pathname="/private/post/edit">
+						<Link href={`/post/edit?id=${post.id}`}>
+							<Button
+								size="compact-xs"
+								color="orange">
+								<EditSvg />
+								Edit
+							</Button>
+						</Link>
+					</AuthorizedView>
 
-					{/* <AuthorizedView pathname="/private/post/delete"> */}
-					<DeleteModal
-						id={post.id}
-						deleteAction={deletePost}
-						title="Delete Post"
-						message={`Are you sure you want to delete this post?`}
-					/>
-					{/* </AuthorizedView> */}
+					<AuthorizedView pathname="/private/post/delete">
+						<DeleteModal
+							id={post.id}
+							deleteAction={deletePost}
+							title="Delete Post"
+							message={`Are you sure you want to delete this post?`}
+						/>
+					</AuthorizedView>
 				</div>
 			</Table.Td>
 		</Table.Tr>
@@ -83,13 +82,16 @@ export default function UserPostListingsTable({ posts, children }) {
 	return (
 		<>
 			{children}
-			<Table.ScrollContainer minWidth={800}>
+			<Table.ScrollContainer
+				minWidth={1000}
+				className="min-w-full">
 				<Table
 					stickyHeader
 					verticalSpacing="md"
 					striped
 					highlightOnHover
 					withTableBorder
+					className="min-w-full"
 					withColumnBorders>
 					<Table.Thead>
 						<Table.Tr>
@@ -127,7 +129,7 @@ export default function UserPostListingsTable({ posts, children }) {
 							<Table.Tr key="no-post-found">
 								<Table.Td
 									colSpan={6}
-									className="text-center text-gray-500 py-4 text-xl">
+									className="py-4 text-xl text-center text-gray-500">
 									No Post found
 								</Table.Td>
 							</Table.Tr>

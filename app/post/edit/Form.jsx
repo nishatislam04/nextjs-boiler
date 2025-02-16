@@ -1,8 +1,6 @@
 "use client";
 
 import ImageSvg from "@/components/svg/imageSvg";
-import Toast from "@/components/ui/Toast";
-import Logger from "@/lib/logger";
 import { updatePost } from "@/lib/repository/actions/posts/update";
 import { updatePostSchema } from "@/lib/schema/post/update";
 import {
@@ -23,7 +21,12 @@ import { zodResolver } from "mantine-form-zod-resolver";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function PostEditPage({ post, categories, authorId }) {
+export default function PostEditPage({
+	post,
+	categories,
+	authorId,
+	postId,
+}) {
 	const [serverErrors, setServerErrors] = useState({});
 	const [visible, toggle] = useDisclosure(false);
 	const [publishStatus, setPublishStatus] = useState("");
@@ -54,7 +57,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 		toggle.open();
 		setServerErrors({});
 
-		const response = await updatePost(authorId, values);
+		const response = await updatePost(postId, values);
 
 		if (!response.success && !response.showNotification) {
 			await setServerErrors(response.errors);
@@ -70,29 +73,11 @@ export default function PostEditPage({ post, categories, authorId }) {
 			});
 			setServerErrors({});
 			toggle.close();
-			// setServerErrors(response.errors);
-			// toggle.close();
-			// return;
 		} else {
-			router.push(`/dashboard/post/${authorId}`);
+			router.push(`/post?id=${authorId}`);
 			toggle.close();
 		}
 	};
-
-	// useEffect(() => {
-	// 	if (serverErrors.general) {
-	// 		notifications.show({
-	// 			title: "Error",
-	// 			message: serverErrors.general,
-	// 			position: "top-right",
-	// 			color: "red",
-	// 			radius: "md",
-	// 			autoClose: 5000,
-	// 		});
-	// 		setServerErrors({});
-	// 		toggle.close();
-	// 	}
-	// }, [serverErrors, toggle]);
 
 	useEffect(() => {
 		return post.published
@@ -109,11 +94,10 @@ export default function PostEditPage({ post, categories, authorId }) {
 			/>
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
-				className="rounded-lg bg-gray-100 px-3 py-6">
-				{/* <Toast /> */}
-				<div className="flex w-full gap-4">
+				className="px-6 py-4 bg-white border border-gray-200 shadow-md rounded-2xl">
+				<section className="flex w-full gap-4">
 					<TextInput
-						className="mb-4 w-1/2"
+						className="w-1/2 mb-4"
 						name="title"
 						label="Title"
 						withAsterisk
@@ -127,7 +111,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 					/>
 					<TextInput
 						size="xs"
-						className="mb-4 w-1/2"
+						className="w-1/2 mb-4"
 						label="Short Description"
 						name="shortDescription"
 						placeholder="Post short description"
@@ -138,8 +122,8 @@ export default function PostEditPage({ post, categories, authorId }) {
 						}
 						defaultValue={post.shortDescription}
 					/>
-				</div>
-				<div className="flex w-full justify-stretch gap-4">
+				</section>
+				<section className="flex w-full gap-4 justify-stretch">
 					<Textarea
 						className="w-full"
 						label="Description"
@@ -153,9 +137,9 @@ export default function PostEditPage({ post, categories, authorId }) {
 						error={form.errors.description || serverErrors.description}
 						defaultValue={post.description}
 					/>
-				</div>
+				</section>
 
-				<div className="mt-2 flex w-full gap-4">
+				<section className="flex w-full gap-4 mt-2">
 					<TagsInput
 						size="xs"
 						clearable
@@ -182,7 +166,6 @@ export default function PostEditPage({ post, categories, authorId }) {
 							{ value: "0", label: "Don't Publish yet" },
 						]}
 						name="published"
-						clearable
 						allowDeselect
 						checkIconPosition="right"
 						size="xs"
@@ -196,8 +179,8 @@ export default function PostEditPage({ post, categories, authorId }) {
 							form.setValues({ published: option.value });
 						}}
 					/>
-				</div>
-				<div className="ml-auto mt-2 flex w-full gap-4">
+				</section>
+				<section className="flex w-full gap-4 mt-2 ml-auto">
 					<FileInput
 						name="coverPhoto"
 						className="w-[30rem]"
@@ -218,7 +201,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 
 					<MultiSelect
 						size="xs"
-						className="w-1/2 ml-auto mt-2"
+						className="w-1/2 mt-2 ml-auto"
 						label="Post Categories"
 						placeholder="Pick categories"
 						data={categories}
@@ -237,14 +220,14 @@ export default function PostEditPage({ post, categories, authorId }) {
 							form.setValues({ categories: value });
 						}}
 					/>
-				</div>
+				</section>
 				<Button
-					className="mt-4"
 					loading={visible}
 					color="orange"
 					variant="filled"
 					radius="sm"
 					size="xs"
+					className="!mt-5"
 					type="submit">
 					Update
 				</Button>

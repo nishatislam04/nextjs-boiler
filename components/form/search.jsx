@@ -24,26 +24,48 @@ export default function Search({
 	const handleSubmit = (event) => {
 		event.preventDefault(); // Prevent the form from reloading the page
 
-		// Build the query params based on the form inputs
-		const queryParams = new URLSearchParams();
-		queryParams.set("query", searchQuery);
-		queryParams.set("queryBy", selectedOption.value);
+		// Get the current query parameters (preserving all existing params)
+		const url = new URL(window.location.href); // Get the current URL
+		const params = new URLSearchParams(url.search); // Get the query params
 
-		// Update the URL with the query params
-		router.push(`${pathname}?${queryParams.toString()}`, undefined, {
-			shallow: true,
-		});
+		// Set the 'page' query parameter to 1 (overwriting the current page value or adding it if missing)
+		params.set("page", 1);
+
+		// Update the query parameters with the form data (search query and selected option)
+		params.set("query", searchQuery);
+		params.set("queryBy", selectedOption.value);
+
+		// The new URL with all existing query params plus the new ones
+		const updatedUrl = `${url.pathname}?${params.toString()}`;
+
+		// Push the updated URL to the router, preserving the page state
+		router.push(updatedUrl, undefined, { shallow: true });
 	};
 
 	function handleSelectedDataChange(_value, option) {
 		setSelectedOption(option);
 	}
 
-	function handleReset() {
+	const handleReset = () => {
+		// Get the current URL and query parameters
+		const url = new URL(window.location.href);
+		const params = new URLSearchParams(url.search);
+
+		// Reset query, queryBy, and page query params
+		params.set("query", "");
+		params.set("queryBy", defaultSelectedData.value); // Reset queryBy to the default selected option
+		params.set("page", 1); // Reset page to 1
+
+		// Construct the updated URL with the modified query params
+		const updatedUrl = `${url.pathname}?${params.toString()}`;
+
+		// Use router.replace to update the URL without adding a new entry in the history
+		router.replace(updatedUrl, undefined, { shallow: true });
+
+		// Optionally reset the state in the component
 		setSearchQuery("");
 		setSelectedOption(defaultSelectedData);
-		router.replace("?");
-	}
+	};
 
 	return (
 		<form

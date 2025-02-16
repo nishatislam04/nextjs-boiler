@@ -1,4 +1,3 @@
-import Logger from "@/lib/logger";
 import {
 	fetchPostListings,
 	fetchTotalCount,
@@ -8,13 +7,14 @@ import {
 	AspectRatio,
 	Card,
 	Container,
+	Image,
 	SimpleGrid,
 	Text,
-	Image,
 } from "@mantine/core";
 // import Image from "next/image";
 import Pagination from "@/components/ui/Pagination";
 import Link from "next/link";
+import Logger from "@/lib/logger";
 
 export default async function PublicPostPage({ searchParams }) {
 	const params = await searchParams;
@@ -24,6 +24,7 @@ export default async function PublicPostPage({ searchParams }) {
 	const posts = await fetchPostListings(currentPage);
 	let totalPostCount = await fetchTotalCount();
 	const totalPages = Math.ceil(totalPostCount / POSTLISTINGS_PER_PAGE);
+	Logger.debug("posts component>", posts[0]);
 
 	const cards = posts.map((post) => (
 		<Card
@@ -36,12 +37,12 @@ export default async function PublicPostPage({ searchParams }) {
 			{/* Cover Photo */}
 			<AspectRatio
 				ratio={1920 / 1080}
-				className="rounded-lg overflow-hidden">
+				className="overflow-hidden rounded-lg">
 				<Image
 					alt="Cover Photo"
 					height={300}
 					width={400}
-					className="w-full h-full object-cover"
+					className="object-cover w-full h-full"
 					src={
 						post.coverPhoto ||
 						"https://placehold.co/600x400?text=No+Cover+Photo+Found"
@@ -71,8 +72,8 @@ export default async function PublicPostPage({ searchParams }) {
 	));
 
 	return (
-		<div className="max-w-screen-xl flex flex-col flex-wrap items-center justify-between mx-auto p-4">
-			<div className="text-xl uppercase underline underline-offset-4">
+		<div className="flex flex-col flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto">
+			<div className="text-xl underline uppercase underline-offset-4">
 				post listings action
 			</div>
 			<Container
@@ -88,7 +89,7 @@ export default async function PublicPostPage({ searchParams }) {
 
 			<div className="py-8">
 				<Pagination
-					uri="publicPost"
+					uri="post/publicPost"
 					totalPages={totalPages}
 					currentPage={currentPage}
 				/>

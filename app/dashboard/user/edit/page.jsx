@@ -6,31 +6,28 @@ import { checkAuthAndRoles } from "@/lib/authHelper";
 import React from "react";
 
 export default async function UserEditPage({ searchParams }) {
-	const authUser = await checkAuthAndRoles("/dashboard/user/edit");
-	if (React.isValidElement(authUser)) return authUser;
+  const authUser = await checkAuthAndRoles("/dashboard/user/edit");
+  if (React.isValidElement(authUser)) return authUser;
 
-	const params = await searchParams;
-	const id = params.id || "";
-	const user = await fetchUser(id);
+  const params = await searchParams;
+  const id = params.id || "";
+  const user = await fetchUser(id);
 
-	let roles = await fetchAllRoles();
-	roles = roles.map((role) => {
-		return { value: String(role.id), label: role.name };
-	});
+  let roles = await fetchAllRoles();
+  roles = roles.map((role) => {
+    return { value: String(role.id), label: role.name };
+  });
 
-	return (
-		<div className="relative mx-auto mt-12 max-w-screen-xl p-4">
-			<div className="relative">
-				<div className="mt-12 mb-8 absolute -top-24 right-2">
-					<GoBack />
-				</div>{" "}
-				<h1 className="mb-5 text-2xl font-bold">Edit User</h1>
-				<EditUserForm
-					user={user}
-					authorId={id}
-					roles={roles}
-				/>
-			</div>
-		</div>
-	);
+  return (
+    <main className="relative mx-auto flex min-h-[calc(100vh-var(--nav-height))] max-w-screen-xl flex-col items-stretch justify-center">
+      {/* go back */}
+      <section className="absolute top-0 right-0">
+        <GoBack />
+      </section>
+      <section className="">
+        <h1 className="mb-2 text-2xl font-bold">Edit User</h1>
+        <EditUserForm user={user} authorId={id} roles={roles} />
+      </section>
+    </main>
+  );
 }

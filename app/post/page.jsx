@@ -11,10 +11,16 @@ import {
 } from "@/lib/repository/user/dal";
 import helpers from "@/lib/helpers";
 import UserPostListingsTable from "./Table";
-import { authenticateUser, checkAuthAndRoles } from "@/lib/authHelper";
+import { checkAuthAndRoles } from "@/lib/authHelper";
 import { SessionProvider } from "next-auth/react";
 import UserProvider from "@/context/AuthUserContext";
+import Logger from "@/lib/logger";
 
+/**
+ * USER PERSONAL POST LISTINGS
+ *
+ * @param param0 - USERID
+ */
 export default async function UserPostPage({ searchParams }) {
 	const searchQuery = await searchParams;
 	const id = searchQuery.id;
@@ -50,43 +56,42 @@ export default async function UserPostPage({ searchParams }) {
 	totalPages = Math.ceil(totalPages / itemPerPage);
 
 	return (
-		<div className="relative mx-auto mt-12 max-w-screen-xl p-4">
-			<div className="relative">
-				<div className="mt-12 mb-8 absolute -top-24 right-2">
-					<GoBack />
-				</div>
-				<Toast />
-				<Suspense fallback={<Spinner />}>
-					<div className="min-h-[27rem]">
-						<SessionProvider>
-							<UserProvider>
-								<UserPostListingsTable posts={user.posts}>
-									<TableHeaderAction
-										selectPlaceHolder="Search For"
-										selectData={[
-											{ value: "title", label: "Title" },
-											{ value: "shortDescription", label: "Description" },
-										]}
-										defaultSelectedData={{
-											value: "title",
-											label: "Title",
-										}}
-										queryPlaceholder="Search for post title"
-										authorId={user.id}
-										queryValue={query}
-										tableName="post"
-									/>
-								</UserPostListingsTable>
-							</UserProvider>
-						</SessionProvider>
-					</div>
-				</Suspense>
-				<Pagination
-					uri={user.id} // uri: /post/cm66j0ikt0000pf1cp89q5her?page=1
-					totalPages={totalPages}
-					currentPage={currentPage}
-				/>
-			</div>
-		</div>
+		<main className="relative flex flex-col items-center min-h-[calc(90vh-var(--nav-height))] mx-auto max-w-screen-xl mt-12">
+			{/* go back */}
+			<section className="absolute right-0 -top-8">
+				<GoBack />
+			</section>
+			<Toast />
+
+			<Suspense fallback={<Spinner />}>
+				<SessionProvider>
+					<UserProvider>
+						<UserPostListingsTable posts={user.posts}>
+							<TableHeaderAction
+								selectPlaceHolder="Search For"
+								selectData={[
+									{ value: "title", label: "Title" },
+									{ value: "shortDescription", label: "Description" },
+								]}
+								defaultSelectedData={{
+									value: "title",
+									label: "Title",
+								}}
+								queryPlaceholder="Search for post title"
+								authorId={id}
+								queryValue={query}
+								tableName="post"
+							/>
+						</UserPostListingsTable>
+					</UserProvider>
+				</SessionProvider>
+			</Suspense>
+
+			<Pagination
+				uri={`/post?id=${id}`}
+				totalPages={totalPages}
+				currentPage={currentPage}
+			/>
+		</main>
 	);
 }

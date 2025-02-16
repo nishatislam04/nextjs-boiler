@@ -14,7 +14,7 @@ export default function TableHeaderAction({
 	defaultSelectedData,
 }) {
 	return (
-		<div className="mb-6 flex w-full items-center justify-start gap-3 p-2">
+		<section className="flex items-center justify-start w-full gap-3 py-3">
 			{/* search */}
 			<Search
 				selectPlaceHolder={selectPlaceHolder}
@@ -23,24 +23,23 @@ export default function TableHeaderAction({
 				queryPlaceholder={queryPlaceholder}
 				defaultSelectedData={defaultSelectedData}
 			/>
+
+			{/* create button */}
 			<AuthorizedView
-				// pathname={`/dashboard/${tableName.toLowerCase()}/create`}>
 				pathname={
 					tableName.toLowerCase() === "user"
 						? `/dashboard/user/create`
 						: `/${tableName.toLowerCase()}/create`
 				}>
-				<div className="ml-auto">
+				<section className="ml-auto">
 					<Anchor
 						variant="filled"
 						color="indigo"
 						component={Link}
-						className=""
-						// href={`/dashboard/${tableName.toLowerCase()}/create?authorId=${authorId}`}
 						href={
 							tableName.toLowerCase() === "user"
 								? `/dashboard/user/create`
-								: `/post/create`
+								: `/post/create?id=${authorId}`
 						}
 						prefetch>
 						<span className="flex gap-0">
@@ -53,8 +52,8 @@ export default function TableHeaderAction({
 							</Button>
 						</span>
 					</Anchor>
-				</div>
+				</section>
 			</AuthorizedView>
-		</div>
+		</section>
 	);
 }

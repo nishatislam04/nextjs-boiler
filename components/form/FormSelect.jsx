@@ -17,7 +17,7 @@ export default function FormSelect({
 			name={name}
 			value={value}
 			onChange={onChange}
-			clearable
+			// clearable
 			allowDeselect
 			checkIconPosition="right"
 			size="xs"

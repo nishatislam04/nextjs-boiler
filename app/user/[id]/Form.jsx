@@ -1,11 +1,17 @@
 import { Textarea, TextInput } from "@mantine/core";
 
+/**
+ * USER PROFILE FORM PART
+ *
+ * @param param0
+ * @param param0.user
+ */
 export default function UserShowForm({ user }) {
 	return (
-		<form className="rounded-lg bg-gray-100 px-3 py-6">
+		<form className="px-6 py-6 bg-white border border-gray-200 shadow-md rounded-xl">
 			<div className="flex w-full gap-4">
 				<TextInput
-					className="mb-4 w-1/2"
+					className="w-1/2 mb-4"
 					label="Name"
 					size="xs"
 					placeholder="User name"
@@ -13,7 +19,7 @@ export default function UserShowForm({ user }) {
 					disabled
 				/>
 				<TextInput
-					className="mb-4 w-1/2"
+					className="w-1/2 mb-4"
 					label="Email Address"
 					size="xs"
 					placeholder="Email address"
@@ -23,7 +29,7 @@ export default function UserShowForm({ user }) {
 			</div>
 			<div className="flex w-full gap-4">
 				<TextInput
-					className="mb-4 w-1/2"
+					className="w-1/2 mb-4"
 					label="User Name"
 					size="xs"
 					placeholder="username"
@@ -31,7 +37,7 @@ export default function UserShowForm({ user }) {
 					disabled
 				/>
 				<TextInput
-					className="mb-4 w-1/2"
+					className="w-1/2 mb-4"
 					label="Website Link"
 					size="xs"
 					placeholder="user website"
@@ -51,7 +57,7 @@ export default function UserShowForm({ user }) {
 			/>
 			<div className="flex w-full gap-4">
 				<TextInput
-					className="mb-4 w-1/3"
+					className="w-1/3 mb-4"
 					label="User Location"
 					size="xs"
 					placeholder="user location"
@@ -59,7 +65,7 @@ export default function UserShowForm({ user }) {
 					disabled
 				/>
 				<TextInput
-					className="mb-4 w-1/3"
+					className="w-1/3 mb-4"
 					label="Roles"
 					size="xs"
 					placeholder="Roles"
@@ -67,7 +73,7 @@ export default function UserShowForm({ user }) {
 					disabled
 				/>
 				<TextInput
-					className="mb-4 w-1/3"
+					className="w-1/3 mb-4"
 					label="Post Uploaded"
 					size="xs"
 					placeholder="Post uploaded count"
