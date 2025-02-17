@@ -14,7 +14,8 @@ export default function GoBack() {
 
 	if (route.length > 1)
 		return (
-			<div className="absolute -top-16 right-2">
+			// <div className="absolute -top-16 right-2">
+			<div className="">
 				<Button
 					leftSection={back}
 					onClick={() => router.back()}

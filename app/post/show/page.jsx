@@ -1,22 +1,28 @@
 import GoBack from "@/components/ui/GoBack";
 import { fetchPost } from "@/lib/repository/post/dal";
 import ShowPostForm from "./Form";
+import React from "react";
+import { notFound } from "next/navigation";
 
 export default async function ShowPostPage({ searchParams }) {
-	const params = await searchParams;
-	const id = +params.id || "";
+  const params = await searchParams;
+  const id = +params.id;
 
-	const post = await fetchPost(id);
+  if (!id) notFound();
 
-	return (
-		<div className="mx-auto mt-12 max-w-screen-xl p-4">
-			<div className="relative">
-				<GoBack />
+  const post = await fetchPost(id);
 
-				<h1 className="mb-5 text-2xl font-bold">Show Post</h1>
+  return (
+    <main className="relative mx-auto flex min-h-[calc(100vh-var(--nav-height))] max-w-screen-xl items-center justify-stretch">
+      {/* go back */}
+      <section className="absolute right-0 top-0">
+        <GoBack />
+      </section>
+      <section className="h-full w-full">
+        <h1 className="mb-2 text-2xl font-bold">Show Post</h1>
 
-				<ShowPostForm post={post} />
-			</div>
-		</div>
-	);
+        <ShowPostForm post={post} />
+      </section>
+    </main>
+  );
 }

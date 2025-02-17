@@ -9,6 +9,7 @@ import {
 	IconArrowRight,
 	IconGripHorizontal,
 } from "@tabler/icons-react";
+import Logger from "@/lib/logger";
 
 export default function MantinePagination({
 	uri,
@@ -17,8 +18,21 @@ export default function MantinePagination({
 }) {
 	const router = useRouter();
 
+	// Helper function to append page param to any existing query params
+	const appendPageParam = (uri, page) => {
+		const url = new URL(uri, window.location.origin); // Base URL for the URI
+		const params = new URLSearchParams(url.search);
+
+		// Add or update the 'page' parameter
+		params.set("page", page);
+
+		return `${url.pathname}?${params.toString()}`; // Return the updated URL with all params
+	};
+
 	const handlePageChange = (page) => {
-		router.push(`${uri}?page=${page}`);
+		// Use the appendPageParam function to modify the URL with the page parameter
+		const updatedUri = appendPageParam(uri, page);
+		router.push(updatedUri); // Navigate to the updated URL
 	};
 
 	return (

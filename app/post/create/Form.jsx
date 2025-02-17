@@ -1,11 +1,12 @@
 "use client";
 
-import Toast from "@/components/ui/Toast";
+import ImageSvg from "@/components/svg/imageSvg";
 import { createPost } from "@/lib/repository/actions/posts/create";
 import { createPostSchema } from "@/lib/schema/post/create";
 import {
 	Box,
 	Button,
+	FileInput,
 	LoadingOverlay,
 	MultiSelect,
 	Select,
@@ -18,11 +19,11 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function PostCreateForm({ authorId, categories }) {
 	const [serverErrors, setServerErrors] = useState({});
-	const [visible, { toggle }] = useDisclosure(false);
+	const [visible, toggle] = useDisclosure(false);
 
 	const router = useRouter();
 
@@ -35,41 +36,37 @@ export default function PostCreateForm({ authorId, categories }) {
 			tags: [],
 			published: "",
 			categories: [],
+			coverPhoto: null,
 		},
 		validate: zodResolver(createPostSchema),
 	});
 
 	const handleSubmit = async (values) => {
-		console.log("--res");
-		toggle();
+		toggle.open();
 		setServerErrors({});
 
 		const response = await createPost(authorId, values);
 
-		if (!response.success) {
-			setServerErrors(response.errors);
-			toggle();
+		if (!response.success && !response.showNotification) {
+			await setServerErrors(response.errors);
+			toggle.close();
 			return;
-		} else {
-			toggle();
-			router.push(`/post/${authorId}`);
-		}
-	};
-
-	useEffect(() => {
-		if (serverErrors.general) {
+		} else if (!response.success && response.showNotification) {
 			notifications.show({
 				title: "Error",
-				message: serverErrors.general,
+				message: response.errors.general,
 				position: "top-right",
 				color: "red",
 				radius: "md",
 				autoClose: 5000,
 			});
 			setServerErrors({});
-			toggle();
+			toggle.close();
+		} else {
+			router.push(`/post?id=${authorId}`);
+			toggle.close();
 		}
-	}, [serverErrors, toggle]);
+	};
 
 	return (
 		<Box pos="relative">
@@ -80,24 +77,23 @@ export default function PostCreateForm({ authorId, categories }) {
 			/>
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
-				className="rounded-lg bg-gray-100 px-3 py-6">
-				<Toast />
-				<div className="flex w-full gap-4">
+				className="px-6 py-4 bg-white border border-gray-200 shadow-md rounded-2xl">
+				<section className="flex w-full gap-4">
 					<TextInput
-						className="mb-4 w-1/2"
+						className="w-1/2 mb-4"
 						name="title"
 						label="Title"
-						withAsterisk
+						required
 						size="xs"
-						required={true}
 						placeholder="Post Title"
 						key={form.key("title")}
 						{...form.getInputProps("title")}
 						error={form.errors.title || serverErrors.title}
 					/>
 					<TextInput
+						required
 						size="xs"
-						className="mb-4 w-1/2"
+						className="w-1/2 mb-4"
 						label="Short Description"
 						name="shortDescription"
 						placeholder="Post short description"
@@ -107,8 +103,8 @@ export default function PostCreateForm({ authorId, categories }) {
 							form.errors.shortDescription || serverErrors.shortDescription
 						}
 					/>
-				</div>
-				<div className="flex w-full justify-stretch gap-4">
+				</section>
+				<section className="flex w-full gap-4 justify-stretch">
 					<Textarea
 						className="w-full"
 						label="Description"
@@ -121,8 +117,8 @@ export default function PostCreateForm({ authorId, categories }) {
 						{...form.getInputProps("description")}
 						error={form.errors.description || serverErrors.description}
 					/>
-				</div>
-				<div className="mt-2 flex w-full gap-4">
+				</section>
+				<section className="flex w-full gap-4 mt-2">
 					<TagsInput
 						size="xs"
 						clearable
@@ -153,8 +149,21 @@ export default function PostCreateForm({ authorId, categories }) {
 							{ value: "0", label: "Don't Publish yet" },
 						]}
 					/>
-				</div>
-				<div className="ml-auto mt-2 flex w-1/2 gap-4">
+				</section>
+				<section className="flex w-full gap-4 mt-2 mb-4">
+					<FileInput
+						name="coverPhoto"
+						className="w-1/2"
+						size="xs"
+						clearable
+						leftSection={<ImageSvg />}
+						label="Post Cover Picture"
+						accept="image/png,image/jpeg,image/jpg"
+						placeholder="Upload Post cover picture"
+						onChange={(file) => form.setFieldValue("coverPhoto", file)}
+						error={form.errors.coverPhoto}
+					/>
+
 					<MultiSelect
 						size="xs"
 						className="w-full"
@@ -171,7 +180,7 @@ export default function PostCreateForm({ authorId, categories }) {
 						data={categories}
 						error={form.errors.categories || serverErrors.categories}
 					/>
-				</div>
+				</section>
 
 				<Button
 					loading={visible}
@@ -179,6 +188,7 @@ export default function PostCreateForm({ authorId, categories }) {
 					type="submit"
 					variant="filled"
 					radius="sm"
+					className="!mt-3"
 					size="xs">
 					Create
 				</Button>

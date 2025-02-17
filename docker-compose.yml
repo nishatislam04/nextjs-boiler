@@ -6,9 +6,10 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      # DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: ${DATABASE_URL_DOCKER}
+      # REDIS_HOST: redis
+      # REDIS_PORT: 6379
       DEBUG: prisma:query
     extra_hosts:
       - "db.nsftfkuzxthlzoihgjqa.supabase.co:192.168.1.1"
@@ -20,53 +21,59 @@ services:
     ports:
       - 3000:3000
       
-  postgres:
-    image: postgis/postgis:17-3.5-alpine  # Lightweight Postgres with PostGIS support
-    container_name: shadow-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: shadow_user
-      POSTGRES_PASSWORD: shadow_pass
-      POSTGRES_DB: shadow_db
-    ports:
-      - "5433:5432"  # Avoid conflicts with your Supabase connection
-    volumes:
-      - shadow-db-data:/var/lib/postgresql/data
-
-  # mysql:
-  #   image: mysql:8.0
-  #   restart: always
+  # postgres:
+  #   image: postgis/postgis:17-3.5-alpine  # Lightweight Postgres with PostGIS support
+  #   container_name: shadow-db
+  #   restart: unless-stopped
   #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
-  #     MYSQL_USER: ${MYSQL_USER}
-  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  #     POSTGRES_USER: shadow_user
+  #     POSTGRES_PASSWORD: shadow_pass
+  #     POSTGRES_DB: shadow_db
   #   ports:
-  #     - "3306:3306"
+  #     - "5433:5432"  # Avoid conflicts with your Supabase connection
   #   volumes:
-  #     - mysql-data:/var/lib/mysql
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-  #     interval: 10s
-  #     retries: 3
+  #     - shadow-db-data:/var/lib/postgresql/data
 
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin
-  #   restart: always
-  #   ports:
-  #     - "8080:80"
-  #   environment:
-  #     PMA_HOST: mysql
-  #     PMA_USER: ${MYSQL_USER}
-  #     PMA_PASSWORD: ${MYSQL_PASSWORD}
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  redis:
-    image: redis:latest
-    container_name: redis
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "6379:6379"
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 3
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # redis:
+  #   image: redis:latest
+  #   container_name: redis
+  #   ports:
+  #     - "6379:6379"
+  #   restart: always
+  #   volumes:
+  #   - redis-data:/data
+
 volumes:
-  shadow-db-data:
-  # mysql-data:
+  # shadow-db-data:
+  mysql-data:
+  # redis-data:

@@ -1,11 +1,12 @@
 "use client";
 
-import Toast from "@/components/ui/Toast";
+import ImageSvg from "@/components/svg/imageSvg";
 import { updatePost } from "@/lib/repository/actions/posts/update";
 import { updatePostSchema } from "@/lib/schema/post/update";
 import {
 	Box,
 	Button,
+	FileInput,
 	LoadingOverlay,
 	MultiSelect,
 	Select,
@@ -20,9 +21,14 @@ import { zodResolver } from "mantine-form-zod-resolver";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function PostEditPage({ post, categories, authorId }) {
+export default function PostEditPage({
+	post,
+	categories,
+	authorId,
+	postId,
+}) {
 	const [serverErrors, setServerErrors] = useState({});
-	const [visible, { toggle }] = useDisclosure(false);
+	const [visible, toggle] = useDisclosure(false);
 	const [publishStatus, setPublishStatus] = useState("");
 	const [selectedCategories, setSelectedCategories] = useState(
 		post.categories.map((category) => category.value)
@@ -33,8 +39,6 @@ export default function PostEditPage({ post, categories, authorId }) {
 
 	const router = useRouter();
 
-	console.log("--loaded post", post, categories);
-
 	const form = useForm({
 		mode: "uncontrolled",
 		initialValues: {
@@ -42,43 +46,38 @@ export default function PostEditPage({ post, categories, authorId }) {
 			shortDescription: post.shortDescription,
 			description: post.description,
 			tags: selectedTags,
-			// published: publishStatus,
 			published: post.published ? "1" : "0",
 			categories: selectedCategories,
+			coverPhoto: null,
 		},
 		validate: zodResolver(updatePostSchema),
 	});
 
 	const handleSubmit = async (values) => {
-		toggle();
+		toggle.open();
 		setServerErrors({});
 
-		const response = await updatePost(authorId, values);
+		const response = await updatePost(postId, values);
 
-		if (!response.success) {
-			setServerErrors(response.errors);
-			toggle();
-			return;
-		} else {
-			toggle();
-			router.push(`/post/${authorId}`);
-		}
-	};
-
-	useEffect(() => {
-		if (serverErrors.general) {
+		if (!response.success && !response.showNotification) {
+			await setServerErrors(response.errors);
+			toggle.close();
+		} else if (!response.success && response.showNotification) {
 			notifications.show({
 				title: "Error",
-				message: serverErrors.general,
+				message: response.errors.general,
 				position: "top-right",
 				color: "red",
 				radius: "md",
 				autoClose: 5000,
 			});
 			setServerErrors({});
-			toggle();
+			toggle.close();
+		} else {
+			router.push(`/post?id=${authorId}`);
+			toggle.close();
 		}
-	}, [serverErrors, toggle]);
+	};
 
 	useEffect(() => {
 		return post.published
@@ -95,12 +94,10 @@ export default function PostEditPage({ post, categories, authorId }) {
 			/>
 			<form
 				onSubmit={form.onSubmit(handleSubmit)}
-				// action={updatePost.bind(null, authorId)}
-				className="rounded-lg bg-gray-100 px-3 py-6">
-				<Toast />
-				<div className="flex w-full gap-4">
+				className="px-6 py-4 bg-white border border-gray-200 shadow-md rounded-2xl">
+				<section className="flex w-full gap-4">
 					<TextInput
-						className="mb-4 w-1/2"
+						className="w-1/2 mb-4"
 						name="title"
 						label="Title"
 						withAsterisk
@@ -114,7 +111,7 @@ export default function PostEditPage({ post, categories, authorId }) {
 					/>
 					<TextInput
 						size="xs"
-						className="mb-4 w-1/2"
+						className="w-1/2 mb-4"
 						label="Short Description"
 						name="shortDescription"
 						placeholder="Post short description"
@@ -125,8 +122,8 @@ export default function PostEditPage({ post, categories, authorId }) {
 						}
 						defaultValue={post.shortDescription}
 					/>
-				</div>
-				<div className="flex w-full justify-stretch gap-4">
+				</section>
+				<section className="flex w-full gap-4 justify-stretch">
 					<Textarea
 						className="w-full"
 						label="Description"
@@ -140,9 +137,9 @@ export default function PostEditPage({ post, categories, authorId }) {
 						error={form.errors.description || serverErrors.description}
 						defaultValue={post.description}
 					/>
-				</div>
+				</section>
 
-				<div className="mt-2 flex w-full gap-4">
+				<section className="flex w-full gap-4 mt-2">
 					<TagsInput
 						size="xs"
 						clearable
@@ -169,7 +166,6 @@ export default function PostEditPage({ post, categories, authorId }) {
 							{ value: "0", label: "Don't Publish yet" },
 						]}
 						name="published"
-						clearable
 						allowDeselect
 						checkIconPosition="right"
 						size="xs"
@@ -183,11 +179,29 @@ export default function PostEditPage({ post, categories, authorId }) {
 							form.setValues({ published: option.value });
 						}}
 					/>
-				</div>
-				<div className="ml-auto mt-2 flex w-1/2 gap-4">
+				</section>
+				<section className="flex w-full gap-4 mt-2 ml-auto">
+					<FileInput
+						name="coverPhoto"
+						className="w-[30rem]"
+						size="xs"
+						clearable
+						description={
+							post.coverPhoto
+								? "you have already used cover picture for this post. choose a new one to update"
+								: "you still did not use a cover photo. choose a picture to setup cover photo"
+						}
+						leftSection={<ImageSvg />}
+						label="Cover Photo"
+						accept="image/png,image/jpeg,image/jpg"
+						placeholder="Upload post cover photo"
+						onChange={(file) => form.setFieldValue("coverPhoto", file)}
+						error={form.errors.image}
+					/>
+
 					<MultiSelect
 						size="xs"
-						className="w-full"
+						className="w-1/2 mt-2 ml-auto"
 						label="Post Categories"
 						placeholder="Pick categories"
 						data={categories}
@@ -206,13 +220,14 @@ export default function PostEditPage({ post, categories, authorId }) {
 							form.setValues({ categories: value });
 						}}
 					/>
-				</div>
+				</section>
 				<Button
 					loading={visible}
 					color="orange"
 					variant="filled"
 					radius="sm"
 					size="xs"
+					className="!mt-5"
 					type="submit">
 					Update
 				</Button>
