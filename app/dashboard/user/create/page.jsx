@@ -6,7 +6,7 @@ import { checkAuthAndRoles } from "@/lib/authHelper";
 import React from "react";
 
 export default async function UserCreatePage() {
-  const authUser = await checkAuthAndRoles("/dashboard/user/create");
+  const authUser = await checkAuthAndRoles("/dashboard/user/createPage");
   if (React.isValidElement(authUser)) return authUser;
 
   let roles = await fetchAllRoles();
@@ -16,7 +16,7 @@ export default async function UserCreatePage() {
   return (
     <main className="relative mx-auto flex min-h-[calc(100vh-var(--nav-height))] max-w-screen-xl flex-col items-stretch justify-center">
       {/* go back */}
-      <section className="absolute top-0 right-0">
+      <section className="absolute right-0 top-0">
         <GoBack />
       </section>
 

@@ -9,7 +9,7 @@ import { deletePost } from "@/lib/repository/actions/posts/delete";
 import Sort from "@/components/ui/Sort";
 import AuthorizedView from "@/components/ui/auth/AuthorizedView";
 
-export default function UserPostListingsTable({ posts, children }) {
+export default function UserPostListingsTable({ authorId, posts, children }) {
   const [selectedRows, setSelectedRows] = useState([]);
 
   const handleSelectAll = (event) => {
@@ -64,7 +64,11 @@ export default function UserPostListingsTable({ posts, children }) {
               View
             </Button>
           </Link>
-          <AuthorizedView pathname="/dashboard/post/edit">
+          <AuthorizedView
+            showForOwner="true"
+            authorId={authorId}
+            pathname="/dashboard/userPost/editBtn"
+          >
             <Link href={`/dashboard/post/edit?id=${post.id}`}>
               <Button size="compact-xs" color="orange">
                 <EditSvg />
@@ -73,7 +77,7 @@ export default function UserPostListingsTable({ posts, children }) {
             </Link>
           </AuthorizedView>
 
-          <AuthorizedView pathname="/dashboard/post/delete">
+          <AuthorizedView pathname="/dashboard/userPost/deleteBtn">
             <DeleteModal
               id={post.id}
               deleteAction={deletePost}
@@ -133,7 +137,7 @@ export default function UserPostListingsTable({ posts, children }) {
               <Table.Tr key="no-post-found">
                 <Table.Td
                   colSpan={6}
-                  className="py-4 text-xl text-center text-gray-500"
+                  className="py-4 text-center text-xl text-gray-500"
                 >
                   No Post found
                 </Table.Td>

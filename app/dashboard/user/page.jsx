@@ -3,16 +3,21 @@ import React, { Suspense } from "react";
 import Spinner from "@/components/ui/Spinner";
 import Toast from "@/components/ui/Toast";
 import TableHeaderAction from "@/components/TableHeaderAction";
-import { fetchAll, fetchTotalCount } from "@/lib/repository/user/dal";
+import {
+  fetchTotalCount,
+  fetchUserListings,
+  fetchUserProfile,
+} from "@/lib/repository/user/dal";
 import { CURRENT_PAGE, PER_PAGE } from "@/lib/settings";
 import helpers from "@/lib/helpers";
 import UserListingsTable from "./Table";
 import { checkAuthAndRoles } from "@/lib/authHelper";
 import { SessionProvider } from "next-auth/react";
 import UserProvider from "@/context/AuthUserContext";
+import Logger from "@/lib/logger";
 
 export default async function UserPage({ searchParams }) {
-  const authUser = await checkAuthAndRoles("/dashboard/user");
+  const authUser = await checkAuthAndRoles("/dashboard/userPage");
   if (React.isValidElement(authUser)) return authUser;
 
   const params = await searchParams;
@@ -23,9 +28,13 @@ export default async function UserPage({ searchParams }) {
   const emailSort = { email: params?.emailSorting || null };
   const orderBy = helpers.sortData([nameSort, emailSort], { name: "asc" });
 
-  let users = null;
-  users = await fetchAll(currentPage, searchQuery, queryBy, orderBy);
-  let totalUsers = await fetchTotalCount();
+  const users = await fetchUserListings(
+    currentPage,
+    searchQuery,
+    queryBy,
+    orderBy,
+  );
+  const totalUsers = await fetchTotalCount();
   const totalPages = Math.ceil(totalUsers / PER_PAGE);
 
   return (

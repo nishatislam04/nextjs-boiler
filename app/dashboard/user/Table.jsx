@@ -63,7 +63,7 @@ export default function UserListingsTable({ users, children }) {
               View
             </Button>
           </Link>
-          <AuthorizedView pathname="/dashboard/user/edit">
+          <AuthorizedView pathname="/dashboard/user/editBtn">
             <Link href={`/dashboard/user/edit?id=${user.id}`}>
               <Button size="compact-xs" color="orange">
                 <EditSvg />
@@ -71,7 +71,7 @@ export default function UserListingsTable({ users, children }) {
               </Button>
             </Link>
           </AuthorizedView>
-          <AuthorizedView pathname="/dashboard/user/delete">
+          <AuthorizedView pathname="/dashboard/user/deleteBtn">
             <DeleteModal
               id={user.id}
               deleteAction={deleteUser}

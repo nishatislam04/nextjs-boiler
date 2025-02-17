@@ -4,14 +4,21 @@ import { fetchUser } from "@/lib/repository/user/dal";
 import { fetchAllRoles } from "@/lib/repository/roles/dal";
 import { checkAuthAndRoles } from "@/lib/authHelper";
 import React from "react";
+import Logger from "@/lib/logger";
+import sessionHelper from "@/lib/sessionHelper";
+import { forbidden } from "next/navigation";
 
 export default async function UserEditPage({ searchParams }) {
-  const authUser = await checkAuthAndRoles("/dashboard/user/edit");
+  const authUser = await checkAuthAndRoles("/dashboard/user/editPage");
   if (React.isValidElement(authUser)) return authUser;
 
   const params = await searchParams;
   const id = params.id || "";
   const user = await fetchUser(id);
+
+  const session = await sessionHelper.getUserSession();
+  // only owner can edit their profile info
+  if (session.userId !== user.id) return forbidden();
 
   let roles = await fetchAllRoles();
   roles = roles.map((role) => {
@@ -21,7 +28,7 @@ export default async function UserEditPage({ searchParams }) {
   return (
     <main className="relative mx-auto flex min-h-[calc(100vh-var(--nav-height))] max-w-screen-xl flex-col items-stretch justify-center">
       {/* go back */}
-      <section className="absolute top-0 right-0">
+      <section className="absolute right-0 top-0">
         <GoBack />
       </section>
       <section className="">

@@ -17,7 +17,9 @@ import UserProvider from "@/context/AuthUserContext";
 
 export default async function PostPage({ params, searchParams }) {
   const id = (await params).id;
-  const authUser = await checkAuthAndRoles(`/dashboard/post/${id}`);
+  const authUser = await checkAuthAndRoles(
+    `/dashboard/userPostPageListings/${id}`,
+  );
   if (React.isValidElement(authUser)) return authUser;
 
   const itemPerPage = PER_PAGE;
@@ -46,7 +48,7 @@ export default async function PostPage({ params, searchParams }) {
   return (
     <main className="relative mx-auto mt-12 flex min-h-[calc(90vh-var(--nav-height))] max-w-screen-xl flex-col">
       {/* go back */}
-      <section className="absolute right-0 -top-8">
+      <section className="absolute -top-8 right-0">
         <GoBack />
       </section>
 
@@ -54,7 +56,7 @@ export default async function PostPage({ params, searchParams }) {
       <Suspense fallback={<Spinner />}>
         <SessionProvider>
           <UserProvider>
-            <UserPostListingsTable posts={user.posts}>
+            <UserPostListingsTable authorId={id} posts={user.posts}>
               <TableHeaderAction
                 selectPlaceHolder="Search For"
                 selectData={[
