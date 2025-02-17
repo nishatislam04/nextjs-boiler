@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Anchor, Button, Table, Checkbox } from "@mantine/core/";
+import { Anchor, Button, Table, Checkbox } from "@mantine/core";
 import Link from "next/link";
 import DeleteModal from "@/components/ui/DeleteModal";
 import ViewSvg from "@/components/svg/View";

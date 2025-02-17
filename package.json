@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "run next build",
-    "start": "run next start",
+    "build": "next build",
+    "start": "next start",
     "lint": "next lint"
   },
   "prisma": {

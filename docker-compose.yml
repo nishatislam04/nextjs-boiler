@@ -4,35 +4,17 @@ services:
     build:
       context: .
     env_file:
-      - .env
+      - .env # Ensure you have production-specific environment variables here
     environment:
-      # DATABASE_URL: ${DATABASE_URL}
       DATABASE_URL: ${DATABASE_URL_DOCKER}
-      # REDIS_HOST: redis
-      # REDIS_PORT: 6379
-      DEBUG: prisma:query
-    extra_hosts:
-      - "db.nsftfkuzxthlzoihgjqa.supabase.co:192.168.1.1"
+      DEBUG: false # Disable debug mode in production
     volumes:
       - .:/app
       - ./prisma:/app/prisma
-      - ./public/uploads:/app/public/uploads  # Persist uploaded images
+      - ./public/uploads:/app/public/uploads
     restart: always
     ports:
-      - 3000:3000
-      
-  # postgres:
-  #   image: postgis/postgis:17-3.5-alpine  # Lightweight Postgres with PostGIS support
-  #   container_name: shadow-db
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: shadow_user
-  #     POSTGRES_PASSWORD: shadow_pass
-  #     POSTGRES_DB: shadow_db
-  #   ports:
-  #     - "5433:5432"  # Avoid conflicts with your Supabase connection
-  #   volumes:
-  #     - shadow-db-data:/var/lib/postgresql/data
+      - "3000:3000"  # Expose the app on port 3000
 
   mysql:
     image: mysql:8.0
@@ -51,29 +33,16 @@ services:
       interval: 10s
       retries: 3
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
+  # You can uncomment and use Redis if needed
+  redis:
+    image: redis:latest
+    container_name: redis
     ports:
-      - "8080:80"
-    environment:
-      PMA_HOST: mysql
-      PMA_USER: ${MYSQL_USER}
-      PMA_PASSWORD: ${MYSQL_PASSWORD}
-    depends_on:
-      mysql:
-        condition: service_healthy
-
-  # redis:
-  #   image: redis:latest
-  #   container_name: redis
-  #   ports:
-  #     - "6379:6379"
-  #   restart: always
-  #   volumes:
-  #   - redis-data:/data
+      - "6379:6379"
+    restart: always
+    volumes:
+      - redis-data:/data
 
 volumes:
-  # shadow-db-data:
   mysql-data:
-  # redis-data:
+  redis-data:
