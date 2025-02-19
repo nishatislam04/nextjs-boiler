@@ -1,11 +1,14 @@
 import GoBack from "@/components/ui/GoBack";
 import Image from "next/image";
 import UserShowForm from "./Form";
-import { AspectRatio } from "@mantine/core";
+import { Anchor, AspectRatio, Button } from "@mantine/core";
 import { checkAuthAndRoles } from "@/lib/authHelper";
 import React from "react";
 import { fetchUserProfile } from "@/lib/repository/user/dal";
 import Logger from "@/lib/logger";
+import Link from "next/link";
+import AddSvg from "@/components/svg/Add";
+import Toast from "@/components/ui/Toast";
 
 /**
  * USER PROFILE PAGE
@@ -20,15 +23,32 @@ export default async function ProfilePage({ params }) {
   const user = await fetchUserProfile(id);
 
   return (
-    <main className="relative mx-auto flex min-h-[calc(100vh-var(--nav-height))] max-w-screen-xl items-center">
+    <main className="relative mx-auto flex min-h-[calc(100vh-var(--nav-height))] max-w-screen-xl flex-col items-center gap-3">
+      <Toast />
+
       {/* go back */}
-      <section className="absolute top-0 right-0">
+      <section className="absolute right-0 top-0">
         <GoBack />
       </section>
 
-      <section className="grid items-center w-full h-full grid-cols-10 mb-4 border border-gray-200 rounded-lg shadow-lg bg-gradient-to-br from-gray-50 to-gray-100 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+      {/* edit page */}
+      <section className="ml-auto mt-12">
+        <Button
+          size="xs"
+          variant="filled"
+          color="orange"
+          component={Link}
+          href={`/user/edit?id=${user.id}`}
+          prefetch
+        >
+          <AddSvg />
+          Edit Profile Info
+        </Button>
+      </section>
+
+      <section className="mb-4 grid h-full w-full grid-cols-10 items-center rounded-lg border border-gray-200 bg-gradient-to-br from-gray-50 to-gray-100 shadow-lg hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
         {/* profile picture */}
-        <section className="relative flex items-center justify-center h-full col-span-4">
+        <section className="relative col-span-4 flex h-full items-center justify-center">
           <AspectRatio ratio={1080 / 720} maw={200} className="w-full">
             <Image
               src={
@@ -36,7 +56,7 @@ export default async function ProfilePage({ params }) {
                 "https://placehold.co/600x400?text=Default+Profile+Picture"
               }
               alt="User Avatar"
-              className="object-cover rounded-lg"
+              className="rounded-lg object-cover"
               fill
             />
           </AspectRatio>

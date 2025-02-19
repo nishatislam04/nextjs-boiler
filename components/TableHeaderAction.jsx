@@ -4,6 +4,7 @@ import { Anchor, Button } from "@mantine/core";
 import Link from "next/link";
 import AuthorizedView from "./ui/auth/AuthorizedView";
 import { headers } from "next/headers";
+import Logger from "@/lib/logger";
 
 export default async function TableHeaderAction({
   authorId = "",
@@ -13,6 +14,7 @@ export default async function TableHeaderAction({
   selectPlaceHolder,
   selectData,
   defaultSelectedData,
+  children,
 }) {
   const headersList = await headers();
   const fullUrl = headersList.get("referer") || ""; // Get previous URL
@@ -32,7 +34,8 @@ export default async function TableHeaderAction({
       />
 
       {/* create button */}
-      <AuthorizedView
+      {children}
+      {/* <AuthorizedView
         showForOwner={tableName.toLowerCase() === "user" ? false : true}
         authorId={authorId}
         pathname="/dashboard/user/createBtn"
@@ -59,7 +62,7 @@ export default async function TableHeaderAction({
             </Anchor>
           </section>
         )}
-      </AuthorizedView>
+      </AuthorizedView> */}
     </section>
   );
 }

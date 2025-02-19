@@ -120,7 +120,7 @@ export default function UserPostListingsTable({ authorId, posts, children }) {
               <Table.Th>
                 <Sort>Title</Sort>
               </Table.Th>
-              <Table.Th>Description</Table.Th>
+              <Table.Th>Short Description</Table.Th>
               <Table.Th>
                 <Sort>Published</Sort>
               </Table.Th>
@@ -134,12 +134,12 @@ export default function UserPostListingsTable({ authorId, posts, children }) {
             {posts.length > 0 ? (
               rows
             ) : (
-              <Table.Tr key="no-post-found">
+              <Table.Tr key="post-not-found">
                 <Table.Td
                   colSpan={6}
-                  className="py-4 text-center text-xl text-gray-500"
+                  className="py-4 text-center text-xl uppercase text-gray-300"
                 >
-                  No Post found
+                  Search results not found
                 </Table.Td>
               </Table.Tr>
             )}

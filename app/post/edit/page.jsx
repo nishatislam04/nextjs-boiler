@@ -39,7 +39,7 @@ export default async function EditPostPage({ searchParams }) {
         <PostEditPage
           post={post}
           categories={categories}
-          authorId={authUser.id}
+          authorId={session.userId}
           postId={id}
         />
       </section>

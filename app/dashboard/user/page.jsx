@@ -3,11 +3,7 @@ import React, { Suspense } from "react";
 import Spinner from "@/components/ui/Spinner";
 import Toast from "@/components/ui/Toast";
 import TableHeaderAction from "@/components/TableHeaderAction";
-import {
-  fetchTotalCount,
-  fetchUserListings,
-  fetchUserProfile,
-} from "@/lib/repository/user/dal";
+import { fetchTotalCount, fetchUserListings } from "@/lib/repository/user/dal";
 import { CURRENT_PAGE, PER_PAGE } from "@/lib/settings";
 import helpers from "@/lib/helpers";
 import UserListingsTable from "./Table";
@@ -15,26 +11,30 @@ import { checkAuthAndRoles } from "@/lib/authHelper";
 import { SessionProvider } from "next-auth/react";
 import UserProvider from "@/context/AuthUserContext";
 import Logger from "@/lib/logger";
+import AuthorizedView from "@/components/ui/auth/AuthorizedView";
+import { Anchor, Button } from "@mantine/core";
+import Link from "next/link";
+import AddSvg from "@/components/svg/Add";
 
 export default async function UserPage({ searchParams }) {
   const authUser = await checkAuthAndRoles("/dashboard/userPage");
   if (React.isValidElement(authUser)) return authUser;
 
   const params = await searchParams;
-  const searchQuery = params?.query || "";
+  const queryFor = params?.queryFor || "";
   const queryBy = params?.queryBy || "";
   const currentPage = params?.page || CURRENT_PAGE;
   const nameSort = { name: params?.nameSorting || null };
   const emailSort = { email: params?.emailSorting || null };
   const orderBy = helpers.sortData([nameSort, emailSort], { name: "asc" });
 
-  const users = await fetchUserListings(
+  const userListings = await fetchUserListings(
     currentPage,
-    searchQuery,
+    queryFor,
     queryBy,
     orderBy,
   );
-  const totalUsers = await fetchTotalCount();
+  const totalUsers = queryFor ? userListings.length : await fetchTotalCount();
   const totalPages = Math.ceil(totalUsers / PER_PAGE);
 
   return (
@@ -44,7 +44,7 @@ export default async function UserPage({ searchParams }) {
       <Suspense fallback={<Spinner />}>
         <SessionProvider>
           <UserProvider>
-            <UserListingsTable users={users}>
+            <UserListingsTable users={userListings}>
               <TableHeaderAction
                 selectPlaceHolder="Search For"
                 selectData={[
@@ -52,17 +52,32 @@ export default async function UserPage({ searchParams }) {
                   { value: "email", label: "Email" },
                 ]}
                 defaultSelectedData={{ value: "name", label: "Name" }}
-                queryValue={searchQuery}
+                queryValue={queryFor}
                 queryPlaceholder="Search for user"
                 tableName="User"
-              />
+              >
+                <AuthorizedView pathname="/dashboard/user/createBtn">
+                  <section className="ml-auto">
+                    <Button
+                      size="xs"
+                      variant="filled"
+                      color="violet"
+                      component={Link}
+                      href="/dashboard/user/create"
+                    >
+                      <AddSvg />
+                      Add User
+                    </Button>
+                  </section>
+                </AuthorizedView>
+              </TableHeaderAction>
             </UserListingsTable>
           </UserProvider>
         </SessionProvider>
       </Suspense>
 
       <Pagination
-        uri="user"
+        uri="/dashboard/user"
         totalPages={totalPages}
         currentPage={currentPage}
       />
