@@ -10,9 +10,15 @@ generator client {
 //   directUrl         = env("DIRECT_URL")
 //   shadowDatabaseUrl = "postgresql://shadow_user:shadow_pass@postgres:5432/shadow_db"
 // }
+
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL_DOCKER")
+// }
+
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL_DOCKER")
+  provider = "postgresql"
+  url      = env("DATABASE_URL_NEON")
 }
 
 model User {

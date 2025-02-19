@@ -25,7 +25,7 @@ export default async function PostPage({ params, searchParams }) {
   const itemPerPage = PER_PAGE;
   const searchQuery = await searchParams;
   const queryBy = searchQuery?.queryBy || "";
-  const query = searchQuery?.query || "";
+  const queryFor = searchQuery?.queryFor || "";
   const currentPage = searchQuery?.page || CURRENT_PAGE;
   const titleSorting = { title: searchQuery?.titleSorting || null };
   const publishedSorting = {
@@ -41,9 +41,17 @@ export default async function PostPage({ params, searchParams }) {
     },
   );
 
-  const user = await fetchUserPosts(currentPage, id, orderBy, query, queryBy);
-  let { totalPages } = await fetchTotalPostsUserCount(id);
-  totalPages = Math.ceil(totalPages / itemPerPage);
+  const userPostListings = await fetchUserPosts(
+    currentPage,
+    id,
+    orderBy,
+    queryFor,
+    queryBy,
+  );
+  const totalPageCount = queryFor
+    ? userPostListings.posts.length
+    : await fetchTotalPostsUserCount(id);
+  const totalPages = Math.ceil(totalPageCount / itemPerPage);
 
   return (
     <main className="relative mx-auto mt-12 flex min-h-[calc(90vh-var(--nav-height))] max-w-screen-xl flex-col">
@@ -56,7 +64,7 @@ export default async function PostPage({ params, searchParams }) {
       <Suspense fallback={<Spinner />}>
         <SessionProvider>
           <UserProvider>
-            <UserPostListingsTable authorId={id} posts={user.posts}>
+            <UserPostListingsTable authorId={id} posts={userPostListings.posts}>
               <TableHeaderAction
                 selectPlaceHolder="Search For"
                 selectData={[
@@ -68,8 +76,8 @@ export default async function PostPage({ params, searchParams }) {
                   label: "Title",
                 }}
                 queryPlaceholder="Search for post title"
-                authorId={user.id}
-                queryValue={query}
+                authorId={userPostListings.id}
+                queryValue={queryFor}
                 tableName="post"
               />
             </UserPostListingsTable>
@@ -78,7 +86,7 @@ export default async function PostPage({ params, searchParams }) {
       </Suspense>
 
       <Pagination
-        uri={user.id} // uri: /post/cm66j0ikt0000pf1cp89q5her?page=1
+        uri={userPostListings.id} // uri: /post/cm66j0ikt0000pf1cp89q5her?page=1
         totalPages={totalPages}
         currentPage={currentPage}
       />

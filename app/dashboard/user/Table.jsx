@@ -63,14 +63,14 @@ export default function UserListingsTable({ users, children }) {
               View
             </Button>
           </Link>
-          <AuthorizedView pathname="/dashboard/user/editBtn">
+          {/* <AuthorizedView  pathname="/dashboard/user/editBtn">
             <Link href={`/dashboard/user/edit?id=${user.id}`}>
               <Button size="compact-xs" color="orange">
                 <EditSvg />
                 Edit
               </Button>
             </Link>
-          </AuthorizedView>
+          </AuthorizedView> */}
           <AuthorizedView pathname="/dashboard/user/deleteBtn">
             <DeleteModal
               id={user.id}
@@ -122,7 +122,20 @@ export default function UserListingsTable({ users, children }) {
               <Table.Th>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
-          <Table.Tbody className="min-h-[20rem]">{rows}</Table.Tbody>
+          <Table.Tbody className="min-h-[20rem]">
+            {users.length > 0 ? (
+              rows
+            ) : (
+              <Table.Tr key="user-not-found">
+                <Table.Td
+                  colSpan={6}
+                  className="py-4 text-center text-xl uppercase text-gray-300"
+                >
+                  Search results not found
+                </Table.Td>
+              </Table.Tr>
+            )}
+          </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
     </>

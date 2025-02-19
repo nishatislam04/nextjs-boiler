@@ -15,6 +15,9 @@ import { checkAuthAndRoles } from "@/lib/authHelper";
 import { SessionProvider } from "next-auth/react";
 import UserProvider from "@/context/AuthUserContext";
 import Logger from "@/lib/logger";
+import { Anchor, Button } from "@mantine/core";
+import Link from "next/link";
+import AddSvg from "@/components/svg/Add";
 
 /**
  * USER PERSONAL POST LISTINGS
@@ -29,7 +32,7 @@ export default async function UserPostPage({ searchParams }) {
 
   const itemPerPage = PER_PAGE;
   const queryBy = searchQuery?.queryBy || "";
-  const query = searchQuery?.query || "";
+  const queryFor = searchQuery?.queryFor || "";
   const currentPage = searchQuery?.page || CURRENT_PAGE;
   const titleSorting = { title: searchQuery?.titleSorting || null };
   const publishedSorting = {
@@ -45,9 +48,17 @@ export default async function UserPostPage({ searchParams }) {
     },
   );
 
-  const user = await fetchUserPosts(currentPage, id, orderBy, query, queryBy);
-  let { totalPages } = await fetchTotalPostsUserCount(id);
-  totalPages = Math.ceil(totalPages / itemPerPage);
+  const userPostListings = await fetchUserPosts(
+    currentPage,
+    id,
+    orderBy,
+    queryFor,
+    queryBy,
+  );
+  const totalPostCount = queryFor
+    ? userPostListings.posts.length
+    : await fetchTotalPostsUserCount(id);
+  const totalPages = Math.ceil(totalPostCount / itemPerPage);
 
   return (
     <main className="relative mx-auto mt-12 flex min-h-[calc(90vh-var(--nav-height))] max-w-screen-xl flex-col items-center">
@@ -60,7 +71,7 @@ export default async function UserPostPage({ searchParams }) {
       <Suspense fallback={<Spinner />}>
         <SessionProvider>
           <UserProvider>
-            <UserPostListingsTable posts={user.posts}>
+            <UserPostListingsTable posts={userPostListings.posts}>
               <TableHeaderAction
                 selectPlaceHolder="Search For"
                 selectData={[
@@ -72,10 +83,23 @@ export default async function UserPostPage({ searchParams }) {
                   label: "Title",
                 }}
                 queryPlaceholder="Search for post title"
-                authorId={id}
-                queryValue={query}
+                authorId={userPostListings.id}
+                queryValue={queryFor}
                 tableName="post"
-              />
+              >
+                <section className="ml-auto">
+                  <Button
+                    size="xs"
+                    variant="filled"
+                    color="indigo"
+                    component={Link}
+                    href={`/post/create?id=${userPostListings.id}`}
+                  >
+                    <AddSvg />
+                    Add Post
+                  </Button>
+                </section>
+              </TableHeaderAction>
             </UserPostListingsTable>
           </UserProvider>
         </SessionProvider>

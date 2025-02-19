@@ -3,6 +3,7 @@
 import { rolesConfig } from "@/lib/roleConfig";
 import { useContext } from "react";
 import { UserContext } from "@/context/AuthUserContext";
+import Logger from "@/lib/logger";
 
 export default function AuthorizedView({
   showForOwner = false,

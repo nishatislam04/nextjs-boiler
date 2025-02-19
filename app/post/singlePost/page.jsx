@@ -39,7 +39,7 @@ export default async function SinglePostPage({ searchParams }) {
         <Group position="apart" className="mb-6">
           <div>
             <Text size="sm" color="dimmed">
-              Posted on {new Date(post.createdAt).toLocaleDateString()}
+              Posted on {post.createdAt}
             </Text>
             <Text size="sm" color="dimmed">
               Author: {post.author.name}
@@ -69,11 +69,17 @@ export default async function SinglePostPage({ searchParams }) {
             Tags:
           </Text>
           <Group spacing={10} className="mt-2">
-            {post.tags.map((tag) => (
-              <Badge key={tag.value} variant="outline" color="blue">
-                {tag.label}
-              </Badge>
-            ))}
+            {post.tags.length > 0 ? (
+              post.tags.map((tag) => (
+                <Badge key={tag.value} variant="outline" color="blue">
+                  {tag.label}
+                </Badge>
+              ))
+            ) : (
+              <p className="-mt-2 text-sm text-gray-400">
+                No tags found for this post
+              </p>
+            )}
           </Group>
         </section>
 
@@ -83,11 +89,17 @@ export default async function SinglePostPage({ searchParams }) {
             Categories:
           </Text>
           <Group spacing={10} className="mt-2">
-            {post.categories.map((category) => (
-              <Badge key={category.value} variant="outline" color="green">
-                {category.label}
-              </Badge>
-            ))}
+            {post.categories.length > 0 ? (
+              post.categories.map((category) => (
+                <Badge key={category.value} variant="outline" color="green">
+                  {category.label}
+                </Badge>
+              ))
+            ) : (
+              <p className="-mt-2 text-sm text-gray-400">
+                No categories found for this post
+              </p>
+            )}
           </Group>
         </section>
 

@@ -121,12 +121,12 @@ export default function UserPostListingsTable({ posts, children }) {
             {posts.length > 0 ? (
               rows
             ) : (
-              <Table.Tr key="no-post-found">
+              <Table.Tr key="user-not-found">
                 <Table.Td
                   colSpan={6}
-                  className="py-4 text-center text-xl text-gray-500"
+                  className="py-4 text-center text-xl uppercase text-gray-300"
                 >
-                  No Post found
+                  Search results not found
                 </Table.Td>
               </Table.Tr>
             )}
