@@ -1,28 +1,31 @@
+# Use the official Bun base image
 FROM oven/bun:alpine
 
+# Set the working directory inside the container
 WORKDIR /app
 
+# Set environment variables for production
 ENV BUN_AUTO_UPDATE 0
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
 
+# Install dependencies
 COPY package.json ./
 COPY bun.lockb ./
 
-# RUN bun install
-RUN bun install 
+RUN bun install
 
+# Copy the rest of your project files into the container
 COPY . .
 
+# Generate Prisma client (make sure prisma is set up correctly)
 RUN bunx prisma generate
 
-# Uncomment the following line to disable telemetry at run time
-ENV NEXT_TELEMETRY_DISABLED 1
+# Build the Next.js app for production
+RUN bun run build
 
-# for deploying the build version
+# Expose port 3000 for the app to be accessible
+EXPOSE 3000
 
-# RUN bun next build
-# and
-# CMD bun next start
-
-# CMD bun run dev
-CMD bun --bun run dev
-# CMD bun run dev
+# Command to run the app in production mode
+CMD ["bun", "next", "start"]
