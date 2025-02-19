@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import Logger from "@/lib/logger";
 import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.AUTH_SECRET,
@@ -67,7 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!user) return null;
 
         // Verify the password
-        const isValidPassword = await Bun.password.verify(
+        const isValidPassword = await bcrypt.compare(
           credentials.password,
           user.password,
         );
@@ -110,7 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             name: user.name || "",
             image: user.image || "",
             username: user.username || "",
-            password: await Bun.password.hash("123456"),
+            password: await await bcrypt.hash("123456", 10),
             account: {
               create: {
                 provider: account.provider,

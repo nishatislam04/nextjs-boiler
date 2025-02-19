@@ -27,6 +27,7 @@
     "@thewebartisan7/next-flash-message": "^1.0.1",
     "@types/node": "^22.10.7",
     "@types/react": "^19.0.7",
+    "bcryptjs": "^3.0.2",
     "chalk": "^5.4.1",
     "date-fns": "^4.1.0",
     "eslint-plugin-react": "^7.37.4",
@@ -42,6 +43,7 @@
     "react-dom": "^19.0.0",
     "tabler-icons-react": "^1.56.0",
     "typescript": "^5.7.3",
+    "ulid": "^2.3.0",
     "zlib": "^1.0.5",
     "zod": "^3.24.1"
   },
