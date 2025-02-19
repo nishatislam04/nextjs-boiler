@@ -22,7 +22,7 @@ COPY . .
 RUN bunx prisma generate
 
 # Build the Next.js app for production
-RUN bun run build
+RUN bun run next build
 
 # Expose port 3000 for the app to be accessible
 EXPOSE 3000
